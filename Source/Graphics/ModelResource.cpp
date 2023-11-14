@@ -119,7 +119,7 @@ template<class Archive>
 void ModelResource::Vertex::serialize(Archive& archive, int version)
 {
 	archive(
-		CEREAL_NVP(position),
+		CEREAL_NVP(positionWorld),
 		CEREAL_NVP(normal),
 		CEREAL_NVP(tangent),
 		CEREAL_NVP(texcoord),

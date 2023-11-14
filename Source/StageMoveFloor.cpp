@@ -43,7 +43,7 @@ void StageMoveFloor::Update(float elapsedTime)
 
 	//線形補完で位置を算出する
 	DirectX::XMVECTOR Position = DirectX::XMVectorLerp(Start, Goal, moveRate);
-	DirectX::XMStoreFloat3(&position, Position);
+	DirectX::XMStoreFloat3(&positionWorld, Position);
 
 	//回転
 	angle.x += torque.x * elapsedTime;
@@ -95,7 +95,7 @@ bool StageMoveFloor::RayCast(const DirectX::XMFLOAT3& start, const DirectX::XMFL
 		//前回のローカル空間から今回のワールド空間へ変換
 		//前回から今回にかけて変換された内容が乗っているオブジェクトに反映される
 		WorldTransform = DirectX::XMLoadFloat4x4(&transform);
-		DirectX::XMVECTOR LocalPosition = DirectX::XMLoadFloat3(&localHit.position);
+		DirectX::XMVECTOR LocalPosition = DirectX::XMLoadFloat3(&localHit.positionWorld);
 		DirectX::XMVECTOR WorldPosition = DirectX::XMVector3TransformCoord(LocalPosition, WorldTransform);
 
 		DirectX::XMVECTOR LocalNormal = DirectX::XMLoadFloat3(&localHit.normal);
@@ -103,7 +103,7 @@ bool StageMoveFloor::RayCast(const DirectX::XMFLOAT3& start, const DirectX::XMFL
 
 		DirectX::XMVECTOR Vec = DirectX::XMVectorSubtract(WorldPosition, WorldStart);
 		DirectX::XMVECTOR Dist = DirectX::XMVector3Length(Vec);
-		DirectX::XMStoreFloat3(&hit.position, WorldPosition);
+		DirectX::XMStoreFloat3(&hit.positionWorld, WorldPosition);
 		DirectX::XMStoreFloat3(&hit.normal, WorldNormal);
 		DirectX::XMStoreFloat(&hit.distance, Dist);
 		hit.materialIndex = localHit.materialIndex;
@@ -122,7 +122,7 @@ void StageMoveFloor::UpdateTransform()
 {
 	DirectX::XMMATRIX S = DirectX::XMMatrixScaling(scale.x, scale.y, scale.z);
 	DirectX::XMMATRIX R = DirectX::XMMatrixRotationRollPitchYaw(angle.x, angle.y, angle.z);
-	DirectX::XMMATRIX T = DirectX::XMMatrixTranslation(position.x, position.y, position.z);
+	DirectX::XMMATRIX T = DirectX::XMMatrixTranslation(positionWorld.x, positionWorld.y, positionWorld.z);
 	DirectX::XMMATRIX W = S * R * T;
 	DirectX::XMStoreFloat4x4(&transform, W);
 }

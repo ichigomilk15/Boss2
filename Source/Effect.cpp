@@ -23,11 +23,11 @@ Effect::Effect(const char* filename)
 }
 
 //再生
-Effekseer::Handle Effect::Play(const DirectX::XMFLOAT3& position, float scale)
+Effekseer::Handle Effect::Play(const DirectX::XMFLOAT3& positionWorld, float scale)
 {
 	Effekseer::ManagerRef effekseerManager = EffectManager::Instance().GetEffekseerManager();
 
-	Effekseer::Handle handle = effekseerManager->Play(effekseerEffect, position.x, position.y, position.z);
+	Effekseer::Handle handle = effekseerManager->Play(effekseerEffect, positionWorld.x, positionWorld.y, positionWorld.z);
 	effekseerManager->SetScale(handle, scale, scale, scale);
 	return handle;
 }
@@ -41,11 +41,11 @@ void Effect::Stop(Effekseer::Handle handle)
 }
 
 //座標設定
-void Effect::SetPosition(Effekseer::Handle handle, const DirectX::XMFLOAT3& position)
+void Effect::SetPosition(Effekseer::Handle handle, const DirectX::XMFLOAT3& positionWorld)
 {
 	Effekseer::ManagerRef effekseerManager = EffectManager::Instance().GetEffekseerManager();
 
-	effekseerManager->SetLocation(handle, position.x, position.y, position.z);
+	effekseerManager->SetLocation(handle, positionWorld.x, positionWorld.y, positionWorld.z);
 }
 
 //スケール設定

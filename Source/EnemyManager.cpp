@@ -1,65 +1,6 @@
 #include "EnemyManager.h"
 #include "Collision.h"
 
-void EnemyManager::CollisionEnemyVsEnemies()
-{
-	int enemyCount = enemies.size();
-	for (int i = 0; i < enemyCount; ++i)
-	{
-		Enemy* enemyA = enemies.at(i);
-		for (int j = i + 1; j < enemyCount; ++j)
-		{
-			Enemy* enemyB = enemies.at(j);
-			DirectX::XMFLOAT3 outPosition;
-
-			if (Collision::IntersectCylinderVsCylinder(
-				enemyA->GetPosition(),
-				enemyA->GetRadius(),
-				enemyA->GetHeight(),
-				enemyB->GetPosition(),
-				enemyB->GetRadius(),
-				enemyB->GetHeight(),
-				outPosition
-			))
-			{
-				enemyB->SetPosition(outPosition);
-			}
-		}
-	}
-	//for (auto& enemy : enemies)
-	//{
-	//	for (auto& enemy2 : enemies)
-	//	{
-	//		if (enemy == enemy2)continue;
-	//		// Õ“Ëˆ—
-	//		DirectX::XMFLOAT3 outPosition;
-	//		//if (Collision::IntersectSphereVsSphere(
-	//		//	enemy->GetPosition(),
-	//		//	enemy->GetRadius(),
-	//		//	enemy2->GetPosition(),
-	//		//	enemy2->GetRadius(),
-	//		//	outPosition
-	//		//))
-	//		//{
-	//		//	//‰Ÿ‚µo‚µŒã‚ÌˆÊ’uİ’è
-	//		//	enemy2->SetPosition(outPosition);
-	//		//}
-	//		if (Collision::IntersectCylinderVsCylinder(
-	//			enemy->GetPosition(),
-	//			enemy->GetRadius(),
-	//			enemy->GetHeight(),
-	//			enemy2->GetPosition(),
-	//			enemy2->GetRadius(),
-	//			enemy2->GetHeight(),
-	//			outPosition
-	//		))
-	//		{
-	//			enemy2->SetPosition(outPosition);
-	//		}
-	//	}
-	//}
-}
-
 void EnemyManager::Remove(Enemy* enemy)
 {
 	//”jŠüƒŠƒXƒg‚É‘‰Á
@@ -87,9 +28,6 @@ void EnemyManager::Update(float elapsedTime)
 		delete enemy;
 	}
 	removes.clear();
-
-	// “G“¯m‚ÌÕ“Ëˆ—
-	CollisionEnemyVsEnemies();
 }
 
 void EnemyManager::Render(ID3D11DeviceContext* context, Shader* shader)

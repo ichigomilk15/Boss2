@@ -200,10 +200,10 @@ void LineRenderer::Render(ID3D11DeviceContext* context, const DirectX::XMFLOAT4X
 }
 
 // ’¸“_’Ç‰Á
-void LineRenderer::AddVertex(const DirectX::XMFLOAT3& position, const DirectX::XMFLOAT4& color)
+void LineRenderer::AddVertex(const DirectX::XMFLOAT3& positionWorld, const DirectX::XMFLOAT4& color)
 {
 	Vertex v;
-	v.position = position;
+	v.positionWorld = positionWorld;
 	v.color = color;
 	vertices.emplace_back(v);
 }

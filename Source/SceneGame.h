@@ -38,11 +38,6 @@ public:
 	const CameraController* GetCameraController() const { return cameraController; }
 
 private:
-	//エネミーHPゲージ描画
-	void RenderEnemyGauge(ID3D11DeviceContext* dc,
-		const DirectX::XMFLOAT4X4& view, const DirectX::XMFLOAT4X4& projection);
-
-private:
 	Player* player = nullptr;
 	CameraController* cameraController = nullptr;
 	Sprite* gauge = nullptr;

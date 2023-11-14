@@ -26,16 +26,16 @@ void ProjectileHoming::Update(float elapsedTime)
 	//移動
 	{
 		float moveSpeed = this->moveSpeed * elapsedTime;
-		position.x += direction.x * moveSpeed;
-		position.y += direction.y * moveSpeed;
-		position.z += direction.z * moveSpeed;
+		positionWorld.x += direction.x * moveSpeed;
+		positionWorld.y += direction.y * moveSpeed;
+		positionWorld.z += direction.z * moveSpeed;
 	}
 
 	//旋回
 	{
 		float turnSpeed = this->turnSpeed * elapsedTime;
 		//ターゲットまでベクトルを算出
-		DirectX::XMVECTOR Position = DirectX::XMLoadFloat3(&position);
+		DirectX::XMVECTOR Position = DirectX::XMLoadFloat3(&positionWorld);
 		DirectX::XMVECTOR Target = DirectX::XMLoadFloat3(&target);
 		DirectX::XMVECTOR Vec = DirectX::XMVectorSubtract(Target, Position);
 
@@ -49,7 +49,7 @@ void ProjectileHoming::Update(float elapsedTime)
 			Vec = DirectX::XMVector3Normalize(Vec);
 			//向いている方向ベクトルを算出
 			DirectX::XMVECTOR Direction = DirectX::XMLoadFloat3(&direction);
-			/*DirectX::XMVECTOR Pos = DirectX::XMLoadFloat3(&position);
+			/*DirectX::XMVECTOR Pos = DirectX::XMLoadFloat3(&positionWorld);
 			DirectX::XMVECTOR subtract = DirectX::XMVectorSubtract(Direction, Pos);*/
 			
 			//前方向ベクトルとターゲットまでのベクトルの内積（角度）を算出
@@ -101,10 +101,10 @@ void ProjectileHoming::Render(ID3D11DeviceContext* dc, Shader* shader)
 	shader->Draw(dc, model);
 }
 
-void ProjectileHoming::Launch(const DirectX::XMFLOAT3 direction, const DirectX::XMFLOAT3 position, const DirectX::XMFLOAT3 target)
+void ProjectileHoming::Launch(const DirectX::XMFLOAT3 direction, const DirectX::XMFLOAT3 positionWorld, const DirectX::XMFLOAT3 target)
 {
 	this->direction = direction;
-	this->position = position;
+	this->positionWorld = positionWorld;
 	this->target = target;
 
 	UpdateTransform();

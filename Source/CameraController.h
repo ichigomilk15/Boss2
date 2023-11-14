@@ -11,6 +11,9 @@ public:
 	//ターゲット位置設定
 	void setTarget(const DirectX::XMFLOAT3& target) { this->target = target; }
 
+	//カメラGUIのレンダー
+	void DrawDebugGUICamera();
+
 	const DirectX::XMFLOAT3 getAngle() const { return angle; }
 private:
 	DirectX::XMFLOAT3 target = { 0, 0, 0 };

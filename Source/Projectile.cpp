@@ -18,7 +18,7 @@ void Projectile::DrawDebugPrimitive()
 	DebugRenderer* debugRenderer = Graphics::Instance().GetDebugRenderer();
 
 	//衝突判定用のデバッグ球を描画
-	debugRenderer->DrawSphere(position, radius, DirectX::XMFLOAT4(0, 0, 0, 1));
+	debugRenderer->DrawSphere(positionWorld, radius, DirectX::XMFLOAT4(0, 0, 0, 1));
 }
 
 void Projectile::UpdateTransform()
@@ -59,9 +59,9 @@ void Projectile::UpdateTransform()
 	transform._32 = front.y * scale.z;
 	transform._33 = front.z * scale.z;
 	transform._34 = 0.0f;
-	transform._41 = position.x;
-	transform._42 = position.y;
-	transform._43 = position.z;
+	transform._41 = positionWorld.x;
+	transform._42 = positionWorld.y;
+	transform._43 = positionWorld.z;
 	transform._44 = 1.0f;
 
 	// 発射方向

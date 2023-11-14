@@ -16,7 +16,7 @@ public:
 	void Render(ID3D11DeviceContext* context, const DirectX::XMFLOAT4X4& view, const DirectX::XMFLOAT4X4& projection);
 
 	// ’¸“_’Ç‰Á
-	void AddVertex(const DirectX::XMFLOAT3& position, const DirectX::XMFLOAT4& color);
+	void AddVertex(const DirectX::XMFLOAT3& positionWorld, const DirectX::XMFLOAT4& color);
 
 private:
 	struct ConstantBuffer
@@ -26,7 +26,7 @@ private:
 
 	struct Vertex
 	{
-		DirectX::XMFLOAT3	position;
+		DirectX::XMFLOAT3	positionWorld;
 		DirectX::XMFLOAT4	color;
 	};
 

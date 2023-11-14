@@ -23,7 +23,6 @@ public:
 	void Register(Enemy* enemy);
 	void Clear();
 	void DrawDebugPrimitive();
-	void CollisionEnemyVsEnemies();
 	
 	// エネミー数取得
 	int GetEnemyCount() const { return static_cast<int> (enemies.size()); }

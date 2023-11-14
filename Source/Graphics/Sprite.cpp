@@ -317,9 +317,9 @@ void Sprite::Render(ID3D11DeviceContext *immediate_context,
 		Vertex* v = static_cast<Vertex*>(mappedBuffer.pData);
 		for (int i = 0; i < 4; ++i)
 		{
-			v[i].position.x = positions[i].x;
-			v[i].position.y = positions[i].y;
-			v[i].position.z = 0.0f;
+			v[i].positionWorld.x = positions[i].x;
+			v[i].positionWorld.y = positions[i].y;
+			v[i].positionWorld.z = 0.0f;
 
 			v[i].color.x = r;
 			v[i].color.y = g;

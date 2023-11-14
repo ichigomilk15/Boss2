@@ -19,7 +19,7 @@ public:
 	void DrawSphere(const DirectX::XMFLOAT3& center, float radius, const DirectX::XMFLOAT4& color);
 
 	// ‰~’Œ•`‰æ
-	void DrawCylinder(const DirectX::XMFLOAT3& position, float radius, float height, const DirectX::XMFLOAT4& color);
+	void DrawCylinder(const DirectX::XMFLOAT3& positionWorld, float radius, float height, const DirectX::XMFLOAT4& color);
 
 private:
 	// ‹…ƒƒbƒVƒ…ì¬
@@ -45,7 +45,7 @@ private:
 	struct Cylinder
 	{
 		DirectX::XMFLOAT4	color;
-		DirectX::XMFLOAT3	position;
+		DirectX::XMFLOAT3	positionWorld;
 		float				radius;
 		float				height;
 	};
