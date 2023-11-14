@@ -11,7 +11,7 @@ void SceneGame::Initialize()
 	//カメラコントローラー初期化
 	cameraController = new CameraController();
 
-	//ステージ初期化
+	player = new Player();
 
 	//カメラ初期設定
 	Graphics& graphics = Graphics::Instance();
@@ -32,39 +32,37 @@ void SceneGame::Initialize()
 	//エネミー初期化
 	
 	//ゲージスプライト
-	gauge = new Sprite();
 	Stage::Instance()->CreateStage();
 }
 
 // 終了化l
 void SceneGame::Finalize()
 {
-	//ゲージスプライト終了化
-	if (gauge != nullptr)
-	{
-		delete gauge;
-		gauge = nullptr;
-	}
-
 	//カメラコントローラー終了化
 	if (cameraController != nullptr)
 	{
 		delete cameraController;
 		cameraController = nullptr;
 	}
-	//ステージ終了化
+
+	if (player != nullptr)
+	{
+		delete player;
+		player = nullptr;
+	}
 }
 
 // 更新処理
 void SceneGame::Update(float elapsedTime)
 {
 	//カメラコントローラー更新処理
-	DirectX::XMFLOAT3 target = {};
+	DirectX::XMFLOAT3 target = player->GetPosition();
 	target.y += 0.5f;
 	cameraController->setTarget(target);
 	cameraController->Update(elapsedTime);
 
 	Stage::Instance()->Update(elapsedTime);
+	player->Update(elapsedTime);
 
 	//エフェクト更新処理
 	EffectManager::Instance().Update(elapsedTime);
@@ -99,12 +97,13 @@ void SceneGame::Render()
 		shader->Begin(dc, rc);
 		//ステージ描画
 		Stage::Instance()->Render(dc, shader);
+		player->Render(dc, shader);
 
 		shader->End(dc);
 
 	}
 
-	//3Dモデル描画
+	//エフェクト描画
 	{
 		EffectManager::Instance().Render(rc.view, rc.projection);
 	}
@@ -123,7 +122,7 @@ void SceneGame::Render()
 	// 2DデバッグGUI描画
 	{
 		//プレイヤーデバッグ描画
-		//player->DrawDebugGUI();
+		player->DrawDebugGUI();
 		DrawDebugGUI();
 		Stage::Instance()->DrawIMGUI();
 		cameraController->DrawIMGUI();
@@ -175,6 +174,7 @@ void SceneGame::DrawDebugGUI()
 		}
 		ImGui::End();
 	}
+#endif
 }
 
 void SceneGame::RenderEnemyGauge(ID3D11DeviceContext* dc, 

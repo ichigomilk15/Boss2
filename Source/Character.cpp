@@ -1,3 +1,4 @@
+#include "Common.h"
 #include "Character.h"
 #include <CustomMathf.h>
 
@@ -29,12 +30,12 @@ void Character::UpdateVelocity(float elapsedTime)
 	if (movePosX != 0)
 	{
 		this->position.x += movePosX;
-		this->positionWorld.x += movePosX * 1.0f;
+		this->positionWorld.x += movePosX * Common::SquareWidth;
 	}
 	if (movePosY != 0)
 	{
 		this->position.y += movePosY;
-		this->positionWorld.z += movePosY * 1.0f;
+		this->positionWorld.z += movePosY * Common::SquareHeight;
 	}
 
 #if 0

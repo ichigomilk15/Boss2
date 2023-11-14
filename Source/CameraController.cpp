@@ -53,11 +53,6 @@ void CameraController::Update(float elapsedTime)
 #endif
 }
 
-void CameraController::DrawDebugGUICamera()
-{
-	Camera::Instance().DrawDebugGUI();
-}
-
 void CameraController::DrawIMGUI()
 {
 #ifdef _DEBUG

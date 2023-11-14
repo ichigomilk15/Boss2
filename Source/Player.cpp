@@ -3,7 +3,6 @@
 #include "Player.h"
 #include "Input/Input.h"
 #include "Camera.h"
-#include "EnemyManager.h"
 #include "Collision.h"
 #include "ProjectileStraight.h"
 #include "ProjectileHoming.h"
@@ -14,7 +13,7 @@ Player::Player()
 	model = new Model("Data/Model/Jammo/Jammo.mdl");
 
 	//モデルが大きいのでスケーリング
-	scale.x = scale.y = scale.z = 0.01f;
+	scale.x = scale.y = scale.z = 0.03f;
 
 	hitEffect = new Effect("Data/Effect/Hit.efk");
 
@@ -105,18 +104,36 @@ DirectX::XMINT2 Player::GetMoveVec() const
 {
 	//入力情報を取得
 	GamePad& gamePad = Input::Instance().GetGamePad();
-	float ax = gamePad.GetAxisLX();
-	float ay = gamePad.GetAxisLY();
-
-	//スティックの水平入力をカメラ右方向に反映し、
-	//進行ベクトルを計算する
-	/*DirectX::XMFLOAT3 vec;
-	vec.x = ax * cameraRightX + ay * cameraFrontX;
-	vec.z = ax * cameraRightZ + ay * cameraFrontZ;
-	vec.y = 0.0f;*/
-	DirectX::XMINT2 move;
-	move.x = (ax > 0.00001f || ax < 0.00001f) ? ax : 0;
-	move.y = (ay > 0.00001f || ay < 0.00001f) ? ay : 0;
+	/*float ax = gamePad.GetAxisLX();
+	float ay = gamePad.GetAxisLY();*/
+	DirectX::XMINT2 move = { 0, 0 };
+	switch (gamePad.GetButtonDown() & (GamePad::BTN_LEFT | GamePad::BTN_RIGHT | GamePad::BTN_UP | GamePad::BTN_DOWN))
+	{
+	case GamePad::BTN_LEFT:
+		move.x = -1;
+		break;
+	case GamePad::BTN_RIGHT:
+		move.x = 1;
+		break;
+	case GamePad::BTN_UP:
+		move.y = 1;
+		break;
+	case GamePad::BTN_DOWN:
+		move.y = -1;
+		break;
+	}
+	/*if (gamePad.GetButtonDown() & gamePad.BTN_LEFT)
+	{
+		move.x = -1;
+	}*/
+	if (move.x != 0)
+	{
+		move.x = move.x;
+	}
+	if (move.y != 0)
+	{
+		move.y = move.y;
+	}
 
 	return move;
 }
