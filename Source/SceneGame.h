@@ -2,7 +2,6 @@
 #include "Graphics//Graphics.h"
 #include "Graphics\Sprite.h"
 #include "SceneGame.h"
-#include "Player.h"
 #include "CameraController.h"
 #include "Scene.h"
 
@@ -43,7 +42,6 @@ private:
 		const DirectX::XMFLOAT4X4& view, const DirectX::XMFLOAT4X4& projection);
 
 private:
-	Player* player = nullptr;
 	CameraController* cameraController = nullptr;
 	Sprite* gauge = nullptr;
 };
