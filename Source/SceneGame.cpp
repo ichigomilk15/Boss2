@@ -3,6 +3,7 @@
 #include "SceneGame.h"
 #include "Camera.h"
 #include "EffectManager.h"
+#include "Stage.h"
 
 // 初期化
 void SceneGame::Initialize()
@@ -31,6 +32,7 @@ void SceneGame::Initialize()
 	
 	//ゲージスプライト
 	gauge = new Sprite();
+	Stage::Instance()->CreateStage();
 }
 
 // 終了化l
@@ -60,6 +62,8 @@ void SceneGame::Update(float elapsedTime)
 	target.y += 0.5f;
 	cameraController->setTarget(target);
 	cameraController->Update(elapsedTime);
+
+	Stage::Instance()->Update(elapsedTime);
 
 	//エフェクト更新処理
 	EffectManager::Instance().Update(elapsedTime);
@@ -93,8 +97,7 @@ void SceneGame::Render()
 		Shader* shader = graphics.GetShader();
 		shader->Begin(dc, rc);
 		//ステージ描画
-
-		//プレイヤー描画
+		Stage::Instance()->Render(dc, shader);
 
 		shader->End(dc);
 
@@ -126,6 +129,8 @@ void SceneGame::Render()
 		//プレイヤーデバッグ描画
 		//player->DrawDebugGUI();
 		DrawDebugGUI();
+		Stage::Instance()->DrawIMGUI();
+		cameraController->DrawIMGUI();
 		//DrawDebugGUI(player, cameraController);
 	}
 }

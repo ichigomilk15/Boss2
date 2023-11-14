@@ -11,11 +11,6 @@
 class SceneGame : public Scene
 {
 public:
-	/*static SceneGame& Instance()
-	{
-		static SceneGame sceneGame;
-		return sceneGame;
-	}*/
 
 	SceneGame() {}
 	~SceneGame() override {}

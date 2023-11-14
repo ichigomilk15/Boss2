@@ -52,6 +52,9 @@
     <Filter Include="Source\System\Effects">
       <UniqueIdentifier>{08734663-e276-4dde-9789-810627b54911}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Card">
+      <UniqueIdentifier>{a4bcf201-656d-49a8-b9ae-2bfd61593b98}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="External\imgui\imconfig.h">
@@ -183,6 +186,15 @@
     <ClInclude Include="Source\ProjectileStraight.h">
       <Filter>Source\Projectiles</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Stage.h">
+      <Filter>Source\Stages</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Square.h">
+      <Filter>Source\Stages</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Card.h">
+      <Filter>Source\Card</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="External\imgui\imgui.cpp">
@@ -295,6 +307,15 @@
     </ClCompile>
     <ClCompile Include="Source\ProjectileStraight.cpp">
       <Filter>Source\Projectiles</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Stage.cpp">
+      <Filter>Source\Stages</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Square.cpp">
+      <Filter>Source\Stages</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Card.cpp">
+      <Filter>Source\Card</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
