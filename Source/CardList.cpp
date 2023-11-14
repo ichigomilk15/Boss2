@@ -1,4 +1,5 @@
 
+#include "Common.h"
 #include <random>
 #include "CardList.h"
 
@@ -23,15 +24,13 @@ std::shared_ptr<CardBase> CardList::HitCheck(const DirectX::XMFLOAT2& screenPos)
 
 std::shared_ptr<CardBase> CardList::DrowCard(std::pair<CardBase::Type, unsigned int>* pair, const size_t& pairSize)
 {
-	std::random_device seed;
-	std::default_random_engine engine(seed());
 	unsigned int sumPercent = 0;
 	for (size_t i = 0; i < pairSize; i++)
 	{
 		sumPercent += pair->second;
 	}
 	std::uniform_int_distribution<unsigned int> random(0, sumPercent);
-	unsigned int result = random(engine);
+	unsigned int result = random(CommonClass::random_engine);
 
 	return std::shared_ptr<CardBase>();
 }
