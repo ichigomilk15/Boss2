@@ -4,6 +4,7 @@
 #include "SceneGame.h"
 #include "CameraController.h"
 #include "Scene.h"
+#include <Player.h>
 
 //void DrawDebugGUI(Player* player, CameraController* cameraController);
 
@@ -37,6 +38,6 @@ private:
 		const DirectX::XMFLOAT4X4& view, const DirectX::XMFLOAT4X4& projection);
 
 private:
+	Player* player = nullptr;
 	CameraController* cameraController = nullptr;
-	Sprite* gauge = nullptr;
 };

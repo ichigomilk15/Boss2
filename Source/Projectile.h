@@ -24,7 +24,7 @@ public:
 	//”»’èŽæ“¾
 	float GetRadius() const { return radius; }
 
-	const DirectX::XMFLOAT3& GetPosition() const { return position; }
+	const DirectX::XMFLOAT3& GetPosition() const { return positionWorld; }
 	const DirectX::XMFLOAT3& GetDirection() const { return direction; }
 	const DirectX::XMFLOAT3& GetScale() const { return scale; }
 
@@ -33,7 +33,7 @@ protected:
 	void UpdateTransform();
 
 protected:
-	DirectX::XMFLOAT3 position = { 0, 0, 0 };
+	DirectX::XMFLOAT3 positionWorld = { 0, 0, 0 };
 	DirectX::XMFLOAT3 direction = { 0, 0, 1 };
 	DirectX::XMFLOAT3 scale = { 1, 1, 1 };
 	DirectX::XMFLOAT4X4 transform = { 1, 0, 0, 0,

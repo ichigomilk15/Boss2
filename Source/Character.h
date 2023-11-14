@@ -1,6 +1,17 @@
 #pragma once
 #include <DirectXMath.h>
 
+enum class State
+{
+	Idle_Init, //順番待ち
+	Idle,
+	Act_Init,  //ターンにアクションを選ぶ
+	Act,
+	Move_Init, //移動
+	Move,
+	Max,
+};
+
 class Character
 {
 public:
@@ -11,10 +22,10 @@ public:
 	void UpdateTransform();
 
 	//位置取得
-	const DirectX::XMFLOAT3& GetPosition() const { return position; }
+	const DirectX::XMFLOAT3& GetPosition() const { return positionWorld; }
 
 	//位置設定
-	void SetPosition(const DirectX::XMFLOAT3& position) { this->position = position; }
+	void SetPosition(const DirectX::XMFLOAT3& positionWorld) { this->positionWorld = positionWorld; }
 
 	//回転取得
 	const DirectX::XMFLOAT3& GetAngle() const { return angle; }
@@ -28,18 +39,12 @@ public:
 	//スケール設定
 	void SetScale(const DirectX::XMFLOAT3& scale) { this->scale = scale; }
 
-	//半径取得
-	float GetRadius() const { return radius; }
 	DirectX::XMFLOAT4X4 GetTransform() const { return transform; }
-
-	// 地面に接地しているか
-	bool IsGround() const { return isGround; }
 
 	const float GetHeight() const { return height; }
 
 	//ダメージを与える
-	//bool ApplyDamage(int damage);
-	bool ApplyDamage(int damage, float invicibleTime);
+	bool ApplyDamage(int damage);
 
 	//衝突を与える
 	void AddImpulse(const DirectX::XMFLOAT3& impulse);
@@ -66,28 +71,19 @@ private:
 
 protected:
 	//移動処理
-	//void Move(float elapsedTime, float vx, float vz, float speed);
-	void Move(float vx, float vz, float speed);
-	// ジャンプ処理
-	void Jump(float speed);
+	void Move(int vx, int vy);
 	// 速力処理更新
 	void UpdateVelocity(float elapsedTime);
-	//旋回処理
-	void Turn(float elapsedTime, float vx, float vz, float speed);
-
-	// 着地した時に呼ばれる
-	virtual void OnLanding() {}
-
 	//ダメージを受けた時に呼ばれる
 	virtual void OnDamaged() {};
 	//死亡した時に呼ばれる
 	virtual void OnDead() {};
-
-	//無効時間変更
-	void UpdateInvisibleTimer(float elapsedTime);
+	//ステート更新処理
+	virtual void UpdateState(float elapsedTime) {};
 
 protected:
-	DirectX::XMFLOAT3 position = { 0, 0, 0 };
+	DirectX::XMFLOAT3 positionWorld = { 0, 0, 0 };
+	DirectX::XMFLOAT2 position = { 0, 0 }; //マスの位置　X・Y
 	DirectX::XMFLOAT3 angle = { 0, 0, 0 };
 	DirectX::XMFLOAT3 scale = { 1, 1, 1 };
 	DirectX::XMFLOAT4X4 transform = {
@@ -96,28 +92,15 @@ protected:
 		0, 0, 1, 0,
 		0, 0, 0, 1
 	};
-	float radius = 0.5f;
-
-	float gravity = -1.0f;
 	DirectX::XMFLOAT3 velocity = { 0, 0, 0 };
+	int movePosX = 0;
+	int movePosY = 0;
 
-	bool isGround = false;
 	float height = 2.0f;
+	int health = 1000;
+	int maxHealth = 1000;
 
-	float invisibleTimer = 1.0f;
-	float friction = 0.5f;
-
-	float acceleration = 1.0f;
-	float maxMoveSpeed = 5.0f;
-	float moveVecX = 0.0f;
-	float moveVecZ = 0.0f;
-	float airControl = 0.3f;
-
-	float stepOffSet = 1.0f;
-	float slopeRate = 1.0f;
-
-	int health = 5;
-	int maxHealth = 5;
+	State state;
 
 public:
 

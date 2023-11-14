@@ -6,6 +6,7 @@
 #include <DirectXMath.h>
 
 #include "Collision.h"
+#include "Common.h"
 
 class Square;
 class Model;
@@ -18,7 +19,7 @@ private://constructors
 	~Stage() {};
 public://functions
 	static Stage* Instance()noexcept { static Stage instance; return &instance; }
-	std::shared_ptr<Square> GetSquare(unsigned int x, unsigned int y)const noexcept { return squares[y][x]; }
+	//std::shared_ptr<Square> GetSquare(unsigned int x, unsigned int y)const noexcept { return squares[y][x]; }
 	void ClearStage()noexcept;
 	void CreateStage();
 
@@ -29,10 +30,8 @@ public://functions
 	const bool Raycast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end, HitResult& hit);
 	const bool IsInArea(int x, int y)const noexcept;
 private://static members
-	static constexpr unsigned int SQUARE_NUM_X = 8u;
-	static constexpr unsigned int SQUARE_NUM_Y = 8u;
 private://members
-	std::shared_ptr<Square> squares[SQUARE_NUM_Y][SQUARE_NUM_X];
+	//std::shared_ptr<Square> squares[Common::SQUARE_NUM_Y][Common::SQUARE_NUM_X];
 	std::unique_ptr<Model> model;
 
 	DirectX::XMFLOAT3 position{};

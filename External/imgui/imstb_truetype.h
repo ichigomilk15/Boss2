@@ -156,10 +156,10 @@
 //      Current Point
 //         As you draw text to the screen, you keep track of a "current point"
 //         which is the origin of each character. The current point's vertical
-//         position is the baseline. Even "baked fonts" use this model.
+//         positionWorld is the baseline. Even "baked fonts" use this model.
 //
 //      Vertical Font Metrics
-//         The vertical qualities of the font, used to vertically position
+//         The vertical qualities of the font, used to vertically positionWorld
 //         and space the characters. See docs for stbtt_GetFontVMetrics.
 //
 //      Font Size in Pixels or Points
@@ -549,15 +549,15 @@ typedef struct
 
 STBTT_DEF void stbtt_GetBakedQuad(const stbtt_bakedchar *chardata, int pw, int ph,  // same data as above
                                int char_index,             // character to display
-                               float *xpos, float *ypos,   // pointers to current position in screen pixel space
+                               float *xpos, float *ypos,   // pointers to current positionWorld in screen pixel space
                                stbtt_aligned_quad *q,      // output: quad to draw
                                int opengl_fillrule);       // true if opengl fill rule; false if DX9 or earlier
 // Call GetBakedQuad with char_index = 'character - first_char', and it
-// creates the quad you need to draw and advances the current position.
+// creates the quad you need to draw and advances the current positionWorld.
 //
 // The coordinate system used assumes y increases downwards.
 //
-// Characters will extend both above and below the current position;
+// Characters will extend both above and below the current positionWorld;
 // see discussion of "BASELINE" above.
 //
 // It's inefficient; you might want to c&p it and optimize it.
@@ -657,7 +657,7 @@ STBTT_DEF void stbtt_PackSetSkipMissingCodepoints(stbtt_pack_context *spc, int s
 
 STBTT_DEF void stbtt_GetPackedQuad(const stbtt_packedchar *chardata, int pw, int ph,  // same data as above
                                int char_index,             // character to display
-                               float *xpos, float *ypos,   // pointers to current position in screen pixel space
+                               float *xpos, float *ypos,   // pointers to current positionWorld in screen pixel space
                                stbtt_aligned_quad *q,      // output: quad to draw
                                int align_to_integer);
 
@@ -773,7 +773,7 @@ STBTT_DEF void stbtt_GetFontVMetrics(const stbtt_fontinfo *info, int *ascent, in
 // ascent is the coordinate above the baseline the font extends; descent
 // is the coordinate below the baseline the font extends (i.e. it is typically negative)
 // lineGap is the spacing between one row's descent and the next row's ascent...
-// so you should advance the vertical position by "*ascent - *descent + *lineGap"
+// so you should advance the vertical positionWorld by "*ascent - *descent + *lineGap"
 //   these are expressed in unscaled coordinates, so you must multiply by
 //   the scale factor for a given size
 
@@ -787,8 +787,8 @@ STBTT_DEF void stbtt_GetFontBoundingBox(const stbtt_fontinfo *info, int *x0, int
 // the bounding box around all possible characters
 
 STBTT_DEF void stbtt_GetCodepointHMetrics(const stbtt_fontinfo *info, int codepoint, int *advanceWidth, int *leftSideBearing);
-// leftSideBearing is the offset from the current horizontal position to the left edge of the character
-// advanceWidth is the offset from the current horizontal position to the next horizontal position
+// leftSideBearing is the offset from the current horizontal positionWorld to the left edge of the character
+// advanceWidth is the offset from the current horizontal positionWorld to the next horizontal positionWorld
 //   these are expressed in unscaled coordinates
 
 STBTT_DEF int  stbtt_GetCodepointKernAdvance(const stbtt_fontinfo *info, int ch1, int ch2);
@@ -2863,7 +2863,7 @@ static void stbtt__rasterize_sorted_edges(stbtt__bitmap *result, stbtt__edge *e,
                z->direction = 0;
                stbtt__hheap_free(&hh, z);
             } else {
-               z->x += z->dx; // advance to position for current scanline
+               z->x += z->dx; // advance to positionWorld for current scanline
                step = &((*step)->next); // advance through list
             }
          }
@@ -2966,7 +2966,7 @@ static void stbtt__handle_clipped_edge(float *scanline, int x, stbtt__active_edg
       ;
    else {
       STBTT_assert(x0 >= x && x0 <= x+1 && x1 >= x && x1 <= x+1);
-      scanline[x] += e->direction * (y1-y0) * (1-((x0-x)+(x1-x))/2); // coverage = 1 - average x position
+      scanline[x] += e->direction * (y1-y0) * (1-((x0-x)+(x1-x))/2); // coverage = 1 - average x positionWorld
    }
 }
 
@@ -3086,7 +3086,7 @@ static void stbtt__fill_active_edges_new(float *scanline, float *scanline_fill, 
                // the old way of doing this found the intersections with the left & right edges,
                // then used some simple logic to produce up to three segments in sorted order
                // from top-to-bottom. however, this had a problem: if an x edge was epsilon
-               // across the x border, then the corresponding y position might not be distinct
+               // across the x border, then the corresponding y positionWorld might not be distinct
                // from the other y segment, and it might ignored as an empty segment. to avoid
                // that, we need to explicitly produce segments based on x positions.
 
@@ -3217,7 +3217,7 @@ static void stbtt__rasterize_sorted_edges(stbtt__bitmap *result, stbtt__edge *e,
       step = &active;
       while (*step) {
          stbtt__active_edge *z = *step;
-         z->fx += z->fdx; // advance to position for current scanline
+         z->fx += z->fdx; // advance to positionWorld for current scanline
          step = &((*step)->next); // advance through list
       }
 
@@ -4495,7 +4495,7 @@ STBTT_DEF unsigned char * stbtt_GetGlyphSDF(const stbtt_fontinfo *info, float sc
                   float dist = (float) STBTT_fabs((x1-x0)*(y0-sy) - (y1-y0)*(x0-sx)) * precompute[i];
                   STBTT_assert(i != 0);
                   if (dist < min_dist) {
-                     // check position along line
+                     // check positionWorld along line
                      // x' = x0 + t*(x1-x0), y' = y0 + t*(y1-y0)
                      // minimize (x'-sx)*(x'-sx)+(y'-sy)*(y'-sy)
                      float dx = x1-x0, dy = y1-y0;
@@ -4831,7 +4831,7 @@ STBTT_DEF int stbtt_CompareUTF8toUTF16_bigendian(const char *s1, int len1, const
 //   1.04 (2015-04-15) typo in example
 //   1.03 (2015-04-12) STBTT_STATIC, fix memory leak in new packing, various fixes
 //   1.02 (2014-12-10) fix various warnings & compile issues w/ stb_rect_pack, C++
-//   1.01 (2014-12-08) fix subpixel position when oversampling to exactly match
+//   1.01 (2014-12-08) fix subpixel positionWorld when oversampling to exactly match
 //                        non-oversampled; STBTT_POINT_SIZE for packed case only
 //   1.00 (2014-12-06) add new PackBegin etc. API, w/ support for oversampling
 //   0.99 (2014-09-18) fix multiple bugs with subpixel rendering (ryg)

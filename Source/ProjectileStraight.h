@@ -16,7 +16,7 @@ public:
 	// ï`âÊèàóù
 	void Render(ID3D11DeviceContext* dc, Shader* shader) override;
 	// î≠éÀ
-	void Launch(const DirectX::XMFLOAT3& direction, const DirectX::XMFLOAT3& position);
+	void Launch(const DirectX::XMFLOAT3& direction, const DirectX::XMFLOAT3& positionWorld);
 
 private:
 	Model* model = nullptr;

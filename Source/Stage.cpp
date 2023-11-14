@@ -7,9 +7,11 @@
 #endif // _DEBUG
 
 #include "Square.h"
+#include "Graphics\DebugRenderer.h"
+#include "Graphics\Graphics.h"
 
 Stage::Stage():
-    squares(),
+    //squares(),
     model(std::make_unique<Model>("./Data/Model/Cube/Cube.mdl"))
 {
     this->scale = { 100.0f,0.01f,100.0f };
@@ -18,29 +20,28 @@ Stage::Stage():
 
 void Stage::ClearStage() noexcept
 {
-    for (auto& y : squares)
+    /*for (auto& y : squares)
     {
         for (auto& x : y)
         {
             x.reset();
         }
-    }
+    }*/
 }
 
 void Stage::CreateStage()
 {
+    using namespace Common;
     ClearStage();
-    const float SquareWidth = 5.0f;
-    const float SquareHeight = 5.0f;
     const DirectX::XMFLOAT3 lefttop = {-SquareWidth*(SQUARE_NUM_X/2.0f-0.5f),0.0f,SquareHeight*(SQUARE_NUM_Y/2.0f-0.5f)};
-    for (unsigned int y = 0; y < SQUARE_NUM_Y; y++)
+    /*for (unsigned int y = 0; y < SQUARE_NUM_Y; y++)
     {
         for (unsigned int x = 0; x < SQUARE_NUM_X; x++)
         {
             squares[y][x] = std::make_shared<Square>(
                 DirectX::XMFLOAT3{ lefttop.x + (SquareWidth * x),lefttop.y,lefttop.z - (SquareHeight * y) });
         }
-    }
+    }*/
 }
 
 void Stage::Update(float elapsedTime)
@@ -53,24 +54,40 @@ void Stage::Update(float elapsedTime)
     DirectX::XMStoreFloat4x4(&transform, Transform);
     model->UpdateTransform(transform);
 
-    for (auto& y : squares)
+    /*for (auto& y : squares)
     {
         for (auto& x : y)
         {
             x->Update(elapsedTime);
         }
-    }
+    }*/
 }
 
 void Stage::Render(ID3D11DeviceContext* dc,Shader* shader)
 {
-    for (auto& y : squares)
+    /*for (auto& y : squares)
     {
         for (auto& x : y)
         {
             x->Render(dc, shader);
         }
+    }*/
+
+#ifdef _DEBUG
+    using namespace Common;
+    DebugRenderer* debugRenderer = Graphics::Instance().GetDebugRenderer();
+    const DirectX::XMFLOAT3 lefttop = { -SquareWidth * (SQUARE_NUM_X / 2.0f - 0.5f),0.0f,SquareHeight * (SQUARE_NUM_Y / 2.0f - 0.5f) };
+    for (int y = 0; y < SQUARE_NUM_Y; ++y)
+    {
+        for (int x = 0; x < SQUARE_NUM_X; ++x)
+        {
+            debugRenderer->DrawCylinder(
+                { lefttop.x + x * SquareWidth, lefttop.y, lefttop.z - y * SquareHeight },
+                2.5f, 0.2f, { 1.0f, 1.0f, 1.0f, 0.5f });
+        }
     }
+#endif
+
     shader->Draw(dc, model.get());
 }
 
@@ -89,21 +106,22 @@ void Stage::DrawIMGUI()
 
 const bool Stage::Raycast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end, HitResult& hit)
 {
-    for (auto& y : squares)
+    /*for (auto& y : squares)
     {
         for (auto& x : y)
         {
             if (x->Raycast(start, end, hit))
                 return true;
         }
-    }
+    }*/
     return false;
 }
 
 const bool Stage::IsInArea(int x, int y) const noexcept
 {
+    using namespace Common;
     return (x>=0&&
         y>=0&&
-        x<SQUARE_NUM_X&&
+        x<Common::SQUARE_NUM_X&&
         y<SQUARE_NUM_Y);
 }

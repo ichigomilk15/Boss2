@@ -54,7 +54,7 @@ public:
 
 	struct Vertex
 	{
-		DirectX::XMFLOAT3	position = { 0, 0, 0 };
+		DirectX::XMFLOAT3	positionWorld = { 0, 0, 0 };
 		DirectX::XMFLOAT3	normal = { 0, 0, 0 };
 		DirectX::XMFLOAT3	tangent = { 0, 0, 0 };
 		DirectX::XMFLOAT2	texcoord = { 0, 0 };

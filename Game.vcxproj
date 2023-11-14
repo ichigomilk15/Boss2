@@ -123,6 +123,7 @@
     <ClInclude Include="Source\Card.h" />
     <ClInclude Include="Source\Character.h" />
     <ClInclude Include="Source\Collision.h" />
+    <ClInclude Include="Source\Common.h" />
     <ClInclude Include="Source\CardList.h" />
     <ClInclude Include="Source\Effect.h" />
     <ClInclude Include="Source\EffectManager.h" />
@@ -144,6 +145,7 @@
     <ClInclude Include="Source\Logger.h" />
     <ClInclude Include="Source\CustomMathf.h" />
     <ClInclude Include="Source\Misc.h" />
+    <ClInclude Include="Source\Player.h" />
     <ClInclude Include="Source\Projectile.h" />
     <ClInclude Include="Source\ProjectileHoming.h" />
     <ClInclude Include="Source\ProjectileManager.h" />
@@ -188,6 +190,7 @@
     <ClCompile Include="Source\Logger.cpp" />
     <ClCompile Include="Source\Main.cpp" />
     <ClCompile Include="Source\CustomMathf.cpp" />
+    <ClCompile Include="Source\Player.cpp" />
     <ClCompile Include="Source\Projectile.cpp" />
     <ClCompile Include="Source\ProjectileHoming.cpp" />
     <ClCompile Include="Source\ProjectileManager.cpp" />

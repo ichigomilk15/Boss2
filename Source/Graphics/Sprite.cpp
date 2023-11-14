@@ -174,7 +174,7 @@ Sprite::Sprite(const char* filename)
 		desc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
 		desc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
 		desc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-		desc.Filter = D3D11_FILTER::D3D11_FILTER_COMPARISON_MIN_MAG_MIP_LINEAR;
+		//desc.Filter = D3D11_FILTER::D3D11_FILTER_COMPARISON_MIN_MAG_MIP_LINEAR;
 
 		HRESULT hr = device->CreateSamplerState(&desc, samplerState.GetAddressOf());
 		_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
@@ -317,9 +317,9 @@ void Sprite::Render(ID3D11DeviceContext *immediate_context,
 		Vertex* v = static_cast<Vertex*>(mappedBuffer.pData);
 		for (int i = 0; i < 4; ++i)
 		{
-			v[i].position.x = positions[i].x;
-			v[i].position.y = positions[i].y;
-			v[i].position.z = 0.0f;
+			v[i].positionWorld.x = positions[i].x;
+			v[i].positionWorld.y = positions[i].y;
+			v[i].positionWorld.z = 0.0f;
 
 			v[i].color.x = r;
 			v[i].color.y = g;

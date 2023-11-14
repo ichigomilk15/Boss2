@@ -184,7 +184,7 @@ void DebugRenderer::Render(ID3D11DeviceContext* context, const DirectX::XMFLOAT4
 	{
 		// ワールドビュープロジェクション行列作成
 		DirectX::XMMATRIX S = DirectX::XMMatrixScaling(cylinder.radius, cylinder.height, cylinder.radius);
-		DirectX::XMMATRIX T = DirectX::XMMatrixTranslation(cylinder.position.x, cylinder.position.y, cylinder.position.z);
+		DirectX::XMMATRIX T = DirectX::XMMatrixTranslation(cylinder.positionWorld.x, cylinder.positionWorld.y, cylinder.positionWorld.z);
 		DirectX::XMMATRIX W = S * T;
 		DirectX::XMMATRIX WVP = W * VP;
 
@@ -210,10 +210,10 @@ void DebugRenderer::DrawSphere(const DirectX::XMFLOAT3& center, float radius, co
 }
 
 // 円柱描画
-void DebugRenderer::DrawCylinder(const DirectX::XMFLOAT3& position, float radius, float height, const DirectX::XMFLOAT4& color)
+void DebugRenderer::DrawCylinder(const DirectX::XMFLOAT3& positionWorld, float radius, float height, const DirectX::XMFLOAT4& color)
 {
 	Cylinder cylinder;
-	cylinder.position = position;
+	cylinder.positionWorld = positionWorld;
 	cylinder.radius = radius;
 	cylinder.height = height;
 	cylinder.color = color;

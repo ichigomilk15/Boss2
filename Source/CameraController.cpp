@@ -9,6 +9,9 @@
 
 void CameraController::Update(float elapsedTime)
 {
+#if 0
+	Camera::Instance().SetLookAt();
+#else
 	GamePad& gamePad = Input::Instance().GetGamePad();
 	float ax = gamePad.GetAxisRX();
 	float ay = gamePad.GetAxisRY();
@@ -47,6 +50,7 @@ void CameraController::Update(float elapsedTime)
 
 	//ƒJƒƒ‰‹“_‚Æ’‹“_‚ğİ’è
 	Camera::Instance().SetLookAt(eye, target, DirectX::XMFLOAT3(0, 1, 0));
+#endif
 }
 
 void CameraController::DrawIMGUI()

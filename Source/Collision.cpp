@@ -193,9 +193,9 @@ bool Collision::IntersectRayVsModel(const DirectX::XMFLOAT3& start, const Direct
 				const ModelResource::Vertex& b = vertices.at(indices.at(index + 1));
 				const ModelResource::Vertex& c = vertices.at(indices.at(index + 2));
 
-				DirectX::XMVECTOR A = DirectX::XMLoadFloat3(&a.position);
-				DirectX::XMVECTOR B = DirectX::XMLoadFloat3(&b.position);
-				DirectX::XMVECTOR C = DirectX::XMLoadFloat3(&c.position);
+				DirectX::XMVECTOR A = DirectX::XMLoadFloat3(&a.positionWorld);
+				DirectX::XMVECTOR B = DirectX::XMLoadFloat3(&b.positionWorld);
+				DirectX::XMVECTOR C = DirectX::XMLoadFloat3(&c.positionWorld);
 
 				//三角形の三辺ベクトルを算出
 				DirectX::XMVECTOR AB = DirectX::XMVectorSubtract(B, A);
@@ -271,7 +271,7 @@ bool Collision::IntersectRayVsModel(const DirectX::XMFLOAT3& start, const Direct
 
 				result.distance = distance;
 				result.materialIndex = materialIndex;
-				DirectX::XMStoreFloat3(&result.position, WorldPosition);
+				DirectX::XMStoreFloat3(&result.positionWorld, WorldPosition);
 				DirectX::XMStoreFloat3(&result.normal, DirectX::XMVector3Normalize(WorldNormal));
 				hit = true;
 			}
@@ -283,9 +283,9 @@ bool Collision::IntersectRayVsModel(const DirectX::XMFLOAT3& start, const Direct
 	//以前の処理が正しく動くように仮の実装
 	/*if (end.y < 0.0f)
 	{
-		result.position.x = end.x;
-		result.position.y = 0.0f;
-		result.position.z = end.z;
+		result.positionWorld.x = end.x;
+		result.positionWorld.y = 0.0f;
+		result.positionWorld.z = end.z;
 		result.normal.x = 0.0f;
 		result.normal.y = 1.0f;
 		result.normal.z = 0.0f;

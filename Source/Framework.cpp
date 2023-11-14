@@ -25,8 +25,12 @@ Framework::Framework(HWND hWnd)
 
 	//シーン初期化
 	//sceneGame.Initialize();
-	//SceneManager::Instance().ChangeScene(new SceneGame);
+#if _DEBUG
+	//SceneManager::Instance().ChangeScene(new SceneTitle);
+	SceneManager::Instance().ChangeScene(new SceneGame);
+#else
 	SceneManager::Instance().ChangeScene(new SceneTitle);
+#endif
 }
 
 // デストラクタ

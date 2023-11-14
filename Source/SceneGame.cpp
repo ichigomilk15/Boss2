@@ -11,7 +11,7 @@ void SceneGame::Initialize()
 	//カメラコントローラー初期化
 	cameraController = new CameraController();
 
-	//ステージ初期化
+	player = new Player();
 
 	//カメラ初期設定
 	Graphics& graphics = Graphics::Instance();
@@ -27,31 +27,29 @@ void SceneGame::Initialize()
 		0.1f,
 		1000.0f
 	);
+	cameraController->setTarget(player->GetPosition());
 
 	//エネミー初期化
 	
 	//ゲージスプライト
-	gauge = new Sprite();
 	Stage::Instance()->CreateStage();
 }
 
 // 終了化l
 void SceneGame::Finalize()
 {
-	//ゲージスプライト終了化
-	if (gauge != nullptr)
-	{
-		delete gauge;
-		gauge = nullptr;
-	}
-
 	//カメラコントローラー終了化
 	if (cameraController != nullptr)
 	{
 		delete cameraController;
 		cameraController = nullptr;
 	}
-	//ステージ終了化
+
+	if (player != nullptr)
+	{
+		delete player;
+		player = nullptr;
+	}
 }
 
 // 更新処理
@@ -61,6 +59,7 @@ void SceneGame::Update(float elapsedTime)
 	cameraController->Update(elapsedTime);
 
 	Stage::Instance()->Update(elapsedTime);
+	player->Update(elapsedTime);
 
 	//エフェクト更新処理
 	EffectManager::Instance().Update(elapsedTime);
@@ -95,12 +94,13 @@ void SceneGame::Render()
 		shader->Begin(dc, rc);
 		//ステージ描画
 		Stage::Instance()->Render(dc, shader);
+		player->Render(dc, shader);
 
 		shader->End(dc);
 
 	}
 
-	//3Dモデル描画
+	//エフェクト描画
 	{
 		EffectManager::Instance().Render(rc.view, rc.projection);
 	}
@@ -116,15 +116,10 @@ void SceneGame::Render()
 		graphics.GetDebugRenderer()->Render(dc, rc.view, rc.projection);
 	}
 
-	// 2Dスプライト描画
-	{
-		RenderEnemyGauge(dc, rc.view, rc.projection);
-	}
-
 	// 2DデバッグGUI描画
 	{
 		//プレイヤーデバッグ描画
-		//player->DrawDebugGUI();
+		player->DrawDebugGUI();
 		DrawDebugGUI();
 		Stage::Instance()->DrawIMGUI();
 		cameraController->DrawIMGUI();
@@ -132,12 +127,12 @@ void SceneGame::Render()
 	}
 }
 
-//void DrawDebugGUI(Player* player, CameraController* cameraController)
 void SceneGame::DrawDebugGUI()
 {
 	ImGui::SetNextWindowPos(ImVec2(10, 10), ImGuiCond_FirstUseEver);
 	ImGui::SetNextWindowSize(ImVec2(300, 300), ImGuiCond_FirstUseEver);
 
+#if 0
 	if (ImGui::Begin("Window 1", nullptr, ImGuiWindowFlags_None))
 	{
 		//トランスフォーム
@@ -176,6 +171,7 @@ void SceneGame::DrawDebugGUI()
 		}
 		ImGui::End();
 	}
+#endif
 }
 
 void SceneGame::RenderEnemyGauge(ID3D11DeviceContext* dc, 

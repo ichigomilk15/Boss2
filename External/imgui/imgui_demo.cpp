@@ -293,7 +293,7 @@ void ImGui::ShowDemoWindow(bool* p_open)
     if (no_bring_to_front)  window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus;
     if (no_close)           p_open = NULL; // Don't pass our bool* to Begin
 
-    // We specify a default position/size in case there's no data in the .ini file.
+    // We specify a default positionWorld/size in case there's no data in the .ini file.
     // We only do it to make the demo applications a little more welcoming, but typically this isn't required.
     ImGui::SetNextWindowPos(ImVec2(650, 20), ImGuiCond_FirstUseEver);
     ImGui::SetNextWindowSize(ImVec2(550, 680), ImGuiCond_FirstUseEver);
@@ -1447,7 +1447,7 @@ static void ShowDemoWindowWidgets()
             ImGui::ColorPicker4("##picker", (float*)&color, misc_flags | ImGuiColorEditFlags_NoSidePreview | ImGuiColorEditFlags_NoSmallPreview);
             ImGui::SameLine();
 
-            ImGui::BeginGroup(); // Lock X position
+            ImGui::BeginGroup(); // Lock X positionWorld
             ImGui::Text("Current");
             ImGui::ColorButton("##current", color, ImGuiColorEditFlags_NoPicker | ImGuiColorEditFlags_AlphaPreviewHalf, ImVec2(60, 40));
             ImGui::Text("Previous");
@@ -2128,9 +2128,9 @@ static void ShowDemoWindowLayout()
 
         // Demonstrate a few extra things
         // - Changing ImGuiCol_ChildBg (which is transparent black in default styles)
-        // - Using SetCursorPos() to position child window (the child window is an item from the POV of parent window)
-        //   You can also call SetNextWindowPos() to position the child window. The parent window will effectively
-        //   layout from this position.
+        // - Using SetCursorPos() to positionWorld child window (the child window is an item from the POV of parent window)
+        //   You can also call SetNextWindowPos() to positionWorld the child window. The parent window will effectively
+        //   layout from this positionWorld.
         // - Using ImGui::GetItemRectMin/Max() to query the "item" state (because the child window is an item from
         //   the POV of the parent window). See 'Demo->Querying Status (Active/Focused/Hovered etc.)' for details.
         {
@@ -2220,7 +2220,7 @@ static void ShowDemoWindowLayout()
         ImGui::SmallButton("Like this one"); ImGui::SameLine();
         ImGui::Text("can fit within a text block.");
 
-        // Aligned to arbitrary position. Easy/cheap column.
+        // Aligned to arbitrary positionWorld. Easy/cheap column.
         ImGui::Text("Aligned");
         ImGui::SameLine(150); ImGui::Text("x=150");
         ImGui::SameLine(300); ImGui::Text("x=300");
@@ -2276,7 +2276,7 @@ static void ShowDemoWindowLayout()
             ImGui::PushID(n);
             ImGui::Button("Box", button_sz);
             float last_button_x2 = ImGui::GetItemRectMax().x;
-            float next_button_x2 = last_button_x2 + style.ItemSpacing.x + button_sz.x; // Expected position if next button was on same line
+            float next_button_x2 = last_button_x2 + style.ItemSpacing.x + button_sz.x; // Expected positionWorld if next button was on same line
             if (n + 1 < buttons_count && next_button_x2 < window_visible_x2)
                 ImGui::SameLine();
             ImGui::PopID();
@@ -2720,7 +2720,7 @@ static void ShowDemoWindowLayout()
         {
             // Display random stuff. For the sake of this trivial demo we are using basic Button() + SameLine()
             // If you want to create your own time line for a real application you may be better off manipulating
-            // the cursor position yourself, aka using SetCursorPos/SetCursorScreenPos to position the widgets
+            // the cursor positionWorld yourself, aka using SetCursorPos/SetCursorScreenPos to positionWorld the widgets
             // yourself. You may also want to use the lower-level ImDrawList API.
             int num_buttons = 10 + ((line & 1) ? line * 9 : line * 3);
             for (int n = 0; n < num_buttons; n++)
@@ -2868,7 +2868,7 @@ static void ShowDemoWindowLayout()
             if (n > 0)
                 ImGui::SameLine();
             ImGui::PushID(n);
-            ImGui::BeginGroup(); // Lock X position
+            ImGui::BeginGroup(); // Lock X positionWorld
 
             ImGui::InvisibleButton("##empty", size);
             if (ImGui::IsItemActive() && ImGui::IsMouseDragging(ImGuiMouseButton_Left))
@@ -4538,7 +4538,7 @@ struct ExampleAppConsole
                             HistoryPos = -1;
                 }
 
-                // A better implementation would preserve the data on the current input line along with cursor position.
+                // A better implementation would preserve the data on the current input line along with cursor positionWorld.
                 if (prev_history_pos != HistoryPos)
                 {
                     const char* history_str = (HistoryPos >= 0) ? History[HistoryPos] : "";

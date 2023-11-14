@@ -36,9 +36,9 @@ void ProjectileStraight::Update(float elapsedTime)
 
 	// 移動
 	float speed = this->speed * elapsedTime;
-	position.x += direction.x * speed;
-	position.y += direction.y * speed;
-	position.z += direction.z * speed;
+	positionWorld.x += direction.x * speed;
+	positionWorld.y += direction.y * speed;
+	positionWorld.z += direction.z * speed;
 
 	// オブジェクト行列を更新
 	UpdateTransform();
@@ -52,8 +52,8 @@ void ProjectileStraight::Render(ID3D11DeviceContext* dc, Shader* shader)
 	shader->Draw(dc, model);
 }
 
-void ProjectileStraight::Launch(const DirectX::XMFLOAT3& direction, const DirectX::XMFLOAT3& position)
+void ProjectileStraight::Launch(const DirectX::XMFLOAT3& direction, const DirectX::XMFLOAT3& positionWorld)
 {
 	this->direction = direction;
-	this->position = position;
+	this->positionWorld = positionWorld;
 }

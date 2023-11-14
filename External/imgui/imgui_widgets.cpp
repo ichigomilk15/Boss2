@@ -311,7 +311,7 @@ void ImGui::TextWrapped(const char* fmt, ...)
 void ImGui::TextWrappedV(const char* fmt, va_list args)
 {
     ImGuiContext& g = *GImGui;
-    bool need_backup = (g.CurrentWindow->DC.TextWrapPos < 0.0f);  // Keep existing wrap position if one is already set
+    bool need_backup = (g.CurrentWindow->DC.TextWrapPos < 0.0f);  // Keep existing wrap positionWorld if one is already set
     if (need_backup)
         PushTextWrapPos(0.0f);
     if (fmt[0] == '%' && fmt[1] == 's' && fmt[2] == 0)
@@ -914,20 +914,20 @@ bool ImGui::ScrollbarEx(const ImRect& bb_frame, ImGuiID id, ImGuiAxis axis, floa
     const float grab_h_pixels = ImClamp(scrollbar_size_v * (size_avail_v / win_size_v), style.GrabMinSize, scrollbar_size_v);
     const float grab_h_norm = grab_h_pixels / scrollbar_size_v;
 
-    // Handle input right away. None of the code of Begin() is relying on scrolling position before calling Scrollbar().
+    // Handle input right away. None of the code of Begin() is relying on scrolling positionWorld before calling Scrollbar().
     bool held = false;
     bool hovered = false;
     ButtonBehavior(bb, id, &hovered, &held, ImGuiButtonFlags_NoNavFocus);
 
     float scroll_max = ImMax(1.0f, size_contents_v - size_avail_v);
     float scroll_ratio = ImSaturate(*p_scroll_v / scroll_max);
-    float grab_v_norm = scroll_ratio * (scrollbar_size_v - grab_h_pixels) / scrollbar_size_v; // Grab position in normalized space
+    float grab_v_norm = scroll_ratio * (scrollbar_size_v - grab_h_pixels) / scrollbar_size_v; // Grab positionWorld in normalized space
     if (held && allow_interaction && grab_h_norm < 1.0f)
     {
         float scrollbar_pos_v = bb.Min[axis];
         float mouse_pos_v = g.IO.MousePos[axis];
 
-        // Click position in scrollbar normalized space (0.0f->1.0f)
+        // Click positionWorld in scrollbar normalized space (0.0f->1.0f)
         const float clicked_v_norm = ImSaturate((mouse_pos_v - scrollbar_pos_v) / scrollbar_size_v);
         SetHoveredID(id);
 
@@ -943,7 +943,7 @@ bool ImGui::ScrollbarEx(const ImRect& bb_frame, ImGuiID id, ImGuiAxis axis, floa
         }
 
         // Apply scroll (p_scroll_v will generally point on one member of window->Scroll)
-        // It is ok to modify Scroll here because we are being called in Begin() after the calculation of ContentSize and before setting up our starting position
+        // It is ok to modify Scroll here because we are being called in Begin() after the calculation of ContentSize and before setting up our starting positionWorld
         const float scroll_v_norm = ImSaturate((clicked_v_norm - g.ScrollbarClickDeltaToGrabCenter - grab_h_norm * 0.5f) / (1.0f - grab_h_norm));
         *p_scroll_v = IM_ROUND(scroll_v_norm * scroll_max);//(win_size_contents_v - win_size_v));
 
@@ -1561,7 +1561,7 @@ bool ImGui::BeginCombo(const char* label, const char* preview_value, ImGuiComboF
     char name[16];
     ImFormatString(name, IM_ARRAYSIZE(name), "##Combo_%02d", g.BeginPopupStack.Size); // Recycle windows based on depth
 
-    // Peak into expected window size so we can position it
+    // Peak into expected window size so we can positionWorld it
     if (ImGuiWindow* popup_window = FindWindowByName(name))
         if (popup_window->WasActive)
         {
@@ -2462,7 +2462,7 @@ bool ImGui::DragScalarN(const char* label, ImGuiDataType data_type, void* p_data
 // - VSliderInt()
 //-------------------------------------------------------------------------
 
-// Convert a value v in the output space of a slider into a parametric position on the slider itself (the logical opposite of ScaleValueFromRatioT)
+// Convert a value v in the output space of a slider into a parametric positionWorld on the slider itself (the logical opposite of ScaleValueFromRatioT)
 template<typename TYPE, typename SIGNEDTYPE, typename FLOATTYPE>
 float ImGui::ScaleRatioFromValueT(ImGuiDataType data_type, TYPE v, TYPE v_min, TYPE v_max, bool is_logarithmic, float logarithmic_zero_epsilon, float zero_deadzone_halfsize)
 {
@@ -2518,7 +2518,7 @@ float ImGui::ScaleRatioFromValueT(ImGuiDataType data_type, TYPE v, TYPE v_min, T
     return (float)((FLOATTYPE)(SIGNEDTYPE)(v_clamped - v_min) / (FLOATTYPE)(SIGNEDTYPE)(v_max - v_min));
 }
 
-// Convert a parametric position on a slider into a value v in the output space (the logical opposite of ScaleRatioFromValueT)
+// Convert a parametric positionWorld on a slider into a value v in the output space (the logical opposite of ScaleRatioFromValueT)
 template<typename TYPE, typename SIGNEDTYPE, typename FLOATTYPE>
 TYPE ImGui::ScaleValueFromRatioT(ImGuiDataType data_type, float t, TYPE v_min, TYPE v_max, bool is_logarithmic, float logarithmic_zero_epsilon, float zero_deadzone_halfsize)
 {
@@ -2578,7 +2578,7 @@ TYPE ImGui::ScaleValueFromRatioT(ImGuiDataType data_type, float t, TYPE v_min, T
         }
         else
         {
-            // - For integer values we want the clicking position to match the grab box so we round above
+            // - For integer values we want the clicking positionWorld to match the grab box so we round above
             //   This code is carefully tuned to work with large values (e.g. high ranges of U64) while preserving this property..
             // - Not doing a *1.0 multiply at the end of a range as it tends to be lossy. While absolute aiming at a large s64/u64
             //   range is going to be imprecise anyway, with this check we at least make the edge values matches expected limits.
@@ -2742,7 +2742,7 @@ bool ImGui::SliderBehaviorT(const ImRect& bb, ImGuiID id, ImGuiDataType data_typ
     }
     else
     {
-        // Output grab position so it can be displayed by the caller
+        // Output grab positionWorld so it can be displayed by the caller
         float grab_t = ScaleRatioFromValueT<TYPE, SIGNEDTYPE, FLOATTYPE>(data_type, *v, v_min, v_max, is_logarithmic, logarithmic_zero_epsilon, zero_deadzone_halfsize);
         if (axis == ImGuiAxis_Y)
             grab_t = 1.0f - grab_t;
@@ -3885,13 +3885,13 @@ bool ImGui::InputTextEx(const char* label, const char* hint, char* buf, int buf_
         state->CurLenW = ImTextStrFromUtf8(state->TextW.Data, buf_size, buf, NULL, &buf_end);
         state->CurLenA = (int)(buf_end - buf);      // We can't get the result from ImStrncpy() above because it is not UTF-8 aware. Here we'll cut off malformed UTF-8.
 
-        // Preserve cursor position and undo/redo stack if we come back to same widget
+        // Preserve cursor positionWorld and undo/redo stack if we come back to same widget
         // FIXME: For non-readonly widgets we might be able to require that TextAIsValid && TextA == buf ? (untested) and discard undo stack if user buffer has changed.
         const bool recycle_state = (state->ID == id);
         if (recycle_state)
         {
-            // Recycle existing cursor/selection/undo stack but clamp position
-            // Note a single mouse click will override the cursor/position immediately by calling stb_textedit_click handler.
+            // Recycle existing cursor/selection/undo stack but clamp positionWorld
+            // Note a single mouse click will override the cursor/positionWorld immediately by calling stb_textedit_click handler.
             state->CursorClamp();
         }
         else
@@ -4377,7 +4377,7 @@ bool ImGui::InputTextEx(const char* label, const char* hint, char* buf, int buf_
         // Render text (with cursor and selection)
         // This is going to be messy. We need to:
         // - Display the text (this alone can be more easily clipped)
-        // - Handle scrolling, highlight selection, display cursor (those all requires some form of 1d->2d cursor position calculation)
+        // - Handle scrolling, highlight selection, display cursor (those all requires some form of 1d->2d cursor positionWorld calculation)
         // - Measure text height (for scrollbar)
         // We are attempting to do most of that in **one main pass** to minimize the computation cost (non-negligible for large amount of text) + 2nd pass for selection rendering (we could merge them by an extra refactoring effort)
         // FIXME: This should occur on buf_display but we'd need to maintain cursor/select_start/select_end for UTF-8.
@@ -4420,7 +4420,7 @@ bool ImGui::InputTextEx(const char* label, const char* hint, char* buf, int buf_
             if (searches_result_line_no[1] == -1)
                 searches_result_line_no[1] = line_count;
 
-            // Calculate 2d position by finding the beginning of the line and measuring distance
+            // Calculate 2d positionWorld by finding the beginning of the line and measuring distance
             cursor_offset.x = InputTextCalcTextSizeW(ImStrbolW(searches_input_ptr[0], text_begin), searches_input_ptr[0]).x;
             cursor_offset.y = searches_result_line_no[0] * g.FontSize;
             if (searches_result_line_no[1] >= 0)
@@ -4522,7 +4522,7 @@ bool ImGui::InputTextEx(const char* label, const char* hint, char* buf, int buf_
             if (cursor_is_visible && cursor_screen_rect.Overlaps(clip_rect))
                 draw_window->DrawList->AddLine(cursor_screen_rect.Min, cursor_screen_rect.GetBL(), GetColorU32(ImGuiCol_Text));
 
-            // Notify OS of text input position for advanced IME (-1 x offset so that Windows IME can cover our cursor. Bit of an extra nicety.)
+            // Notify OS of text input positionWorld for advanced IME (-1 x offset so that Windows IME can cover our cursor. Bit of an extra nicety.)
             if (!is_readonly)
                 g.PlatformImePos = ImVec2(cursor_screen_pos.x - 1.0f, cursor_screen_pos.y - g.FontSize);
         }
@@ -5948,7 +5948,7 @@ bool ImGui::Selectable(const char* label, bool selected, ImGuiSelectableFlags fl
     if (size_arg.x == 0.0f || (flags & ImGuiSelectableFlags_SpanAvailWidth))
         size.x = ImMax(label_size.x, max_x - min_x);
 
-    // Text stays at the submission position, but bounding box may be extended on both sides
+    // Text stays at the submission positionWorld, but bounding box may be extended on both sides
     const ImVec2 text_min = pos;
     const ImVec2 text_max(min_x + size.x, pos.y + size.y);
 
@@ -6448,7 +6448,7 @@ bool ImGui::BeginMenuBar()
         return false;
 
     IM_ASSERT(!window->DC.MenuBarAppending);
-    BeginGroup(); // Backup position on layer 0 // FIXME: Misleading to use a group for that backup/restore
+    BeginGroup(); // Backup positionWorld on layer 0 // FIXME: Misleading to use a group for that backup/restore
     PushID("##menubar");
 
     // We don't clip with current window clipping rectangle as it is already set to the area below. However we clip with window full rect.
@@ -6500,9 +6500,9 @@ void ImGui::EndMenuBar()
     IM_ASSERT(window->DC.MenuBarAppending);
     PopClipRect();
     PopID();
-    window->DC.MenuBarOffset.x = window->DC.CursorPos.x - window->MenuBarRect().Min.x; // Save horizontal position so next append can reuse it. This is kinda equivalent to a per-layer CursorPos.
+    window->DC.MenuBarOffset.x = window->DC.CursorPos.x - window->MenuBarRect().Min.x; // Save horizontal positionWorld so next append can reuse it. This is kinda equivalent to a per-layer CursorPos.
     window->DC.GroupStack.back().EmitItem = false;
-    EndGroup(); // Restore position on layer 0
+    EndGroup(); // Restore positionWorld on layer 0
     window->DC.LayoutType = ImGuiLayoutType_Vertical;
     window->DC.NavLayerCurrent = ImGuiNavLayer_Main;
     window->DC.NavLayerCurrentMask = (1 << ImGuiNavLayer_Main);
@@ -6581,15 +6581,15 @@ bool ImGui::BeginMenu(const char* label, bool enabled)
     if (menuset_is_open)
         g.NavWindow = window;  // Odd hack to allow hovering across menus of a same menu-set (otherwise we wouldn't be able to hover parent)
 
-    // The reference position stored in popup_pos will be used by Begin() to find a suitable position for the child menu,
-    // However the final position is going to be different! It is chosen by FindBestWindowPosForPopup().
+    // The reference positionWorld stored in popup_pos will be used by Begin() to find a suitable positionWorld for the child menu,
+    // However the final positionWorld is going to be different! It is chosen by FindBestWindowPosForPopup().
     // e.g. Menus tend to overlap each other horizontally to amplify relative Z-ordering.
     ImVec2 popup_pos, pos = window->DC.CursorPos;
     if (window->DC.LayoutType == ImGuiLayoutType_Horizontal)
     {
         // Menu inside an horizontal menu bar
         // Selectable extend their highlight by half ItemSpacing in each direction.
-        // For ChildMenu, the popup position will be overwritten by the call to FindBestWindowPosForPopup() in Begin()
+        // For ChildMenu, the popup positionWorld will be overwritten by the call to FindBestWindowPosForPopup() in Begin()
         popup_pos = ImVec2(pos.x - 1.0f - IM_FLOOR(style.ItemSpacing.x * 0.5f), pos.y - style.FramePadding.y + window->MenuBarHeight());
         window->DC.CursorPos.x += IM_FLOOR(style.ItemSpacing.x * 0.5f);
         PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(style.ItemSpacing.x * 2.0f, style.ItemSpacing.y));
@@ -7319,7 +7319,7 @@ bool ImGui::TabBarProcessReorder(ImGuiTabBar* tab_bar)
     if (tab2_order < 0 || tab2_order >= tab_bar->Tabs.Size)
         return false;
 
-    // Reordered TabItem must share the same position flags than target
+    // Reordered TabItem must share the same positionWorld flags than target
     ImGuiTabItem* tab2 = &tab_bar->Tabs[tab2_order];
     if (tab2->Flags & ImGuiTabItemFlags_NoReorder)
         return false;
@@ -7605,7 +7605,7 @@ bool    ImGui::TabItemEx(ImGuiTabBar* tab_bar, const char* label, bool* p_open, 
     if (tab_bar->SelectedTabId == id)
         tab->LastFrameSelected = g.FrameCount;
 
-    // Backup current layout position
+    // Backup current layout positionWorld
     const ImVec2 backup_main_cursor_pos = window->DC.CursorPos;
 
     // Layout
@@ -7702,7 +7702,7 @@ bool    ImGui::TabItemEx(ImGuiTabBar* tab_bar, const char* label, bool* p_open, 
         TabBarCloseTab(tab_bar, tab);
     }
 
-    // Restore main window position so user can draw there
+    // Restore main window positionWorld so user can draw there
     if (want_clip_rect)
         PopClipRect();
     window->DC.CursorPos = backup_main_cursor_pos;

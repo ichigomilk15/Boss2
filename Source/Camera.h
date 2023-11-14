@@ -18,6 +18,8 @@ public:
 	//指定方向を向く
 	void SetLookAt(const DirectX::XMFLOAT3& eye, const DirectX::XMFLOAT3& focus,
 		const DirectX::XMFLOAT3& up);
+	//ターゲットなしで持っている変数を向く
+	void SetLookAt();
 
 	//パースペクティブ設定
 	void SetPerspectiveFov(float fovY, float aspect, float nearZ, float farZ);
@@ -38,6 +40,9 @@ public:
 	const DirectX::XMFLOAT3& GetFront() const { return front; }
 	//右方向取得
 	const DirectX::XMFLOAT3& GetRight() const { return right; }
+
+	//GUIのレンダー
+	void DrawDebugGUI();
 
 private:
 	DirectX::XMFLOAT4X4 view;

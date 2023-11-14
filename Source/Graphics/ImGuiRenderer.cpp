@@ -266,7 +266,7 @@ void ImGuiRenderer::NewFrame()
 	io.KeyAlt = (::GetKeyState(VK_MENU) & 0x8000) != 0;
 	io.KeySuper = false;
 	// io.KeysDown[], io.MousePos, io.MouseDown[], io.MouseWheel: filled by the WndProc handler below.
-	// Update OS mouse position
+	// Update OS mouse positionWorld
 	UpdateMousePos();
 	// Update OS mouse cursor with the cursor requested by imgui
 	ImGuiMouseCursor mouseCursor = io.MouseDrawCursor ? ImGuiMouseCursor_None : ImGui::GetMouseCursor();
@@ -467,7 +467,7 @@ void ImGuiRenderer::UpdateMousePos()
 {
 	ImGuiIO& io = ImGui::GetIO();
 
-	// Set OS mouse position if requested (rarely used, only when ImGuiConfigFlags_NavEnableSetMousePos is enabled by user)
+	// Set OS mouse positionWorld if requested (rarely used, only when ImGuiConfigFlags_NavEnableSetMousePos is enabled by user)
 	if (io.WantSetMousePos)
 	{
 		POINT pos = { (int)io.MousePos.x, (int)io.MousePos.y };
@@ -475,7 +475,7 @@ void ImGuiRenderer::UpdateMousePos()
 		::SetCursorPos(pos.x, pos.y);
 	}
 
-	// Set mouse position
+	// Set mouse positionWorld
 	io.MousePos = ImVec2(-FLT_MAX, -FLT_MAX);
 	POINT pos;
 	if (HWND active_window = ::GetForegroundWindow())
