@@ -1,5 +1,4 @@
 #include "Character.h"
-#include "StageManager.h"
 #include <CustomMathf.h>
 
 void Character::UpdateTransform()
@@ -108,38 +107,6 @@ void Character::UpdateVerticalMove(float elapsedTime)
 		//レイの終点位置は移動後の位置
 		DirectX::XMFLOAT3 end = { positionWorld.x, positionWorld.y + my, positionWorld.z };
 
-		//レイキャストによる地面判定
-		HitResult hit;
-		if (StageManager::Instance().RayCast(start, end, hit))
-		{
-			normal = hit.normal;
-
-			//地面に接地している
-			//positionWorld.y = hit.positionWorld.y;
-			positionWorld = hit.positionWorld;
-
-			//回転
-			//this->angle.x += hit.rotation.x;
-			this->angle.y += hit.rotation.y;
-			//this->angle.z += hit.rotation.z;
-			
-			// 傾斜率の計算
-			float normalLengthXZ = sqrtf(hit.normal.x * hit.normal.x + hit.normal.z * hit.normal.z);
-
-			//着地した
-			/*if (!isGround)
-			{
-				OnLanding();
-			}*/
-			//isGround = true;
-			velocity.y = 0.0f;
-		}
-		else
-		{
-			//空中に浮いている
-			positionWorld.y += my;
-			//isGround = false;
-		}
 	}
 	//上昇中
 	else if (my > 0.0f)
@@ -188,50 +155,6 @@ void Character::UpdateHorizontalMove(float elapsedTime)
 		DirectX::XMFLOAT3 end = { positionWorld.x + mx, positionWorld.y, positionWorld.z + mz };
 
 		//レイキャストによる壁判定
-		HitResult hit;
-		if (StageManager::Instance().RayCast(start, end, hit))
-		{
-			//壁までのベクトル
-			DirectX::XMVECTOR Start = DirectX::XMLoadFloat3(/*&start*/&hit.positionWorld);
-			DirectX::XMVECTOR End = DirectX::XMLoadFloat3(&end);
-			DirectX::XMVECTOR Vec = DirectX::XMVectorSubtract(End, Start);
-
-			//壁の法線w
-			DirectX::XMVECTOR Normal = DirectX::XMLoadFloat3(&hit.normal);
-
-			//入射ベクトルを法線に射影
-			DirectX::XMVECTOR Dot = DirectX::XMVector3Dot(DirectX::XMVectorNegate(Vec), Normal);
-			Dot = DirectX::XMVectorScale(Dot, 1.1f);
-			float dot = DirectX::XMVectorGetX(Dot);
-
-			//補正位置の計算
-			DirectX::XMVECTOR Pos = DirectX::XMVectorAdd(End, DirectX::XMVectorScale(Normal, dot));
-			DirectX::XMFLOAT3 pos;
-			DirectX::XMStoreFloat3(&pos, Pos);
-
-			HitResult hitSecondWall;
-			if (StageManager::Instance().RayCast(start, pos, hitSecondWall))
-			{
-				DirectX::XMVECTOR Line = DirectX::XMVectorSubtract(DirectX::XMLoadFloat3(&hitSecondWall.positionWorld), Start);
-
-				auto CorrectPos = DirectX::XMVectorAdd(DirectX::XMLoadFloat3(&hit.positionWorld), DirectX::XMVectorScale(Line, 0.2f));
-				DirectX::XMFLOAT3 correctPos;
-				DirectX::XMStoreFloat3(&correctPos, CorrectPos);
-				positionWorld.x = correctPos.x;
-				positionWorld.z = correctPos.z;
-			}
-			else
-			{
-				positionWorld.x = DirectX::XMVectorGetX(Pos);
-				positionWorld.z = DirectX::XMVectorGetZ(Pos);
-			}
-		}
-		else
-		{
-			//移動
-			positionWorld.x += mx;
-			positionWorld.z += mz;
-		}
 	}
 
 }

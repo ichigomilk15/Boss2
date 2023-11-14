@@ -2,7 +2,6 @@
 #include "Graphics//Graphics.h"
 #include "Graphics\Sprite.h"
 #include "SceneGame.h"
-#include "Player.h"
 #include "CameraController.h"
 #include "Scene.h"
 
@@ -12,11 +11,6 @@
 class SceneGame : public Scene
 {
 public:
-	/*static SceneGame& Instance()
-	{
-		static SceneGame sceneGame;
-		return sceneGame;
-	}*/
 
 	SceneGame() {}
 	~SceneGame() override {}
@@ -36,6 +30,11 @@ public:
 	void DrawDebugGUI();
 
 	const CameraController* GetCameraController() const { return cameraController; }
+
+private:
+	//エネミーHPゲージ描画
+	void RenderEnemyGauge(ID3D11DeviceContext* dc,
+		const DirectX::XMFLOAT4X4& view, const DirectX::XMFLOAT4X4& projection);
 
 private:
 	Player* player = nullptr;

@@ -2,6 +2,10 @@
 #include "CameraController.h"
 #include "Camera.h"
 #include "Input/Input.h"
+#ifdef _DEBUG
+#include "Graphics/ImGuiRenderer.h"
+#endif // _DEBUG
+
 
 void CameraController::Update(float elapsedTime)
 {
@@ -52,4 +56,18 @@ void CameraController::Update(float elapsedTime)
 void CameraController::DrawDebugGUICamera()
 {
 	Camera::Instance().DrawDebugGUI();
+}
+
+void CameraController::DrawIMGUI()
+{
+#ifdef _DEBUG
+	if(ImGui::Begin("CameraController", nullptr, ImGuiWindowFlags_::ImGuiWindowFlags_None))
+	{
+		ImGui::SliderFloat("distance", &range, .0f, 1000.0f);
+		ImGui::SliderFloat3("forcasPos", &target.x, -500.0f, 500.0f, "%.3f", 1.0f);
+		ImGui::SliderFloat3("angle", &angle.x, -DirectX::XM_PI, DirectX::XM_PI);
+	}
+	ImGui::End();
+#endif // _DEBUG
+
 }
