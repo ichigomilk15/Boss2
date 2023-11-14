@@ -123,6 +123,7 @@
     <ClInclude Include="Source\Card.h" />
     <ClInclude Include="Source\Character.h" />
     <ClInclude Include="Source\Collision.h" />
+    <ClInclude Include="Source\CardList.h" />
     <ClInclude Include="Source\Effect.h" />
     <ClInclude Include="Source\EffectManager.h" />
     <ClInclude Include="Source\Framework.h" />
@@ -169,6 +170,7 @@
     <ClCompile Include="Source\Card.cpp" />
     <ClCompile Include="Source\Character.cpp" />
     <ClCompile Include="Source\Collision.cpp" />
+    <ClCompile Include="Source\CardList.cpp" />
     <ClCompile Include="Source\Effect.cpp" />
     <ClCompile Include="Source\EffectManager.cpp" />
     <ClCompile Include="Source\Framework.cpp" />

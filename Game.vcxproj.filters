@@ -195,6 +195,9 @@
     <ClInclude Include="Source\Card.h">
       <Filter>Source\Card</Filter>
     </ClInclude>
+    <ClInclude Include="Source\CardList.h">
+      <Filter>Source\Card</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="External\imgui\imgui.cpp">
@@ -315,6 +318,9 @@
       <Filter>Source\Stages</Filter>
     </ClCompile>
     <ClCompile Include="Source\Card.cpp">
+      <Filter>Source\Card</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\CardList.cpp">
       <Filter>Source\Card</Filter>
     </ClCompile>
   </ItemGroup>

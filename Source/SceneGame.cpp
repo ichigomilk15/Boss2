@@ -58,9 +58,6 @@ void SceneGame::Finalize()
 void SceneGame::Update(float elapsedTime)
 {
 	//カメラコントローラー更新処理
-	DirectX::XMFLOAT3 target = {};
-	target.y += 0.5f;
-	cameraController->setTarget(target);
 	cameraController->Update(elapsedTime);
 
 	Stage::Instance()->Update(elapsedTime);

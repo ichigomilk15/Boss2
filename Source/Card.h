@@ -3,6 +3,7 @@
 #include <memory>
 #include <d3d11.h>
 #include <DirectXMath.h>
+#include "Graphics/Sprite.h"
 
 class Model;
 class Shader;
@@ -21,11 +22,14 @@ public://class
         MAX,
     };
 public:
-    CardBase();
+    CardBase(DirectX::XMFLOAT3 pos,DirectX::XMFLOAT2 size);
     ~CardBase();
 
     virtual void Update(float elapsedTime) = 0;
     virtual void Render(ID3D11DeviceContext* dc,Shader* shader);
+
+    const bool HitMouse();
+    const bool HitCheck(DirectX::XMFLOAT2 screenPos);
 
     /// <summary>
     /// カード仕様時に実行する関数
@@ -42,7 +46,7 @@ public:
 private:
     Type type = Type::NONE;
     DirectX::XMFLOAT3 pos;
-    DirectX::XMFLOAT3 scale;
-    std::unique_ptr<Model> model;
+    DirectX::XMFLOAT2 size;
+    std::unique_ptr<Sprite> sprite;
 };
 
