@@ -25,7 +25,7 @@ public:
 	const DirectX::XMFLOAT3& GetPosition() const { return positionWorld; }
 
 	//位置設定
-	void SetPosition(const DirectX::XMFLOAT3& positionWorld) { this->positionWorld = positionWorld; }
+	void SetPosition(const DirectX::XMINT2 & position);
 
 	//回転取得
 	const DirectX::XMFLOAT3& GetAngle() const { return angle; }
@@ -83,7 +83,7 @@ protected:
 
 protected:
 	DirectX::XMFLOAT3 positionWorld = { 0, 0, 0 };
-	DirectX::XMFLOAT2 position = { 0, 0 }; //マスの位置　X・Y
+	DirectX::XMINT2 position = { 0, 0 }; //マスの位置　X・Y
 	DirectX::XMFLOAT3 angle = { 0, 0, 0 };
 	DirectX::XMFLOAT3 scale = { 1, 1, 1 };
 	DirectX::XMFLOAT4X4 transform = {

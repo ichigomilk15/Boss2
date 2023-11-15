@@ -19,6 +19,7 @@ Square::~Square()
 
 void Square::Update(float elapsedTime)
 {
+    auto test = GetCard();
     DirectX::XMMATRIX Transform =
         DirectX::XMMatrixScaling(scale.x, scale.y, scale.z) *
         DirectX::XMMatrixRotationQuaternion(DirectX::XMLoadFloat4(&rotate)) *

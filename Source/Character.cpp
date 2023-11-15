@@ -1,6 +1,7 @@
 #include "Common.h"
 #include "Character.h"
 #include <CustomMathf.h>
+#include "Stage.h"
 
 void Character::UpdateTransform()
 {
@@ -20,6 +21,12 @@ void Character::UpdateTransform()
 
 	//計算したワールド行れつを取り出す
 	DirectX::XMStoreFloat4x4(&transform, W);
+}
+
+void Character::SetPosition(const DirectX::XMINT2& position)
+{
+	this->position = position;
+	this->positionWorld = Stage::Instance()->GetSquare(position.x, position.y)->GetWorldPos();
 }
 
 void Character::UpdateVelocity(float elapsedTime)

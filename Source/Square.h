@@ -5,6 +5,7 @@
 #include <d3d11.h>
 
 #include "Collision.h"
+#include <optional>
 
 class CardBase;
 class Shader;
@@ -30,12 +31,14 @@ public://function
 #if 1
 	const DirectX::XMFLOAT3& GetWorldPos()const noexcept { return worldPos; }
 	const Type& GetType()const noexcept { return type; }
-	CardBase* GetCard()const noexcept { return card.get(); }
+	std::optional<CardBase*> GetCard()const noexcept { return card.value().get(); }
+
+	void ChangeSomething() { scale = { 7.0f,0.01f,7.0f }; }
 #endif // 1
 	//Getter&Setter*************************************************************************
 private:
 	Type type = Type::NONE;
-	std::unique_ptr<CardBase> card;
+	std::optional<std::unique_ptr<CardBase>> card;
 	std::unique_ptr<Model> model;
 	DirectX::XMFLOAT3 worldPos;
 	DirectX::XMFLOAT3 scale;

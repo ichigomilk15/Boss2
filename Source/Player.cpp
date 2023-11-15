@@ -6,16 +6,18 @@
 #include "Collision.h"
 #include "ProjectileStraight.h"
 #include "ProjectileHoming.h"
+#include "Stage.h"
 
 Player::Player()
 {
-	//model = new Model("Data/Model/Mr.Incredible/Mr.Incredible.mdl");
 	model = new Model("Data/Model/Jammo/Jammo.mdl");
 
 	//モデルが大きいのでスケーリング
 	scale.x = scale.y = scale.z = 0.03f;
 
 	hitEffect = new Effect("Data/Effect/Hit.efk");
+
+	state = State::Move_Init;
 
 	//type = 1;
 }
@@ -77,7 +79,7 @@ void Player::DrawDebugGUI()
 		//if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
 		{
 			//位置
-			ImGui::InputFloat2("Position Square", &position.x);
+			ImGui::InputInt2("Position Square", &position.x);
 			ImGui::InputFloat3("Position World", &positionWorld.x);
 
 			//回転
@@ -122,19 +124,6 @@ DirectX::XMINT2 Player::GetMoveVec() const
 		move.y = -1;
 		break;
 	}
-	/*if (gamePad.GetButtonDown() & gamePad.BTN_LEFT)
-	{
-		move.x = -1;
-	}*/
-	if (move.x != 0)
-	{
-		move.x = move.x;
-	}
-	if (move.y != 0)
-	{
-		move.y = move.y;
-	}
-
 	return move;
 }
 
@@ -171,7 +160,33 @@ void Player::UpdateState(float elapsedTime)
 		state = State::Move;
 		/*fallthrough*/
 	case State::Move:
-
+		UpdateMove(elapsedTime);
 		break;
+	}
+}
+
+void Player::UpdateMove(float elapsedTime)
+{
+
+	Mouse& mouse = Input::Instance().GetMouse();
+	RenderContext rc;
+	auto dc = Graphics::Instance().GetDeviceContext();
+	Camera& camera = Camera::Instance();
+	DirectX::XMFLOAT3 startMousePos = CommonClass::GetWorldStartPosition(dc, mouse.GetPositionX(), mouse.GetPositionY(), camera.GetView(), camera.GetProjection());
+	DirectX::XMFLOAT3 endMousePos = CommonClass::GetWorldEndPosition(dc, mouse.GetPositionX(), mouse.GetPositionY(), camera.GetView(), camera.GetProjection());
+
+	const int moveRange = 2;
+
+	auto squares = Stage::Instance()->GetSquares(this->position.x, this->position.y, moveRange);
+
+	for (auto& square : squares)
+	{
+		square->ChangeSomething();
+	}
+
+	HitResult hit;
+	if (mouse.GetButtonDown() & Mouse::BTN_LEFT)
+	{
+
 	}
 }
