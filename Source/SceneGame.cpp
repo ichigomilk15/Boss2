@@ -74,7 +74,7 @@ void SceneGame::Render()
 	ID3D11DepthStencilView* dsv = graphics.GetDepthStencilView();
 
 	// 画面クリア＆レンダーターゲット設定
-	FLOAT color[] = { 0.0f, 0.0f, 0.5f, 1.0f };	// RGBA(0.0～1.0)
+	FLOAT color[] = { 92.0f/255.0f,163/255.0f,188/255.0f };	// RGBA(0.0～1.0)
 	dc->ClearRenderTargetView(rtv, color);
 	dc->ClearDepthStencilView(dsv, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 	dc->OMSetRenderTargets(1, &rtv, dsv);
@@ -203,8 +203,8 @@ void SceneGame::RenderEnemyGauge(ID3D11DeviceContext* dc,
 		DirectX::XMVECTOR ScreenPosition = DirectX::XMLoadFloat3(&screenPosition);
 
 		DirectX::XMVECTOR StartRay2D = DirectX::XMVectorSet(
-			mouse.GetPositionX(), 
-			mouse.GetPositionY(),
+			static_cast<float>(mouse.GetPositionX()), 
+			static_cast<float>(mouse.GetPositionY()),
 			viewport.MinDepth, 0);
 		DirectX::XMVECTOR StartRayVec = DirectX::XMVector3Unproject(
 			StartRay2D,
@@ -219,8 +219,8 @@ void SceneGame::RenderEnemyGauge(ID3D11DeviceContext* dc,
 			World					//ワールド行列（単位行列でよい）
 		);
 		DirectX::XMVECTOR EndRay2D = DirectX::XMVectorSet(
-			mouse.GetPositionX(),
-			mouse.GetPositionY(),
+			static_cast<float>(mouse.GetPositionX()),
+			static_cast<float>(mouse.GetPositionY()),
 			viewport.MaxDepth, 0);
 		DirectX::XMVECTOR EndRayVec = DirectX::XMVector3Unproject(
 			EndRay2D,

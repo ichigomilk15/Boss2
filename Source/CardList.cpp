@@ -27,12 +27,17 @@ std::shared_ptr<CardBase> CardList::DrowCard(std::pair<CardBase::Type, unsigned 
 	unsigned int sumPercent = 0;
 	for (size_t i = 0; i < pairSize; i++)
 	{
-		sumPercent += pair->second;
+		sumPercent += pair[i].second;
 	}
 	std::uniform_int_distribution<unsigned int> random(0, sumPercent);
-	unsigned int result = random(CommonClass::random_engine);
+	int result = random(CommonClass::random_engine);
+	for (size_t i = 0; i < pairSize; i++)
+	{
+		result -= pair[i].second;
+		if (result <= 0)return std::make_unique<CardAttack>(DirectX::XMFLOAT2{ 0,0 }, DirectX::XMFLOAT2{100,100});//todo : ここでのードクラスを変更
+	}
 
-	return std::shared_ptr<CardBase>();
+	return std::make_unique<CardAttack>(DirectX::XMFLOAT2{ 0,0 }, DirectX::XMFLOAT2{ 100,100 });//todo :	一応最後のタイプのカードを生成
 }
 
 void CardList::AddCard(std::shared_ptr<CardBase>& card)

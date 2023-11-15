@@ -22,7 +22,7 @@ public://class
         MAX,
     };
 public:
-    CardBase(DirectX::XMFLOAT3 pos,DirectX::XMFLOAT2 size);
+    CardBase(DirectX::XMFLOAT2 pos,DirectX::XMFLOAT2 size);
     ~CardBase();
 
     virtual void Update(float elapsedTime) = 0;
@@ -35,7 +35,7 @@ public:
     /// カード仕様時に実行する関数
     /// </summary>
     /// <returns>実行に成功したか</returns>
-    virtual const bool ActiveAction() = 0;
+    virtual const bool ActiveAction(void* input) = 0;
 
     //Getter&Setter**********************************************************
 #if 1
@@ -43,10 +43,27 @@ public:
     void SetType(const Type type)noexcept { this->type = type; }
 #endif // 1
     //Getter&Setter**********************************************************
-private:
+protected:
     Type type = Type::NONE;
-    DirectX::XMFLOAT3 pos;
+    DirectX::XMFLOAT2 pos;
     DirectX::XMFLOAT2 size;
     std::unique_ptr<Sprite> sprite;
 };
 
+//***************************************************************************************************
+// CardAttack Class
+//***************************************************************************************************
+
+class CardAttack : public CardBase
+{
+public:
+    CardAttack(DirectX::XMFLOAT2 pos, DirectX::XMFLOAT2 size) :CardBase(pos, size) { type = Type::ATTACK; };
+    ~CardAttack() {};
+
+    virtual void Update(float elapsedTime)override {};
+    virtual const bool ActiveAction(void* input)override { return false; };
+
+
+private:
+
+};

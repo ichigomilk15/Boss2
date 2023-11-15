@@ -4,6 +4,7 @@
 #include <memory>
 #include <d3d11.h>
 #include <DirectXMath.h>
+#include <utility>
 
 #include "Collision.h"
 #include "Common.h"
@@ -14,6 +15,13 @@ class Shader;
 
 class Stage final
 {
+	friend Square;
+	enum class Type
+	{
+		Player,
+		Enemy,
+		Item,
+	};
 private://constructors
 	Stage();
 	~Stage() {};
@@ -29,10 +37,13 @@ public://functions
 
 	const bool Raycast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end, HitResult& hit);
 	const bool IsInArea(int x, int y)const noexcept;
+	std::pair<unsigned int,unsigned int> Search(int x, int y, int cost,Type type);
 private://static members
 private://members
-	//std::shared_ptr<Square> squares[Common::SQUARE_NUM_Y][Common::SQUARE_NUM_X];
+	std::shared_ptr<Square> squares[Common::SQUARE_NUM_Y][Common::SQUARE_NUM_X];
 	std::unique_ptr<Model> model;
+	std::shared_ptr<Model> squareBorder;
+	std::shared_ptr<Model> squareArea;
 
 	DirectX::XMFLOAT3 position{};
 	DirectX::XMFLOAT3 scale{};

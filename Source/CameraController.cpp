@@ -58,7 +58,7 @@ void CameraController::DrawIMGUI()
 #ifdef _DEBUG
 	if(ImGui::Begin("CameraController", nullptr, ImGuiWindowFlags_::ImGuiWindowFlags_None))
 	{
-		ImGui::SliderFloat("distance", &range, .0f, 100.0f);
+		ImGui::SliderFloat("distance", &range, .01f, 100.0f);
 		ImGui::SliderFloat3("forcasPos", &target.x, -50.0f, 50.0f, "%.3f", 1.0f);
 		ImGui::SliderFloat3("angle", &angle.x, -DirectX::XM_PI, DirectX::XM_PI);
 	}

@@ -3,7 +3,7 @@
 #include "Graphics/Model.h"
 #include "Input/Input.h"
 
-CardBase::CardBase(DirectX::XMFLOAT3 pos,DirectX::XMFLOAT2 size):
+CardBase::CardBase(DirectX::XMFLOAT2 pos,DirectX::XMFLOAT2 size):
     pos(pos),
     size(size),
     sprite()
