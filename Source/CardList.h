@@ -11,12 +11,13 @@ public://constracter
 public://functions
 
 	void Update(float elapsedTime);
-	std::shared_ptr<CardBase> HitCheck(const DirectX::XMFLOAT2& screenPos)const;
-	std::shared_ptr<CardBase> DrowCard(std::pair<CardBase::Type,unsigned int>* pair,const size_t& pairSize);
-	void AddCard(std::shared_ptr<CardBase>& card);
-	void EraseItem(std::shared_ptr<CardBase>& item);
+	void Render(ID3D11DeviceContext* dc);
+	std::shared_ptr<Card> HitCheck(const DirectX::XMFLOAT2& screenPos)const;
+	std::shared_ptr<Card> DrowCard(std::pair<Card::Type,unsigned int>* pair,const size_t& pairSize);
+	void AddCard(std::shared_ptr<Card>& card);
+	void EraseItem(std::shared_ptr<Card>& item);
 private://functions
 	void Erase();
 private://members
-	std::list<std::shared_ptr<CardBase>> Cards, eraser;
+	std::list<std::shared_ptr<Card>> cards, eraser;
 };

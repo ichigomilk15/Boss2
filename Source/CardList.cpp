@@ -2,27 +2,40 @@
 #include "Common.h"
 #include <random>
 #include "CardList.h"
+#include "Graphics/Graphics.h"
 
 void CardList::Update(float elapsedTime)
 {
-	for (auto& card : Cards)
+	DirectX::XMFLOAT2 pos = 
+		{Graphics::Instance().GetScreenWidth()*0.1f,Graphics::Instance().GetScreenHeight()-cards.front()->GetSize().y};
+	for (auto& card : cards)
 	{
+		card->SetPosition(pos);
+		pos.x += card->GetSize().x + 10.0f;
 		card->Update(elapsedTime);
 	}
 
 	Erase();
 }
 
-std::shared_ptr<CardBase> CardList::HitCheck(const DirectX::XMFLOAT2& screenPos)const
+void CardList::Render(ID3D11DeviceContext* dc)
 {
-	for (auto& card : Cards)
+	for (auto& card : cards)
+	{
+		card->Render(dc);
+	}
+}
+
+std::shared_ptr<Card> CardList::HitCheck(const DirectX::XMFLOAT2& screenPos)const
+{
+	for (auto& card : cards)
 	{
 		if (card->HitCheck(screenPos))return card;
 	}
 	return nullptr;
 }
 
-std::shared_ptr<CardBase> CardList::DrowCard(std::pair<CardBase::Type, unsigned int>* pair, const size_t& pairSize)
+std::shared_ptr<Card> CardList::DrowCard(std::pair<Card::Type, unsigned int>* pair, const size_t& pairSize)
 {
 	unsigned int sumPercent = 0;
 	for (size_t i = 0; i < pairSize; i++)
@@ -34,18 +47,18 @@ std::shared_ptr<CardBase> CardList::DrowCard(std::pair<CardBase::Type, unsigned 
 	for (size_t i = 0; i < pairSize; i++)
 	{
 		result -= pair[i].second;
-		if (result <= 0)return std::make_unique<CardAttack>(DirectX::XMFLOAT2{ 0,0 }, DirectX::XMFLOAT2{100,100});//todo : ここでのードクラスを変更
+		if (result <= 0)return std::make_unique<Card>(DirectX::XMFLOAT2{ 0,0 }, DirectX::XMFLOAT2{100,200},pair[i].first);
 	}
 
-	return std::make_unique<CardAttack>(DirectX::XMFLOAT2{ 0,0 }, DirectX::XMFLOAT2{ 100,100 });//todo :	一応最後のタイプのカードを生成
+	return std::make_unique<Card>(DirectX::XMFLOAT2{ 0,0 }, DirectX::XMFLOAT2{ 100,100 },pair[pairSize-1].first);
 }
 
-void CardList::AddCard(std::shared_ptr<CardBase>& card)
+void CardList::AddCard(std::shared_ptr<Card>& card)
 {
-	Cards.emplace_back(card);
+	cards.emplace_back(card);
 }
 
-void CardList::EraseItem(std::shared_ptr<CardBase>& item)
+void CardList::EraseItem(std::shared_ptr<Card>& item)
 {
 	eraser.emplace_back(item);
 }
@@ -54,8 +67,8 @@ void CardList::Erase()
 {
 	for (auto& erase : eraser)
 	{
-		const auto& it = std::find(Cards.begin(), Cards.end(), erase);
-		Cards.erase(it);
+		const auto& it = std::find(cards.begin(), cards.end(), erase);
+		cards.erase(it);
 	}
 	eraser.clear();
 }
