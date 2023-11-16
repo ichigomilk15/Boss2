@@ -6,16 +6,18 @@
 #include "Collision.h"
 #include "ProjectileStraight.h"
 #include "ProjectileHoming.h"
+#include "Stage.h"
 
 Player::Player()
 {
-	//model = new Model("Data/Model/Mr.Incredible/Mr.Incredible.mdl");
 	model = new Model("Data/Model/Jammo/Jammo.mdl");
 
 	//モデルが大きいのでスケーリング
 	scale.x = scale.y = scale.z = 0.03f;
 
 	hitEffect = new Effect("Data/Effect/Hit.efk");
+
+	state = State::Move_Init;
 
 	//type = 1;
 }
@@ -77,7 +79,7 @@ void Player::DrawDebugGUI()
 		//if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
 		{
 			//位置
-			ImGui::InputFloat2("Position Square", &position.x);
+			ImGui::InputInt2("Position Square", &position.x);
 			ImGui::InputFloat3("Position World", &positionWorld.x);
 
 			//回転
@@ -116,25 +118,12 @@ DirectX::XMINT2 Player::GetMoveVec() const
 		move.x = 1;
 		break;
 	case GamePad::BTN_UP:
-		move.y = 1;
-		break;
-	case GamePad::BTN_DOWN:
 		move.y = -1;
 		break;
+	case GamePad::BTN_DOWN:
+		move.y = 1;
+		break;
 	}
-	/*if (gamePad.GetButtonDown() & gamePad.BTN_LEFT)
-	{
-		move.x = -1;
-	}*/
-	if (move.x != 0)
-	{
-		move.x = move.x;
-	}
-	if (move.y != 0)
-	{
-		move.y = move.y;
-	}
-
 	return move;
 }
 
@@ -169,9 +158,52 @@ void Player::UpdateState(float elapsedTime)
 	case State::Move_Init:
 
 		state = State::Move;
-		/*fallthrough*/
+		[[fallthrough]];
 	case State::Move:
-
+		UpdateMove(elapsedTime);
 		break;
 	}
+}
+
+void Player::UpdateMove(float elapsedTime)
+{
+	for (int y = 0; y < Common::SQUARE_NUM_Y; ++y)
+	{
+		for (int x = 0; x < Common::SQUARE_NUM_X; x++)
+		{
+			Stage::Instance()->GetSquare(x, y).get()->ResetSquare();
+		}
+	}
+
+	Mouse& mouse = Input::Instance().GetMouse();
+	RenderContext rc;
+	auto dc = Graphics::Instance().GetDeviceContext();
+	Camera& camera = Camera::Instance();
+
+	const int moveRange = 2;
+
+	auto squares = Stage::Instance()->GetSquares(this->position.x, this->position.y, moveRange);
+
+	for (auto& square : squares)
+	{
+		square->SetType(Square::Type::MoveArea);
+	}
+
+	DirectX::XMFLOAT3 startMousePos = CommonClass::GetWorldStartPosition(dc, mouse.GetPositionX(), mouse.GetPositionY(), camera.GetView(), camera.GetProjection());
+	DirectX::XMFLOAT3 endMousePos = CommonClass::GetWorldEndPosition(dc, mouse.GetPositionX(), mouse.GetPositionY(), camera.GetView(), camera.GetProjection());
+
+	HitResult hit;
+	Square* foundSq = nullptr;
+	for (auto& sq : squares)
+	{
+		if (sq->Raycast(startMousePos, endMousePos, hit))
+		{
+			sq->SetType(Square::Type::MoveAreaChosen);
+			foundSq = sq;
+		}
+	}
+	if (foundSq && mouse.GetButtonDown() & Mouse::BTN_LEFT)
+	{
+		//this->position = foundSq.getpo
+	}	
 }

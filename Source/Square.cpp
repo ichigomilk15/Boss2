@@ -4,15 +4,27 @@
 #include "Card.h"
 #include "Stage.h"
 
-Square::Square(const DirectX::XMFLOAT3& pos):
-    worldPos(pos),
-    scale(5.0f*0.2f,0.01f,5.0f*0.2f),
-    rotate(),
-    card(nullptr),
-    type(Type::NONE),
-    SquareBorder(Stage::Instance()->squareBorder),
-    SquareArea(Stage::Instance()->squareArea)
+Square::Square(const DirectX::XMFLOAT3& pos) :
+	worldPos(pos),
+	scale(5.0f * 0.2f, 0.01f, 5.0f * 0.2f),
+	rotate(),
+	card(nullptr),
+	type(Type::NONE),
+	SquareBorder(Stage::Instance()->squareBorder),
+	SquareArea(Stage::Instance()->squareArea)
 {
+	//TypeMaps初期化
+	{
+		/*static DirectX::XMFLOAT4 colors[static_cast<int>(Square::Type::MAX)] = {
+			{1.0f,1.0f,1.0f,0.5f},
+			{1.0f,.0f,.0f,0.5f},
+		};*/
+		typeMaps.insert({ Type::NONE, TypeDetail{ "None", {1.0f,1.0f,1.0f,0.5f} } });
+		typeMaps.insert({ Type::AttackArea, TypeDetail{ "AttackArea", {1.0f,.0f,.0f,0.5f}, } });
+		typeMaps.insert({ Type::MoveArea, TypeDetail{ "MoveArea", {.2f,.2f,1.0f,0.5f}, } });
+		typeMaps.insert({ Type::MoveAreaChosen, TypeDetail{ "MoveAreaChosen", {1.0f,1.0f,.0f,0.5f}, } });
+		typeMaps.insert({ Type::MAX, TypeDetail{ "Max", {.0f,.0f,.0f,.0f} } });
+	}
 }
 
 Square::~Square()
@@ -21,7 +33,7 @@ Square::~Square()
 
 void Square::Update(float elapsedTime)
 {
-
+	this->UpdateDirty();
 }
 
 void Square::Render(ID3D11DeviceContext* dc, Shader* shader)
@@ -40,12 +52,8 @@ void Square::Render(ID3D11DeviceContext* dc, Shader* shader)
         //何かのアクション範囲なら板を表示
         if (type != Type::NONE&&!SquareArea.expired())
         {
-            static DirectX::XMFLOAT4 colors[static_cast<int>(Square::Type::MAX)] = {
-                {1.0f,1.0f,1.0f,0.5f},
-                {1.0f,.0f,.0f,0.5f},
-            };
             model = this->SquareArea.lock();
-            model->ChangeMaterialColor(0u, colors[static_cast<size_t>(type)]);
+            model->ChangeMaterialColor(0u, this->areaColor);
             model->UpdateTransform(transform);
             shader->Draw(dc, model.get());
         }
@@ -64,7 +72,30 @@ const bool Square::Raycast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOA
         return Collision::IntersectRayVsModel(start,end,model.get(),hit);
     }
 
-    return false;
+	return false;
+}
+
+void Square::SetType(Type type)
+{
+	this->type = type;
+	this->typeChanged = true;
+}
+
+void Square::ResetSquare()
+{
+	this->type = Type::NONE;
+	this->typeChanged = true;
+}
+
+void Square::UpdateDirty()
+{
+	if (typeChanged && !SquareBorder.expired())
+	{
+
+		std::shared_ptr<Model> model = this->SquareArea.lock();
+		areaColor = typeMaps.find(type)->second.color;
+		typeChanged = false;
+	}
 }
 
 const DirectX::XMMATRIX Square::GetTransform() const

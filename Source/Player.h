@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Common.h"
 #include "Graphics/Shader.h"
 #include "Graphics/Model.h"
 #include "Character.h"
@@ -30,8 +31,12 @@ private:
 	//ステート更新処理
 	void UpdateState(float elapsedTime) override;
 
+	//移動アクション更新処理
+	void UpdateMove(float elapsedTime);
+
 private:
 	Model* model = nullptr;
+
 
 	Effect* hitEffect = nullptr;
 };
