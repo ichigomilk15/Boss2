@@ -49,7 +49,7 @@ public://functions
 #endif // 1
     //Getter&Setter**********************************************************
 private://static members
-    inline static constexpr float MOVE_SPEED = 800.0f;
+    static constexpr float MOVE_SPEED = 800.0f;
 protected://members
     Type type = Type::NONE;
     DirectX::XMFLOAT2 targetPos;

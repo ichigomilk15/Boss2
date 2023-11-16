@@ -12,7 +12,7 @@ void CardList::Update(float elapsedTime)
 		std::pair<Card::Type, unsigned int> param[] =
 		{
 			{Card::Type::ATTACK,100},
-			{Card::Type::MOVE,200},
+			{Card::Type::MOVE,120},
 			{Card::Type::DEFENCE,100},
 		};
 		AddCard(DrowCard(param, std::size(param)));
@@ -53,6 +53,8 @@ std::shared_ptr<Card> CardList::HitCheck(const DirectX::XMFLOAT2& screenPos)cons
 
 std::shared_ptr<Card> CardList::DrowCard(std::pair<Card::Type, unsigned int>* pair, const size_t& pairSize)
 {
+	const DirectX::XMFLOAT2 spownPos = { .0f,.0f };
+	const DirectX::XMFLOAT2 CardSize = { 100.0f,200.0f };
 	unsigned int sumPercent = 0;
 	for (size_t i = 0; i < pairSize; i++)
 	{
@@ -63,10 +65,10 @@ std::shared_ptr<Card> CardList::DrowCard(std::pair<Card::Type, unsigned int>* pa
 	for (size_t i = 0; i < pairSize; i++)
 	{
 		result -= pair[i].second;
-		if (result <= 0)return std::make_unique<Card>(DirectX::XMFLOAT2{ 0,0 }, DirectX::XMFLOAT2{100,200},pair[i].first);
+		if (result <= 0)return std::make_unique<Card>(spownPos, CardSize,pair[i].first);
 	}
 
-	return std::make_unique<Card>(DirectX::XMFLOAT2{ 0,0 }, DirectX::XMFLOAT2{ 100,100 },pair[pairSize-1].first);
+	return std::make_unique<Card>(spownPos, CardSize,pair[pairSize-1].first);
 }
 
 void CardList::AddCard(std::shared_ptr<Card>& card)
