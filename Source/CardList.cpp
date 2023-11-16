@@ -1,11 +1,25 @@
-
+#define NOMINMAX
 #include "Common.h"
 #include <random>
 #include "CardList.h"
 #include "Graphics/Graphics.h"
+#undef NOMINMAX
 
 void CardList::Update(float elapsedTime)
 {
+	if (cards.size() < (CARD_MAX + haveSpecial) % std::numeric_limits<unsigned int>::max())
+	{
+		std::pair<Card::Type, unsigned int> param[] =
+		{
+			{Card::Type::ATTACK,100},
+			{Card::Type::MOVE,200},
+			{Card::Type::DEFENCE,100},
+		};
+		AddCard(DrowCard(param, std::size(param)));
+	}
+
+	if (cards.empty())return;
+
 	DirectX::XMFLOAT2 pos = 
 		{Graphics::Instance().GetScreenWidth()*0.1f,Graphics::Instance().GetScreenHeight()-cards.front()->GetSize().y};
 	for (auto& card : cards)
@@ -15,17 +29,6 @@ void CardList::Update(float elapsedTime)
 		card->Update(elapsedTime);
 		if (card->GetPosition().x < 0.0f)//todo : debug—p
 			eraser.emplace_back(card);
-	}
-
-	if (cards.size() < CARD_MAX + haveSpecial)
-	{
-		std::pair<Card::Type, unsigned int> param[] =
-		{
-			{Card::Type::ATTACK,100},
-			{Card::Type::MOVE,200},
-			{Card::Type::DEFENCE,100},
-		};
-		AddCard(DrowCard(param, std::size(param)));
 	}
 
 	Erase();

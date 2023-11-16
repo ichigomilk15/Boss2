@@ -13,16 +13,6 @@ void SceneGame::Initialize()
 
 	player = new Player();
 	handCard = std::make_unique<CardList>();
-	for (int i = 0; i < 5; i++)
-	{
-		std::pair<Card::Type, unsigned int> param[] =
-		{
-			{Card::Type::ATTACK,100},
-			{Card::Type::MOVE,200},
-			{Card::Type::DEFENCE,100},
-		};
-		handCard->AddCard(handCard->DrowCard(param, std::size(param)));
-	}
 
 	//ƒJƒƒ‰‰Šúİ’è
 	Graphics& graphics = Graphics::Instance();
