@@ -1,5 +1,4 @@
 #include "Camera.h"
-#include "Enemy.h"
 #include "Graphics\Graphics.h"
 
 //w’è•ûŒü‚ğŒü‚­

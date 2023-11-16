@@ -4,6 +4,7 @@
 #include <memory>
 #include <d3d11.h>
 #include <DirectXMath.h>
+#include <utility>
 
 #include "Collision.h"
 #include "Common.h"
@@ -14,6 +15,13 @@ class Shader;
 
 class Stage final
 {
+	friend Square;
+	enum class Type
+	{
+		Player,
+		Enemy,
+		Item,
+	};
 private://constructors
 	Stage();
 	~Stage() {};
@@ -39,6 +47,8 @@ private://static members
 private://members
 	std::shared_ptr<Square> squares[Common::SQUARE_NUM_Y][Common::SQUARE_NUM_X];
 	std::unique_ptr<Model> model;
+	std::shared_ptr<Model> squareBorder;
+	std::shared_ptr<Model> squareArea;
 
 	DirectX::XMFLOAT3 position{};
 	DirectX::XMFLOAT3 scale{};

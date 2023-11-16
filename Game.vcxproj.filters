@@ -195,6 +195,9 @@
     <ClInclude Include="Source\Card.h">
       <Filter>Source\Card</Filter>
     </ClInclude>
+    <ClInclude Include="Source\CardList.h">
+      <Filter>Source\Card</Filter>
+    </ClInclude>
     <ClInclude Include="Source\Common.h">
       <Filter>Source</Filter>
     </ClInclude>
@@ -323,8 +326,14 @@
     <ClCompile Include="Source\Card.cpp">
       <Filter>Source\Card</Filter>
     </ClCompile>
+    <ClCompile Include="Source\CardList.cpp">
+      <Filter>Source\Card</Filter>
+    </ClCompile>
     <ClCompile Include="Source\Player.cpp">
       <Filter>Source\Characters</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Common.cpp">
+      <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
