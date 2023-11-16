@@ -176,7 +176,6 @@ void Player::UpdateMove(float elapsedTime)
 	}
 
 	Mouse& mouse = Input::Instance().GetMouse();
-	RenderContext rc;
 	auto dc = Graphics::Instance().GetDeviceContext();
 	Camera& camera = Camera::Instance();
 
@@ -204,6 +203,6 @@ void Player::UpdateMove(float elapsedTime)
 	}
 	if (foundSq && mouse.GetButtonDown() & Mouse::BTN_LEFT)
 	{
-		//this->position = foundSq.getpo
+		this->position = foundSq->GetPos();
 	}	
 }

@@ -30,6 +30,7 @@ public://functions
 	std::shared_ptr<Square> GetSquare(unsigned int x, unsigned int y)const noexcept { return squares[y][x]; }
 	void ClearStage()noexcept;
 	void CreateStage();
+	const DirectX::XMFLOAT3 GetWorldPos(const DirectX::XMINT2& pos) const;
 
 	void Update(float elapsedTime);
 	void Render(ID3D11DeviceContext* dc,Shader* shader);

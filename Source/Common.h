@@ -14,6 +14,8 @@ namespace Common
 	static const float SquareWidth = 5.0f;
 	static const float SquareHeight = 5.0f;
 
+	//ステージ詳細
+	static const DirectX::XMFLOAT3 lefttop = { -SquareWidth * (SQUARE_NUM_X / 2.0f - 0.5f),0.0f,SquareHeight * (SQUARE_NUM_Y / 2.0f - 0.5f) };
 }
 
 class CommonClass

@@ -35,15 +35,19 @@ void Stage::CreateStage()
 {
 	using namespace Common;
 	ClearStage();
-	const DirectX::XMFLOAT3 lefttop = { -SquareWidth * (SQUARE_NUM_X / 2.0f - 0.5f),0.0f,SquareHeight * (SQUARE_NUM_Y / 2.0f - 0.5f) };
 	for (unsigned int y = 0; y < SQUARE_NUM_Y; y++)
 	{
 		for (unsigned int x = 0; x < SQUARE_NUM_X; x++)
 		{
-			squares[y][x] = std::make_shared<Square>(
-				DirectX::XMFLOAT3{ lefttop.x + (SquareWidth * x),lefttop.y,lefttop.z - (SquareHeight * y) });
+			squares[y][x] = std::make_shared<Square>(DirectX::XMINT2(x, y));
 		}
 	}
+}
+
+const DirectX::XMFLOAT3 Stage::GetWorldPos(const DirectX::XMINT2& pos) const
+{
+	using namespace Common;
+	return DirectX::XMFLOAT3{ lefttop.x + (SquareWidth * pos.x), lefttop.y, lefttop.z - (SquareHeight * pos.y) };
 }
 
 void Stage::Update(float elapsedTime)

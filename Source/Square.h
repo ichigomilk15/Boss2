@@ -69,7 +69,7 @@ public://class
 	//}
 #endif
 public://function
-	Square(const DirectX::XMFLOAT3& pos);
+	Square(const DirectX::XMINT2& pos);
 	virtual ~Square();
 
 	void Update(float elapsedTime);
@@ -82,6 +82,7 @@ public://function
 	//Getter&Setter*************************************************************************
 #if 1
 	const DirectX::XMFLOAT3& GetWorldPos()const noexcept { return worldPos; }
+	const DirectX::XMINT2& GetPos() const noexcept { return pos; }
 	void SetType(Type type);
 	const Type& GetType()const noexcept { return type; }
 	Card* GetCard()const noexcept { return card.get(); }
@@ -91,12 +92,13 @@ public://function
 	//Getter&Setter*************************************************************************
 private://function
 	const DirectX::XMMATRIX GetTransform()const;
-	void UpdateDirty(); 
+	void UpdateDirty();
 private://members
 	Type type = Type::NONE;
 	std::shared_ptr<Card> card;
 	std::weak_ptr<Model> SquareBorder;
 	std::weak_ptr<Model> SquareArea;
+	DirectX::XMINT2	  pos;
 	DirectX::XMFLOAT3 worldPos;
 	DirectX::XMFLOAT3 scale;
 	DirectX::XMFLOAT4 rotate;
