@@ -8,7 +8,7 @@
 class Model;
 class Shader;
 
-class CardBase
+class Card
 {
 public://class
     enum class Type
@@ -21,49 +21,40 @@ public://class
         BAD,
         MAX,
     };
-public:
-    CardBase(DirectX::XMFLOAT2 pos,DirectX::XMFLOAT2 size);
-    ~CardBase();
+public://functions
+    Card(DirectX::XMFLOAT2 pos,DirectX::XMFLOAT2 size,Type type);
+    ~Card();
 
-    virtual void Update(float elapsedTime) = 0;
-    virtual void Render(ID3D11DeviceContext* dc,Shader* shader);
+    virtual void Update(float elapsedTime);
+    virtual void Render(ID3D11DeviceContext* dc);
 
     const bool HitMouse();
     const bool HitCheck(DirectX::XMFLOAT2 screenPos);
 
     /// <summary>
-    /// カード仕様時に実行する関数
+    /// カード使用時に実行する関数
     /// </summary>
     /// <returns>実行に成功したか</returns>
-    virtual const bool ActiveAction(void* input) = 0;
+    virtual const bool ActiveAction(void* input) { return false; };
 
     //Getter&Setter**********************************************************
 #if 1
-    const Type GetType()const noexcept { return type; }
+    const Type& GetType()const noexcept { return type; }
     void SetType(const Type type)noexcept { this->type = type; }
+    const DirectX::XMFLOAT2& GetPosition()const noexcept { return pos; }
+    void SetPosition(const DirectX::XMFLOAT2& pos)noexcept { targetPos = pos; }
+    const DirectX::XMFLOAT2& GetSize()const noexcept { return size; }
+    const bool GetMoveLock()const noexcept { return moveLock; }
+    void SetMoveLock(const bool lock)noexcept { moveLock = lock; }
 #endif // 1
     //Getter&Setter**********************************************************
-protected:
+private://static members
+    inline static constexpr float MOVE_SPEED = 800.0f;
+protected://members
     Type type = Type::NONE;
+    DirectX::XMFLOAT2 targetPos;
     DirectX::XMFLOAT2 pos;
     DirectX::XMFLOAT2 size;
+    bool moveLock = false;
     std::unique_ptr<Sprite> sprite;
-};
-
-//***************************************************************************************************
-// CardAttack Class
-//***************************************************************************************************
-
-class CardAttack : public CardBase
-{
-public:
-    CardAttack(DirectX::XMFLOAT2 pos, DirectX::XMFLOAT2 size) :CardBase(pos, size) { type = Type::ATTACK; };
-    ~CardAttack() {};
-
-    virtual void Update(float elapsedTime)override {};
-    virtual const bool ActiveAction(void* input)override { return false; };
-
-
-private:
-
 };

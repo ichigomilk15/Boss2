@@ -8,7 +8,7 @@
 #include <optional>
 #include <map>
 
-class CardBase;
+class Card;
 class Shader;
 
 class Square
@@ -84,16 +84,17 @@ public://function
 	const DirectX::XMFLOAT3& GetWorldPos()const noexcept { return worldPos; }
 	void SetType(Type type);
 	const Type& GetType()const noexcept { return type; }
-	CardBase* GetCard()const noexcept { return card.get(); }
-	std::shared_ptr<CardBase> GetUniqueCard()noexcept { return std::move(card); }
-	//std::shared_ptr<CardBase> GetUniqueCard()noexcept { std::shared_ptr<CardBase> temp = card; card.reset(); return temp; }
+	Card* GetCard()const noexcept { return card.get(); }
+	std::shared_ptr<Card> GetUniqueCard()noexcept { return std::move(card); }
+	//std::shared_ptr<Card> GetUniqueCard()noexcept { std::shared_ptr<Card> temp = card; card.reset(); return temp; }
 #endif // 1
 	//Getter&Setter*************************************************************************
-private:
+private://function
+	const DirectX::XMMATRIX GetTransform()const;
 	void UpdateDirty(); 
 private://members
 	Type type = Type::NONE;
-	std::shared_ptr<CardBase> card;
+	std::shared_ptr<Card> card;
 	std::weak_ptr<Model> SquareBorder;
 	std::weak_ptr<Model> SquareArea;
 	DirectX::XMFLOAT3 worldPos;

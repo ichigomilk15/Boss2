@@ -38,44 +38,39 @@ void Square::Update(float elapsedTime)
 
 void Square::Render(ID3D11DeviceContext* dc, Shader* shader)
 {
-	if (!SquareBorder.expired())
-	{
-		//枠の表示
-		std::shared_ptr<Model> model = this->SquareBorder.lock();
-		DirectX::XMMATRIX Transform =
-			DirectX::XMMatrixScaling(scale.x, scale.y, scale.z) *
-			DirectX::XMMatrixRotationQuaternion(DirectX::XMLoadFloat4(&rotate)) *
-			DirectX::XMMatrixTranslation(worldPos.x, worldPos.y, worldPos.z);
-		DirectX::XMFLOAT4X4 transform;
-		DirectX::XMStoreFloat4x4(&transform, Transform);
-		model->UpdateTransform(transform);
-		shader->Draw(dc, model.get());
 
-		//何かのアクション範囲なら板を表示
-		if (/*type != Type::NONE && */!SquareArea.expired())
-		{
-			model = this->SquareArea.lock();
-			const_cast<ModelResource::Material*>(&model->GetResource()->GetMaterials().at(0))->color = this->areaColor;
-			model->UpdateTransform(transform);
-			shader->Draw(dc, model.get());
-		}
-	}
+    if (!SquareBorder.expired())
+    {
+        //枠の表示
+        std::shared_ptr<Model> model = this->SquareBorder.lock();
+        DirectX::XMMATRIX Transform = GetTransform();
+        DirectX::XMFLOAT4X4 transform;
+        DirectX::XMStoreFloat4x4(&transform, Transform);
+        model->UpdateTransform(transform);
+        shader->Draw(dc, model.get());
+
+        //何かのアクション範囲なら板を表示
+        if (type != Type::NONE&&!SquareArea.expired())
+        {
+            model = this->SquareArea.lock();
+            model->ChangeMaterialColor(0u, this->areaColor;);
+            model->UpdateTransform(transform);
+            shader->Draw(dc, model.get());
+        }
+    }
 }
 
 const bool Square::Raycast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end, HitResult& hit)
 {
-	if (!SquareArea.expired())
-	{
-		std::shared_ptr<Model> model = this->SquareArea.lock();
-		DirectX::XMMATRIX Transform =
-			DirectX::XMMatrixScaling(scale.x, scale.y, scale.z) *
-			DirectX::XMMatrixRotationQuaternion(DirectX::XMLoadFloat4(&rotate)) *
-			DirectX::XMMatrixTranslation(worldPos.x, worldPos.y, worldPos.z);
-		DirectX::XMFLOAT4X4 transform;
-		DirectX::XMStoreFloat4x4(&transform, Transform);
-		model->UpdateTransform(transform);
-		return Collision::IntersectRayVsModel(start, end, model.get(), hit);
-	}
+    if (!SquareArea.expired())
+    {
+        std::shared_ptr<Model> model = this->SquareArea.lock();
+        DirectX::XMMATRIX Transform = GetTransform();
+        DirectX::XMFLOAT4X4 transform;
+        DirectX::XMStoreFloat4x4(&transform, Transform);
+        model->UpdateTransform(transform);
+        return Collision::IntersectRayVsModel(start,end,model.get(),hit);
+    }
 
 	return false;
 }
@@ -101,4 +96,11 @@ void Square::UpdateDirty()
 		areaColor = typeMaps.find(type)->second.color;
 		typeChanged = false;
 	}
+}
+
+const DirectX::XMMATRIX Square::GetTransform() const
+{
+    return DirectX::XMMatrixScaling(scale.x, scale.y, scale.z) *
+        DirectX::XMMatrixRotationQuaternion(DirectX::XMLoadFloat4(&rotate)) *
+        DirectX::XMMatrixTranslation(worldPos.x, worldPos.y, worldPos.z);
 }

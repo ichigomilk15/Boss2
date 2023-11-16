@@ -4,7 +4,8 @@
 #include "SceneGame.h"
 #include "CameraController.h"
 #include "Scene.h"
-#include <Player.h>
+#include "Player.h"
+#include "CardList.h"
 
 //void DrawDebugGUI(Player* player, CameraController* cameraController);
 
@@ -40,4 +41,5 @@ private:
 private:
 	Player* player = nullptr;
 	CameraController* cameraController = nullptr;
+	std::unique_ptr<CardList> handCard;
 };
