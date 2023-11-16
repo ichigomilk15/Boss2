@@ -45,12 +45,12 @@ public:
 	void DrawDebugGUI();
 
 private:
-	DirectX::XMFLOAT4X4 view;
-	DirectX::XMFLOAT4X4 projection;
+	DirectX::XMFLOAT4X4 view{};
+	DirectX::XMFLOAT4X4 projection{};
 
-	DirectX::XMFLOAT3 eye;
-	DirectX::XMFLOAT3 focus;
-	DirectX::XMFLOAT3 up;
-	DirectX::XMFLOAT3 right;
-	DirectX::XMFLOAT3 front;
+	DirectX::XMFLOAT3 eye{};
+	DirectX::XMFLOAT3 focus{};
+	DirectX::XMFLOAT3 up{};
+	DirectX::XMFLOAT3 right{};
+	DirectX::XMFLOAT3 front{};
 };

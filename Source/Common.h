@@ -41,8 +41,8 @@ public:
 		screenPosition.y = static_cast<float>(mouseY);
 
 		DirectX::XMVECTOR StartRay2D = DirectX::XMVectorSet(
-			mouseX,
-			mouseY,
+			static_cast<float>(mouseX),
+			static_cast<float>(mouseY),
 			viewport.MinDepth, 0);
 
 		DirectX::XMVECTOR StartRayVec = DirectX::XMVector3Unproject(
@@ -79,8 +79,8 @@ public:
 		screenPosition.y = static_cast<float>(screenY);
 
 		DirectX::XMVECTOR EndRay2D = DirectX::XMVectorSet(
-			screenX,
-			screenY,
+			static_cast<float>(screenX),
+			static_cast<float>(screenY),
 			viewport.MaxDepth, 0);
 
 		DirectX::XMVECTOR EndRayVec = DirectX::XMVector3Unproject(

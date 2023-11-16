@@ -142,7 +142,7 @@ void Player::UpdateState(float elapsedTime)
 	case State::Idle_Init:
 
 		state = State::Idle;
-		/*fallthrough*/
+		[[fallthrough]];
 	case State::Idle:
 
 		break;
@@ -150,7 +150,7 @@ void Player::UpdateState(float elapsedTime)
 	case State::Act_Init:
 
 		state = State::Act;
-		/*fallthrough*/
+		[[fallthrough]];
 	case State::Act:
 
 		break;
@@ -176,7 +176,6 @@ void Player::UpdateMove(float elapsedTime)
 	}
 
 	Mouse& mouse = Input::Instance().GetMouse();
-	RenderContext rc;
 	auto dc = Graphics::Instance().GetDeviceContext();
 	Camera& camera = Camera::Instance();
 

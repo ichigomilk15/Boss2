@@ -132,6 +132,7 @@ void SceneGame::Render()
 		Stage::Instance()->DrawIMGUI();
 		cameraController->DrawIMGUI();
 		//DrawDebugGUI(player, cameraController);
+		
 	}
 }
 
