@@ -112,7 +112,7 @@ Sprite::Sprite(const char* filename)
 	{
 		D3D11_BLEND_DESC desc;
 		::memset(&desc, 0, sizeof(desc));
-		desc.AlphaToCoverageEnable = false;
+		desc.AlphaToCoverageEnable = true;
 		desc.IndependentBlendEnable = false;
 		desc.RenderTarget[0].BlendEnable = true;
 		desc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
