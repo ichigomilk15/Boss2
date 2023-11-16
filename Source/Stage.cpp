@@ -10,40 +10,40 @@
 #include "Graphics\DebugRenderer.h"
 #include "Graphics\Graphics.h"
 
-Stage::Stage():
-    //squares(),
-    model(std::make_unique<Model>("./Data/Model/Stage/BackGround.mdl")),
-    squareBorder(std::make_shared<Model>("./Data/Model/Stage/SquareBorder.mdl")),
-    squareArea(std::make_shared<Model>("./Data/Model/Stage/SquareArea.mdl"))
+Stage::Stage() :
+	//squares(),
+	model(std::make_unique<Model>("./Data/Model/Stage/BackGround.mdl")),
+	squareBorder(std::make_shared<Model>("./Data/Model/Stage/SquareBorder.mdl")),
+	squareArea(std::make_shared<Model>("./Data/Model/Stage/SquareArea.mdl"))
 {
-    this->scale = { 3.0f,0.01f,3.0f };
-    this->position = { 0.0f, -1.0f, 0.0f };
+	this->scale = { 3.0f,0.01f,3.0f };
+	this->position = { 0.0f, -1.0f, 0.0f };
 }
 
 void Stage::ClearStage() noexcept
 {
-    for (auto& y : squares)
-    {
-        for (auto& x : y)
-        {
-            x.reset();
-        }
-    }
+	for (auto& y : squares)
+	{
+		for (auto& x : y)
+		{
+			x.reset();
+		}
+	}
 }
 
 void Stage::CreateStage()
 {
-    using namespace Common;
-    ClearStage();
-    const DirectX::XMFLOAT3 lefttop = {-SquareWidth*(SQUARE_NUM_X/2.0f-0.5f),0.0f,SquareHeight*(SQUARE_NUM_Y/2.0f-0.5f)};
-    for (unsigned int y = 0; y < SQUARE_NUM_Y; y++)
-    {
-        for (unsigned int x = 0; x < SQUARE_NUM_X; x++)
-        {
-            squares[y][x] = std::make_shared<Square>(
-                DirectX::XMFLOAT3{ lefttop.x + (SquareWidth * x),lefttop.y,lefttop.z - (SquareHeight * y) });
-        }
-    }
+	using namespace Common;
+	ClearStage();
+	const DirectX::XMFLOAT3 lefttop = { -SquareWidth * (SQUARE_NUM_X / 2.0f - 0.5f),0.0f,SquareHeight * (SQUARE_NUM_Y / 2.0f - 0.5f) };
+	for (unsigned int y = 0; y < SQUARE_NUM_Y; y++)
+	{
+		for (unsigned int x = 0; x < SQUARE_NUM_X; x++)
+		{
+			squares[y][x] = std::make_shared<Square>(
+				DirectX::XMFLOAT3{ lefttop.x + (SquareWidth * x),lefttop.y,lefttop.z - (SquareHeight * y) });
+		}
+	}
 }
 
 void Stage::Update(float elapsedTime)
@@ -56,24 +56,24 @@ void Stage::Update(float elapsedTime)
 	DirectX::XMStoreFloat4x4(&transform, Transform);
 	model->UpdateTransform(transform);
 
-    for (auto& y : squares)
-    {
-        for (auto& x : y)
-        {
-            x->Update(elapsedTime);
-        }
-    }
+	for (auto& y : squares)
+	{
+		for (auto& x : y)
+		{
+			x->Update(elapsedTime);
+		}
+	}
 }
 
 void Stage::Render(ID3D11DeviceContext* dc, Shader* shader)
 {
-    for (auto& y : squares)
-    {
-        for (auto& x : y)
-        {
-            x->Render(dc, shader);
-        }
-    }
+	for (auto& y : squares)
+	{
+		for (auto& x : y)
+		{
+			x->Render(dc, shader);
+		}
+	}
 
 	shader->Draw(dc, model.get());
 }
@@ -116,12 +116,21 @@ void Stage::SearchSquare(const int x, const int y, const int cost, std::vector<D
 	SearchSquare(x + 1, y, cost - 1, squaresChecked);      // ‰E
 }
 
+void Stage::ResetAllSquare()
+{
+	for (auto& sq : squares)
+	{
+		sq->get()->ResetSquare();
+	}
+}
+
 std::vector<Square*> Stage::GetSquares(const int& initX, const int& initY, int cost)
 {
 	std::vector<DirectX::XMINT2> squaresValid;
 
 	SearchSquare(initX, initY, cost, squaresValid);
-	squaresValid.erase(squaresValid.begin());
+	if (!squaresValid.empty())
+		squaresValid.erase(squaresValid.begin());
 
 	std::vector<Square*> foundSquares;
 	for (auto& square : squaresValid)
@@ -135,15 +144,15 @@ std::vector<Square*> Stage::GetSquares(const int& initX, const int& initY, int c
 
 const bool Stage::Raycast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end, HitResult& hit)
 {
-    for (auto& y : squares)
-    {
-        for (auto& x : y)
-        {
-            if (x->Raycast(start, end, hit))
-                return true;
-        }
-    }
-    return false;
+	for (auto& y : squares)
+	{
+		for (auto& x : y)
+		{
+			if (x->Raycast(start, end, hit))
+				return true;
+		}
+	}
+	return false;
 }
 
 const bool Stage::IsInArea(int x, int y) const noexcept
@@ -153,9 +162,4 @@ const bool Stage::IsInArea(int x, int y) const noexcept
 		y >= 0 &&
 		x < Common::SQUARE_NUM_X&&
 		y < SQUARE_NUM_Y);
-}
-
-std::pair<unsigned int, unsigned int> Stage::Search(int x, int y, int cost, Type type)
-{
-    return std::pair<unsigned int, unsigned int>();
 }

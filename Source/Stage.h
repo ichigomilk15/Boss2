@@ -42,6 +42,7 @@ public://functions
 
 private:
 	void SearchSquare(const int x, const int y, const int cost, std::vector<DirectX::XMINT2>& squaresChecked);
+	void ResetAllSquare();
 
 private://static members
 private://members
@@ -53,4 +54,6 @@ private://members
 	DirectX::XMFLOAT3 position{};
 	DirectX::XMFLOAT3 scale{};
 	DirectX::XMFLOAT4 rotate{};
+
+	//bool isSquareDirty = false; //ˆê‚Â‚Ìƒ}ƒX‚Å‚à•ÏŠ·‚ª‚ ‚Á‚½ê‡true‚É‚·‚é
 };

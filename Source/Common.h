@@ -4,8 +4,11 @@
 
 #include <random>
 
+class Square;
+
 namespace Common
 {
+	//É}ÉXè⁄ç◊
 	static constexpr unsigned int SQUARE_NUM_X = 8u;
 	static constexpr unsigned int SQUARE_NUM_Y = 8u;
 	static const float SquareWidth = 5.0f;
@@ -78,7 +81,7 @@ public:
 		DirectX::XMVECTOR EndRay2D = DirectX::XMVectorSet(
 			screenX,
 			screenY,
-			viewport.MinDepth, 0);
+			viewport.MaxDepth, 0);
 
 		DirectX::XMVECTOR EndRayVec = DirectX::XMVector3Unproject(
 			EndRay2D,

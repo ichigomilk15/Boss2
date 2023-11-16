@@ -15,7 +15,7 @@ void SceneGame::Initialize()
 	Stage::Instance()->CreateStage();
 
 	player = new Player();
-	player->SetPosition({ 3, 3 });
+	player->SetPositionWorld({ 3, 3 });
 
 	//ƒJƒƒ‰‰Šúİ’è
 	Graphics& graphics = Graphics::Instance();

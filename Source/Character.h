@@ -25,7 +25,7 @@ public:
 	const DirectX::XMFLOAT3& GetPosition() const { return positionWorld; }
 
 	//位置設定
-	void SetPosition(const DirectX::XMINT2 & position);
+	void SetPositionWorld(const DirectX::XMINT2 & position);
 
 	//回転取得
 	const DirectX::XMFLOAT3& GetAngle() const { return angle; }
@@ -54,20 +54,6 @@ public:
 
 	//最大健康状態を取得
 	int GetMaxHealth() const { return maxHealth; }
-
-	//int type = 0;
-
-private:
-	//垂直速力更新処理
-	void UpdateVerticalVelocity(float elapsedFrame);
-
-	//垂直移動更新処理
-	void UpdateVerticalMove(float elapsedTime);
-
-	//水平速力更新処理
-	void UpdateHorizontalVelocity(float elapsedFrame);
-	//水平移動更新処理
-	void UpdateHorizontalMove(float elapsedTime);
 
 protected:
 	//移動処理

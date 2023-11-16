@@ -118,10 +118,10 @@ DirectX::XMINT2 Player::GetMoveVec() const
 		move.x = 1;
 		break;
 	case GamePad::BTN_UP:
-		move.y = 1;
+		move.y = -1;
 		break;
 	case GamePad::BTN_DOWN:
-		move.y = -1;
+		move.y = 1;
 		break;
 	}
 	return move;
@@ -158,7 +158,7 @@ void Player::UpdateState(float elapsedTime)
 	case State::Move_Init:
 
 		state = State::Move;
-		/*fallthrough*/
+		[[fallthrough]];
 	case State::Move:
 		UpdateMove(elapsedTime);
 		break;
@@ -167,13 +167,18 @@ void Player::UpdateState(float elapsedTime)
 
 void Player::UpdateMove(float elapsedTime)
 {
+	for (int y = 0; y < Common::SQUARE_NUM_Y; ++y)
+	{
+		for (int x = 0; x < Common::SQUARE_NUM_X; x++)
+		{
+			Stage::Instance()->GetSquare(x, y).get()->ResetSquare();
+		}
+	}
 
 	Mouse& mouse = Input::Instance().GetMouse();
 	RenderContext rc;
 	auto dc = Graphics::Instance().GetDeviceContext();
 	Camera& camera = Camera::Instance();
-	DirectX::XMFLOAT3 startMousePos = CommonClass::GetWorldStartPosition(dc, mouse.GetPositionX(), mouse.GetPositionY(), camera.GetView(), camera.GetProjection());
-	DirectX::XMFLOAT3 endMousePos = CommonClass::GetWorldEndPosition(dc, mouse.GetPositionX(), mouse.GetPositionY(), camera.GetView(), camera.GetProjection());
 
 	const int moveRange = 2;
 
@@ -181,12 +186,24 @@ void Player::UpdateMove(float elapsedTime)
 
 	for (auto& square : squares)
 	{
-		square->ChangeSomething();
+		square->SetType(Square::Type::MoveArea);
 	}
+
+	DirectX::XMFLOAT3 startMousePos = CommonClass::GetWorldStartPosition(dc, mouse.GetPositionX(), mouse.GetPositionY(), camera.GetView(), camera.GetProjection());
+	DirectX::XMFLOAT3 endMousePos = CommonClass::GetWorldEndPosition(dc, mouse.GetPositionX(), mouse.GetPositionY(), camera.GetView(), camera.GetProjection());
 
 	HitResult hit;
-	if (mouse.GetButtonDown() & Mouse::BTN_LEFT)
+	Square* foundSq = nullptr;
+	for (auto& sq : squares)
 	{
-
+		if (sq->Raycast(startMousePos, endMousePos, hit))
+		{
+			sq->SetType(Square::Type::MoveAreaChosen);
+			foundSq = sq;
+		}
 	}
+	if (foundSq && mouse.GetButtonDown() & Mouse::BTN_LEFT)
+	{
+		//this->position = foundSq.getpo
+	}	
 }
