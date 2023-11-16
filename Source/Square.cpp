@@ -53,7 +53,7 @@ void Square::Render(ID3D11DeviceContext* dc, Shader* shader)
         if (type != Type::NONE&&!SquareArea.expired())
         {
             model = this->SquareArea.lock();
-            model->ChangeMaterialColor(0u, this->areaColor;);
+            model->ChangeMaterialColor(0u, this->areaColor);
             model->UpdateTransform(transform);
             shader->Draw(dc, model.get());
         }
