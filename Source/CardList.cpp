@@ -13,6 +13,19 @@ void CardList::Update(float elapsedTime)
 		card->SetPosition(pos);
 		pos.x += card->GetSize().x + 10.0f;
 		card->Update(elapsedTime);
+		if (card->GetPosition().x < 0.0f)//todo : debug—p
+			eraser.emplace_back(card);
+	}
+
+	if (cards.size() < CARD_MAX + haveSpecial)
+	{
+		std::pair<Card::Type, unsigned int> param[] =
+		{
+			{Card::Type::ATTACK,100},
+			{Card::Type::MOVE,200},
+			{Card::Type::DEFENCE,100},
+		};
+		AddCard(DrowCard(param, std::size(param)));
 	}
 
 	Erase();
@@ -56,6 +69,15 @@ std::shared_ptr<Card> CardList::DrowCard(std::pair<Card::Type, unsigned int>* pa
 void CardList::AddCard(std::shared_ptr<Card>& card)
 {
 	cards.emplace_back(card);
+}
+
+const bool CardList::AddCardFront(std::shared_ptr<Card>& card)
+{
+	if (haveSpecial >= SPECIAL_CARD_MAX)
+		return false;
+	++haveSpecial;
+	cards.emplace_front(card);
+	return true;
 }
 
 void CardList::EraseItem(std::shared_ptr<Card>& item)

@@ -31,10 +31,7 @@ void Square::Render(ID3D11DeviceContext* dc, Shader* shader)
     {
         //˜g‚Ì•\Ž¦
         std::shared_ptr<Model> model = this->SquareBorder.lock();
-        DirectX::XMMATRIX Transform =
-            DirectX::XMMatrixScaling(scale.x, scale.y, scale.z) *
-            DirectX::XMMatrixRotationQuaternion(DirectX::XMLoadFloat4(&rotate)) *
-            DirectX::XMMatrixTranslation(worldPos.x, worldPos.y, worldPos.z);
+        DirectX::XMMATRIX Transform = GetTransform();
         DirectX::XMFLOAT4X4 transform;
         DirectX::XMStoreFloat4x4(&transform, Transform);
         model->UpdateTransform(transform);
@@ -48,8 +45,7 @@ void Square::Render(ID3D11DeviceContext* dc, Shader* shader)
                 {1.0f,.0f,.0f,0.5f},
             };
             model = this->SquareArea.lock();
-            const_cast<ModelResource::Material*>(&model->GetResource()->GetMaterials().at(0))->color =
-                colors[static_cast<int>(type)];
+            model->ChangeMaterialColor(0u, colors[static_cast<size_t>(type)]);
             model->UpdateTransform(transform);
             shader->Draw(dc, model.get());
         }
@@ -61,10 +57,7 @@ const bool Square::Raycast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOA
     if (!SquareArea.expired())
     {
         std::shared_ptr<Model> model = this->SquareArea.lock();
-        DirectX::XMMATRIX Transform =
-            DirectX::XMMatrixScaling(scale.x, scale.y, scale.z) *
-            DirectX::XMMatrixRotationQuaternion(DirectX::XMLoadFloat4(&rotate)) *
-            DirectX::XMMatrixTranslation(worldPos.x, worldPos.y, worldPos.z);
+        DirectX::XMMATRIX Transform = GetTransform();
         DirectX::XMFLOAT4X4 transform;
         DirectX::XMStoreFloat4x4(&transform, Transform);
         model->UpdateTransform(transform);
@@ -72,4 +65,11 @@ const bool Square::Raycast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOA
     }
 
     return false;
+}
+
+const DirectX::XMMATRIX Square::GetTransform() const
+{
+    return DirectX::XMMatrixScaling(scale.x, scale.y, scale.z) *
+        DirectX::XMMatrixRotationQuaternion(DirectX::XMLoadFloat4(&rotate)) *
+        DirectX::XMMatrixTranslation(worldPos.x, worldPos.y, worldPos.z);
 }

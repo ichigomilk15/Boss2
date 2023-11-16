@@ -36,7 +36,8 @@ public://function
 	//std::shared_ptr<Card> GetUniqueCard()noexcept { std::shared_ptr<Card> temp = card; card.reset(); return temp; }
 #endif // 1
 	//Getter&Setter*************************************************************************
-private:
+private://function
+	const DirectX::XMMATRIX GetTransform()const;
 private://members
 	Type type = Type::NONE;
 	std::shared_ptr<Card> card;

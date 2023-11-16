@@ -119,6 +119,7 @@ public:
 	const std::vector<Node>& GetNodes() const { return nodes; }
 	const std::vector<Animation>& GetAnimations() const { return animations; }
 	const std::vector<Material>& GetMaterials() const { return materials; }
+	void ChangeMaterialColor(size_t materialIndex, DirectX::XMFLOAT4 color) { materials.at(materialIndex).color = color; }
 
 	// ì«Ç›çûÇ›
 	void Load(ID3D11Device* device, const char* filename);

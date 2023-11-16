@@ -35,6 +35,12 @@ public:
 	// リソース取得
 	const ModelResource* GetResource() const { return resource.get(); }
 
+	//マテリアルの色変換
+	void ChangeMaterialColor(size_t materialIndex, DirectX::XMFLOAT4 color) 
+	{
+		resource.get()->ChangeMaterialColor(materialIndex, color);
+	}
+
 	//アニメーション更新処理
 
 	void UpdateAnimation(float elapedTime);
