@@ -1,3 +1,5 @@
+#define NOMINMAX
+
 #include <imgui.h>
 #include "CameraController.h"
 #include "Camera.h"
@@ -5,6 +7,8 @@
 #ifdef _DEBUG
 #include "Graphics/ImGuiRenderer.h"
 #endif // _DEBUG
+
+#undef NOMINMAX
 
 
 void CameraController::Update(float elapsedTime)
@@ -26,8 +30,8 @@ void CameraController::Update(float elapsedTime)
 	}
 
 	//Xé≤ÇÃÉJÉÅÉââÒì]Çêßå¿
-	angle.x = min(angle.x, maxAngleX);
-	angle.x = max(angle.x, minAngleX);
+	angle.x = std::min(angle.x, maxAngleX);
+	angle.x = std::max(angle.x, minAngleX);
 
 	if (angle.y < -DirectX::XM_PI) angle.y += DirectX::XM_2PI;
 	if (angle.y > DirectX::XM_PI) angle.y -= DirectX::XM_2PI;

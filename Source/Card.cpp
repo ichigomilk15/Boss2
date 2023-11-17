@@ -16,7 +16,7 @@ const char*spriteName[static_cast<int>(Card::Type::MAX)] =
     "",
 };
 
-Card::Card(DirectX::XMFLOAT2 pos,DirectX::XMFLOAT2 size,Type type):
+Card::Card(DirectX::XMFLOAT2 pos,DirectX::XMFLOAT2 size,const Type type):
     pos(pos),
     targetPos(pos),
     size(size),

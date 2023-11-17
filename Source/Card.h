@@ -22,7 +22,7 @@ public://class
         MAX,
     };
 public://functions
-    Card(DirectX::XMFLOAT2 pos,DirectX::XMFLOAT2 size,Type type);
+    Card(DirectX::XMFLOAT2 pos,DirectX::XMFLOAT2 size,const Type type);
     ~Card();
 
     virtual void Update(float elapsedTime);

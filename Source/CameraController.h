@@ -16,9 +16,9 @@ public:
 	const DirectX::XMFLOAT3 getAngle() const { return angle; }
 private:
 	DirectX::XMFLOAT3 target = { 0, 0, 0 };
-	DirectX::XMFLOAT3 angle = { DirectX::XMConvertToRadians(45), 0, 0 };
+	DirectX::XMFLOAT3 angle = { DirectX::XMConvertToRadians(50), 0, 0 };
 	float rollSpeed = DirectX::XMConvertToRadians(90);
-	float range = 100.0f;
+	float range = 60.0f;
 
 	float maxAngleX = DirectX::XMConvertToRadians(80);
 	float minAngleX = DirectX::XMConvertToRadians(-80);

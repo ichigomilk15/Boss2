@@ -32,7 +32,7 @@ void SceneGame::Initialize()
 		0.1f,
 		1000.0f
 	);
-	cameraController->setTarget(player->GetPosition());
+	cameraController->setTarget({.0f,.0f,-7.f});
 }
 
 // 終了化l
@@ -56,9 +56,6 @@ void SceneGame::Finalize()
 void SceneGame::Update(float elapsedTime)
 {
 	//カメラコントローラー更新処理
-	DirectX::XMFLOAT3 target = {}/*player->GetPosition()*/;
-	target.y += 0.5f;
-	cameraController->setTarget(target);
 	cameraController->Update(elapsedTime);
 
 	Stage::Instance()->Update(elapsedTime);
