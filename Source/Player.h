@@ -36,7 +36,5 @@ private:
 
 private:
 	Model* model = nullptr;
-
-
 	Effect* hitEffect = nullptr;
 };

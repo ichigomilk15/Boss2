@@ -34,8 +34,24 @@ void Character::UpdateVelocity(float elapsedTime)
 	// Œo‰ßƒtƒŒ[ƒ€
 	float elapsedFrame = 60.0f * elapsedTime;
 
-	this->positionWorld = Stage::Instance()->GetSquare(position.x, position.y)->GetWorldPos();
+	if (IsMoving())
+	{
+		const DirectX::XMFLOAT3 targetPosWorld = Stage::Instance()->GetWorldPos(targetMovePos);
+		const DirectX::XMFLOAT3 formerPosWorld = Stage::Instance()->GetWorldPos(position);
+		float rangeX = targetPosWorld.x - formerPosWorld.x;
+		float rangeZ = targetPosWorld.z - formerPosWorld.z;
+		this->positionWorld.x += rangeX * 1 / 60.0f * elapsedFrame;
+		this->positionWorld.z += rangeZ * 1 / 60.0f * elapsedFrame;
 
+		if (moveTimer >= Common::moveSpeed)
+		{
+			this->state = State::Move_Init;
+			this->position = this->targetMovePos;
+			this->positionWorld = Stage::Instance()->GetWorldPos(this->position);
+			moveTimer = 0.0f;
+		}
+		moveTimer += elapsedTime;
+	}
 }
 
 bool Character::ApplyDamage(int damage)
@@ -63,6 +79,12 @@ bool Character::ApplyDamage(int damage)
 	return true;
 }
 
+bool Character::IsMoving() const
+{
+	return ((position.x != targetMovePos.x || position.y != targetMovePos.y) &&
+		Stage::Instance()->IsInArea(targetMovePos.x, targetMovePos.y));
+}
+
 void Character::AddImpulse(const DirectX::XMFLOAT3& impulse)
 {
 	//‘¬—Í‚É—Í‚ð—^‚¦‚é
@@ -81,5 +103,4 @@ void Character::Move(int vx, int vy)
 		position.x = x;
 		position.y = y;
 	}
-	//TODO: area check
 }

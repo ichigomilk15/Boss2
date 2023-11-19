@@ -5,10 +5,12 @@ enum class State
 {
 	Idle_Init, //順番待ち
 	Idle,
-	Act_Init,  //ターンにアクションを選ぶ
+	Act_Init,  //ターンにアクションの選択
 	Act,
-	Move_Init, //移動
+	Move_Init, //移動更新処理
 	Move,
+	Moving_Init, //移動している状態
+	Moving,
 	Max,
 };
 
@@ -46,8 +48,13 @@ public:
 	//ダメージを与える
 	bool ApplyDamage(int damage);
 
+	bool IsMoving() const;
+
 	//衝突を与える
 	void AddImpulse(const DirectX::XMFLOAT3& impulse);
+
+	// ステート設定
+	void SetState(State state) { this->state = state; }
 
 	//健康状態取得
 	int GetHealth() const { return health; }
@@ -87,6 +94,9 @@ protected:
 	int maxHealth = 1000;
 
 	State state;
+
+	DirectX::XMINT2 targetMovePos = { -1, -1 }; //移動するターゲットの位置
+	float moveTimer = 0.0f;
 
 public:
 

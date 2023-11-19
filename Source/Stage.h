@@ -41,9 +41,10 @@ public://functions
 	const bool Raycast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end, HitResult& hit);
 	const bool IsInArea(int x, int y)const noexcept;
 
+	void ResetAllSquare();
+
 private:
 	void SearchSquare(const int x, const int y, const int cost, std::vector<DirectX::XMINT2>& squaresChecked);
-	void ResetAllSquare();
 
 private://static members
 private://members

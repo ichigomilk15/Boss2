@@ -137,12 +137,14 @@ void Player::InputMove(float elapsedTime)
 
 void Player::UpdateState(float elapsedTime)
 {
+	float elapsedFrame = 60.0f * elapsedTime;
+
 	switch (state)
 	{
 	case State::Idle_Init:
 
 		state = State::Idle;
-		/*fallthrough*/
+		[[fallthrough]];
 	case State::Idle:
 
 		break;
@@ -150,17 +152,34 @@ void Player::UpdateState(float elapsedTime)
 	case State::Act_Init:
 
 		state = State::Act;
-		/*fallthrough*/
+		[[fallthrough]];
 	case State::Act:
 
 		break;
 
 	case State::Move_Init:
-
+		this->targetMovePos = { -1, -1 };
 		state = State::Move;
 		[[fallthrough]];
 	case State::Move:
 		UpdateMove(elapsedTime);
+
+		if (Stage::Instance()->IsInArea(this->targetMovePos.x, this->targetMovePos.y))
+		{
+			this->state = State::Moving_Init;
+			break;
+		}
+		break;
+	case State::Moving_Init:
+
+		state = State::Moving;
+		[[fallthrough]];
+	case State::Moving:
+		if (!IsMoving())
+		{
+			this->state = State::Move_Init;
+			break;
+		}
 		break;
 	}
 }
@@ -203,6 +222,7 @@ void Player::UpdateMove(float elapsedTime)
 	}
 	if (foundSq && mouse.GetButtonDown() & Mouse::BTN_LEFT)
 	{
-		this->position = foundSq->GetPos();
-	}	
+		Stage::Instance()->ResetAllSquare();
+		this->targetMovePos = foundSq->GetPos();
+	}
 }
