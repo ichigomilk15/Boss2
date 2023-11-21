@@ -30,9 +30,11 @@ public:
 
 	// テクスチャ幅取得
 	int GetTextureWidth() const { return textureWidth; }
+	float GetTextureWidthf()const noexcept { return static_cast<float>(textureWidth); }
 
 	// テクスチャ高さ取得
 	int GetTextureHeight() const { return textureHeight; }
+	float GetTextureHeightf()const { return static_cast<float>(textureHeight); }
 
 private:
 	Microsoft::WRL::ComPtr<ID3D11VertexShader>			vertexShader;

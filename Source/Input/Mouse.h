@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Windows.h>
+#include <DirectXMath.h>
 
 using MouseButton = unsigned int;
 
@@ -39,6 +40,9 @@ public:
 
 	// マウスカーソルY座標取得
 	int GetPositionY() const { return positionY[0]; }
+
+	const DirectX::XMFLOAT2 GetPosition()const noexcept 
+		{ return DirectX::XMFLOAT2{ static_cast<float>(positionX[0]),static_cast<float>(positionY[0]) }; }
 
 	// 前回のマウスカーソルX座標取得
 	int GetOldPositionX() const { return positionX[1]; }

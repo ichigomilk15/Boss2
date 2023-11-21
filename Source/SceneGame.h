@@ -38,8 +38,9 @@ private:
 	void RenderEnemyGauge(ID3D11DeviceContext* dc,
 		const DirectX::XMFLOAT4X4& view, const DirectX::XMFLOAT4X4& projection);
 
-private:
+private://members
 	Player* player = nullptr;
 	CameraController* cameraController = nullptr;
-	std::unique_ptr<CardList> handCard;
+	std::unique_ptr<Sprite> playerHP;
+	std::unique_ptr<Card> testCard;
 };

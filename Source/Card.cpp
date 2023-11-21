@@ -4,20 +4,27 @@
 #include "Card.h"
 #include "Graphics/Model.h"
 #include "Input/Input.h"
+#include "CardList.h"
+
+#ifdef _DEBUG
+#include "Graphics/ImGuiRenderer.h"
+#endif // _DEBUG
+
 
 //todo : カード画像追加したときに追加してください
 const char*spriteName[static_cast<int>(Card::Type::MAX)] =
 {
-    "",
-    "./Data/Sprite/Attack.png",
-    "./Data/Sprite/Defense.png",
-    "./Data/Sprite/Move.png",
-    "",
-    "",
+    "./Data/Sprite/Attack.png",//none
+    "./Data/Sprite/Attack.png",//attack
+    "./Data/Sprite/Defense.png",//defense
+    "./Data/Sprite/Move.png",//move
+    "./Data/Sprite/Attack.png",//special
+    "./Data/Sprite/Attack.png",//bad
 };
 
-Card::Card(DirectX::XMFLOAT2 pos,DirectX::XMFLOAT2 size,const Type type):
+Card::Card(DirectX::XMFLOAT2 pos, DirectX::XMFLOAT2 size, const Type type) :
     pos(pos),
+    center(DirectX::XMFLOAT2{pos.x+size.x*0.5f,pos.y+size.y*0.5f}),
     targetPos(pos),
     size(size),
     type(type),
@@ -32,25 +39,6 @@ Card::~Card()
 
 void Card::Update(float elapsedTime)
 {
-    Mouse& mouse = Input::Instance().GetMouse();
-    //マウスによる操作
-    if (this->HitCheck(DirectX::XMFLOAT2{ static_cast<float>(mouse.GetPositionX()),static_cast<float>(mouse.GetPositionY()) }))
-    {
-        if (mouse.GetButtonDown() & Mouse::BTN_LEFT)
-        {
-            moveLock = true;
-        }
-    }
-    if (moveLock&& mouse.GetButton() & Mouse::BTN_LEFT)
-    {
-        pos.x += static_cast<float>(mouse.GetPositionX() - mouse.GetOldPositionX());
-        pos.y += static_cast<float>(mouse.GetPositionY() - mouse.GetOldPositionY());
-    }
-    else if (mouse.GetButtonUp() & Mouse::BTN_LEFT)
-    {
-        moveLock = false;
-    }
-
     //移動
     if (!moveLock&&( pos.x != targetPos.x || pos.y != targetPos.y))
     {
@@ -78,8 +66,15 @@ void Card::Render(ID3D11DeviceContext* dc)
         size.x, size.y,
         .0f, .0f,
         static_cast<float>(sprite->GetTextureWidth()),static_cast<float>(sprite->GetTextureHeight()),
-        DirectX::XMConvertToRadians(.0f),
+        .0f,
         1.0f, 1.0f, 1.0f, 1.0f);
+}
+
+void Card::DrawIMGUI()
+{
+    if (ImGui::InputFloat2("position", &pos.x)) {};
+    if (ImGui::InputFloat2("target", &targetPos.x)) {};
+    if (ImGui::RadioButton("isMoveLock", moveLock)) {};
 }
 
 const bool Card::HitMouse()
@@ -90,7 +85,7 @@ const bool Card::HitMouse()
 
 const bool Card::HitCheck(DirectX::XMFLOAT2 screenPos)
 {
-    if (pos.x != targetPos.x || pos.y != targetPos.y)return false;
+    if (pos.x != targetPos.x || pos.y != targetPos.y)return false;//移動中は判定を取らない
     return (screenPos.x>pos.x&&screenPos.y>pos.y&&
         screenPos.x<pos.x+size.x&&screenPos.y<pos.y+size.y);
 }

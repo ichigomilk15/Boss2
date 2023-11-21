@@ -15,8 +15,9 @@ void SceneGame::Initialize()
 	Stage::Instance()->CreateStage();
 
 	player = new Player();
+	playerHP = std::make_unique<Sprite>();
 	player->SetPositionWorld({ 3, 3 });
-	handCard = std::make_unique<CardList>();
+	CardManager::Instance().ALLClear();
 
 	//カメラ初期設定
 	Graphics& graphics = Graphics::Instance();
@@ -33,6 +34,8 @@ void SceneGame::Initialize()
 		1000.0f
 	);
 	cameraController->setTarget({.0f,.0f,-7.f});
+
+	testCard = std::make_unique<Card>(CardManager::CARD_SPAWM_POS, CardManager::CARD_SIZE, Card::Type::ATTACK);
 }
 
 // 終了化l
@@ -59,7 +62,7 @@ void SceneGame::Update(float elapsedTime)
 	cameraController->Update(elapsedTime);
 
 	Stage::Instance()->Update(elapsedTime);
-	handCard->Update(elapsedTime);
+	CardManager::Instance().Update(elapsedTime);
 	player->Update(elapsedTime);
 
 	//エフェクト更新処理
@@ -119,7 +122,21 @@ void SceneGame::Render()
 
 	//2D表示
 	{
-		handCard->Render(dc);
+		CardManager::Instance().Render(dc);
+
+		const DirectX::XMFLOAT2 HpBarSize = { 250.0f,50.0f };
+		const DirectX::XMFLOAT2 HpBarBorderSize = { 2.0f,2.0f };
+		playerHP->Render(dc,
+			50.0f - HpBarBorderSize.x, 50.0f - HpBarBorderSize.y,
+			HpBarSize.x + HpBarBorderSize.x * 2.0f, HpBarSize.y + HpBarBorderSize.y * 2.0f,
+			.0f, .0f, static_cast<float>(playerHP->GetTextureWidth()), static_cast<float>(playerHP->GetTextureHeight()),
+			DirectX::XMConvertToRadians(.0f), .0f, .0f, .0f, 1.0f);
+		playerHP->Render(dc,
+			50.0f, 50.0f,
+			HpBarSize.x, HpBarSize.y,
+			.0f, .0f, static_cast<float>(playerHP->GetTextureWidth()), static_cast<float>(playerHP->GetTextureHeight()),
+			DirectX::XMConvertToRadians(.0f),
+			1.0f, .0f, .0f, 1.0f);
 	}
 	// 2DデバッグGUI描画
 	{
@@ -128,8 +145,9 @@ void SceneGame::Render()
 		DrawDebugGUI();
 		Stage::Instance()->DrawIMGUI();
 		cameraController->DrawIMGUI();
+
 		//DrawDebugGUI(player, cameraController);
-		
+		CardManager::Instance().DrawDebugGUI();
 	}
 }
 

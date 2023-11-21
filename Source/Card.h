@@ -27,6 +27,7 @@ public://functions
 
     virtual void Update(float elapsedTime);
     virtual void Render(ID3D11DeviceContext* dc);
+    virtual void DrawIMGUI();
 
     const bool HitMouse();
     const bool HitCheck(DirectX::XMFLOAT2 screenPos);
@@ -43,6 +44,7 @@ public://functions
     void SetType(const Type type)noexcept { this->type = type; }
     const DirectX::XMFLOAT2& GetPosition()const noexcept { return pos; }
     void SetPosition(const DirectX::XMFLOAT2& pos)noexcept { targetPos = pos; }
+    void SetRawPosition(const DirectX::XMFLOAT2& pos)noexcept { this->pos = pos; }//‘¦ŽžˆÚ“®‚·‚é‚Æ‚«ˆÈŠOŽg—p‚µ‚È‚¢‚Å‰º‚³‚¢
     const DirectX::XMFLOAT2& GetSize()const noexcept { return size; }
     const bool GetMoveLock()const noexcept { return moveLock; }
     void SetMoveLock(const bool lock)noexcept { moveLock = lock; }
@@ -54,6 +56,7 @@ protected://members
     Type type = Type::NONE;
     DirectX::XMFLOAT2 targetPos;
     DirectX::XMFLOAT2 pos;
+    DirectX::XMFLOAT2 center;
     DirectX::XMFLOAT2 size;
     bool moveLock = false;
     std::unique_ptr<Sprite> sprite;

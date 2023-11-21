@@ -53,3 +53,9 @@ public:
 		HitResult& result
 	);
 };
+
+class Collision2D
+{
+public:
+	static const bool BoxVsPos(const DirectX::XMFLOAT2& topleft,const DirectX::XMFLOAT2& size,const DirectX::XMFLOAT2& pos);
+};
