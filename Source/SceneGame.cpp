@@ -21,16 +21,6 @@ void SceneGame::Initialize()
 	player = new Player();
 	player->SetPositionWorld({ 3, 3 });
 	handCard = std::make_unique<CardList>();
-	for (int i = 0; i < 5; i++)
-	{
-		std::pair<Card::Type, unsigned int> param[] =
-		{
-			{Card::Type::ATTACK,100},
-			{Card::Type::MOVE,200},
-			{Card::Type::DEFENCE,100},
-		};
-		handCard->AddCard(handCard->DrowCard(param, std::size(param)));
-	}
 
 	//カメラ初期設定
 	Graphics& graphics = Graphics::Instance();
@@ -46,10 +36,7 @@ void SceneGame::Initialize()
 		0.1f,
 		1000.0f
 	);
-	cameraController->setTarget(player->GetPosition());
-	
-	//方向マップ設定
-	SetGlobalDirection();
+	cameraController->setTarget({.0f,.0f,-7.f});
 }
 
 // 終了化l
@@ -73,9 +60,6 @@ void SceneGame::Finalize()
 void SceneGame::Update(float elapsedTime)
 {
 	//カメラコントローラー更新処理
-	DirectX::XMFLOAT3 target = {}/*player->GetPosition()*/;
-	target.y += 0.5f;
-	cameraController->setTarget(target);
 	cameraController->Update(elapsedTime);
 
 	Stage::Instance()->Update(elapsedTime);
@@ -151,6 +135,7 @@ void SceneGame::Render()
 		Stage::Instance()->DrawIMGUI();
 		cameraController->DrawIMGUI();
 		//DrawDebugGUI(player, cameraController);
+		
 	}
 }
 

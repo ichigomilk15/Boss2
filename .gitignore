@@ -1,7 +1,6 @@
 x64/
 [Bb]in/
 obj/
-*.cso
 /.vs/Game/v16/Browse.VC.opendb
 /.vs/Game/v16/Browse.VC.db-wal
 /.vs/Game/v16/Browse.VC.db-shm
@@ -10,3 +9,5 @@ obj/
 /.vs/Game/v16/ipch/AutoPCH/fd7a741d8d8bca03/COMMON.ipch
 *.ipch
 /Game.vcxproj.user
+*.cso
+*.cod

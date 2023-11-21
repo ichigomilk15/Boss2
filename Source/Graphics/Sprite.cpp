@@ -112,7 +112,7 @@ Sprite::Sprite(const char* filename)
 	{
 		D3D11_BLEND_DESC desc;
 		::memset(&desc, 0, sizeof(desc));
-		desc.AlphaToCoverageEnable = false;
+		desc.AlphaToCoverageEnable = true;
 		desc.IndependentBlendEnable = false;
 		desc.RenderTarget[0].BlendEnable = true;
 		desc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
@@ -343,6 +343,8 @@ void Sprite::Render(ID3D11DeviceContext *immediate_context,
 		immediate_context->IASetInputLayout(inputLayout.Get());
 
 		immediate_context->RSSetState(rasterizerState.Get());
+		const float blend_factor[4] = { 1.0f,1.0f ,1.0f ,1.0f };
+		immediate_context->OMSetBlendState(blendState.Get(), blend_factor, 0xFFFFFFFF);
 
 		immediate_context->VSSetShader(vertexShader.Get(), nullptr, 0);
 		immediate_context->PSSetShader(pixelShader.Get(), nullptr, 0);

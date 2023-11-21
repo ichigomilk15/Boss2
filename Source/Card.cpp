@@ -16,7 +16,7 @@ const char*spriteName[static_cast<int>(Card::Type::MAX)] =
     "",
 };
 
-Card::Card(DirectX::XMFLOAT2 pos,DirectX::XMFLOAT2 size,Type type):
+Card::Card(DirectX::XMFLOAT2 pos,DirectX::XMFLOAT2 size,const Type type):
     pos(pos),
     targetPos(pos),
     size(size),
@@ -90,6 +90,7 @@ const bool Card::HitMouse()
 
 const bool Card::HitCheck(DirectX::XMFLOAT2 screenPos)
 {
+    if (pos.x != targetPos.x || pos.y != targetPos.y)return false;
     return (screenPos.x>pos.x&&screenPos.y>pos.y&&
         screenPos.x<pos.x+size.x&&screenPos.y<pos.y+size.y);
 }
