@@ -3,6 +3,7 @@
 #include <d3d11.h>
 
 #include <random>
+#include <map>
 
 class Square;
 
@@ -14,6 +15,11 @@ namespace Common
 	static const float SquareWidth = 5.0f;
 	static const float SquareHeight = 5.0f;
 
+	//ステージ詳細
+	static const DirectX::XMFLOAT3 lefttop = { -SquareWidth * (SQUARE_NUM_X / 2.0f - 0.5f),0.0f,SquareHeight * (SQUARE_NUM_Y / 2.0f - 0.5f) };
+
+	//プレイヤーの移動速度
+	const float moveSpeed = 0.5f; //秒数
 }
 
 class CommonClass
@@ -99,4 +105,20 @@ public:
 		DirectX::XMStoreFloat3(&endPosition, EndRayVec);
 		return endPosition;
 	}
+public: 
+	enum DirectionFace
+	{
+		Front,
+		FrontRight,
+		Right,
+		BackRight,
+		Back,
+		BackLeft,
+		Left,
+		FrontLeft,
+		Max
+	};
+	static std::map<int, DirectX::XMFLOAT3> directionMaps;
+
+	static const int GetDirectionTarget(const DirectX::XMINT2 initPos, const DirectX::XMINT2& targetPos);
 };

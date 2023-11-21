@@ -55,6 +55,9 @@
     <Filter Include="Source\Card">
       <UniqueIdentifier>{a4bcf201-656d-49a8-b9ae-2bfd61593b98}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Attacks">
+      <UniqueIdentifier>{87d632e1-27ff-48be-bbb7-6acbac4cc76f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="External\imgui\imconfig.h">
@@ -204,6 +207,15 @@
     <ClInclude Include="Source\Player.h">
       <Filter>Source\Characters</Filter>
     </ClInclude>
+    <ClInclude Include="Source\AttackParent.h">
+      <Filter>Source\Attacks</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\NormalAttack.h">
+      <Filter>Source\Attacks</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AttackManager.h">
+      <Filter>Source\Attacks</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="External\imgui\imgui.cpp">
@@ -334,6 +346,15 @@
     </ClCompile>
     <ClCompile Include="Source\Common.cpp">
       <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AttackParent.cpp">
+      <Filter>Source\Attacks</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\NormalAttack.cpp">
+      <Filter>Source\Attacks</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AttackManager.cpp">
+      <Filter>Source\Attacks</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

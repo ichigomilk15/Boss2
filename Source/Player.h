@@ -34,9 +34,9 @@ private:
 	//移動アクション更新処理
 	void UpdateMove(float elapsedTime);
 
+	//攻撃アクション更新処理
+	void UpdateAttack(float elapsedTime);
 private:
 	Model* model = nullptr;
-
-
 	Effect* hitEffect = nullptr;
 };

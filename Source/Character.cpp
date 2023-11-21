@@ -1,10 +1,11 @@
-#include "Common.h"
 #include "Character.h"
 #include "CustomMathf.h"
 #include "Stage.h"
 
 void Character::UpdateTransform()
 {
+	SetAngle(CommonClass::directionMaps.find(direction)->second);
+	
 	//スケール行列
 	DirectX::XMMATRIX S = DirectX::XMMatrixScaling(scale.x, scale.y, scale.z);
 	//回転行列を作成
@@ -29,13 +30,39 @@ void Character::SetPositionWorld(const DirectX::XMINT2& position)
 	this->positionWorld = Stage::Instance()->GetSquare(position.x, position.y)->GetWorldPos();
 }
 
+void Character::SetDirection(int dir)
+{
+	dir %= CommonClass::directionMaps.size();
+	direction = dir;
+}
+
+void Character::SetDirection(const DirectX::XMINT2 targetPos)
+{
+	SetDirection(CommonClass::GetDirectionTarget(position, targetPos));
+}
+
 void Character::UpdateVelocity(float elapsedTime)
 {
 	// 経過フレーム
 	float elapsedFrame = 60.0f * elapsedTime;
 
-	this->positionWorld = Stage::Instance()->GetSquare(position.x, position.y)->GetWorldPos();
+	if (IsMoving())
+	{
+		const DirectX::XMFLOAT3 targetPosWorld = Stage::Instance()->GetWorldPos(targetMovePos);
+		const DirectX::XMFLOAT3 formerPosWorld = Stage::Instance()->GetWorldPos(position);
+		float rangeX = targetPosWorld.x - formerPosWorld.x;
+		float rangeZ = targetPosWorld.z - formerPosWorld.z;
+		this->positionWorld.x += rangeX * 1 / (60.0f * Common::moveSpeed) * elapsedFrame;
+		this->positionWorld.z += rangeZ * 1 / (60.0f * Common::moveSpeed) * elapsedFrame;
 
+		if (moveTimer >= Common::moveSpeed)
+		{
+			this->position = this->targetMovePos;
+			this->positionWorld = Stage::Instance()->GetWorldPos(this->position);
+			moveTimer = 0.0f;
+		}
+		moveTimer += elapsedTime;
+	}
 }
 
 bool Character::ApplyDamage(int damage)
@@ -63,6 +90,17 @@ bool Character::ApplyDamage(int damage)
 	return true;
 }
 
+bool Character::IsMoving() const
+{
+	return ((position.x != targetMovePos.x || position.y != targetMovePos.y) &&
+		Stage::Instance()->IsInArea(targetMovePos.x, targetMovePos.y));
+}
+
+bool Character::IsAttacking() const
+{
+	return false;
+}
+
 void Character::AddImpulse(const DirectX::XMFLOAT3& impulse)
 {
 	//速力に力を与える
@@ -81,5 +119,4 @@ void Character::Move(int vx, int vy)
 		position.x = x;
 		position.y = y;
 	}
-	//TODO: area check
 }

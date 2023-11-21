@@ -37,6 +37,7 @@ private:
 	//エネミーHPゲージ描画
 	void RenderEnemyGauge(ID3D11DeviceContext* dc,
 		const DirectX::XMFLOAT4X4& view, const DirectX::XMFLOAT4X4& projection);
+	void SetGlobalDirection();
 
 private://members
 	Player* player = nullptr;

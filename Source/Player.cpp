@@ -7,6 +7,8 @@
 #include "ProjectileStraight.h"
 #include "ProjectileHoming.h"
 #include "Stage.h"
+#include <NormalAttack.h>
+#include <AttackManager.h>
 
 Player::Player()
 {
@@ -18,8 +20,7 @@ Player::Player()
 	hitEffect = new Effect("Data/Effect/Hit.efk");
 
 	state = State::Move_Init;
-
-	//type = 1;
+	//state = State::Attack;
 }
 
 Player::~Player()
@@ -80,6 +81,7 @@ void Player::DrawDebugGUI()
 		{
 			//ˆÊ’u
 			ImGui::InputInt2("Position Square", &position.x);
+			ImGui::InputInt2("Target Pos Square", &targetMovePos.x);
 			ImGui::InputFloat3("Position World", &positionWorld.x);
 
 			//‰ñ“]
@@ -137,6 +139,8 @@ void Player::InputMove(float elapsedTime)
 
 void Player::UpdateState(float elapsedTime)
 {
+	float elapsedFrame = 60.0f * elapsedTime;
+
 	switch (state)
 	{
 	case State::Idle_Init:
@@ -157,10 +161,55 @@ void Player::UpdateState(float elapsedTime)
 
 	case State::Move_Init:
 
+		this->targetMovePos = { -1, -1 };
 		state = State::Move;
 		[[fallthrough]];
 	case State::Move:
 		UpdateMove(elapsedTime);
+
+		if (IsMoving())
+		{
+			this->state = State::Moving_Init;
+			break;
+		}
+		break;
+	case State::Moving_Init:
+		this->SetDirection(this->targetMovePos);
+		state = State::Moving;
+		[[fallthrough]];
+	case State::Moving:
+		if (!IsMoving())
+		{
+			this->state = State::Attack_Init;
+			break;
+		}
+		break;
+
+	case State::Attack_Init:
+		Stage::Instance()->ResetAllSquare();
+		state = State::Attack;
+		[[fallthrough]];
+	case State::Attack:
+		UpdateAttack(elapsedTime);
+		if (attack && !attack->GetIsDestroy())
+		{
+			state = State::Attacking_Init;
+			break;
+		}
+		break;
+
+	case State::Attacking_Init:
+		this->model->PlayAnimation(0, false);
+		state = State::Attacking;
+		//todo :: set direction
+		[[fallthrough]];
+	case State::Attacking:
+		if (!attack ||
+			(attack && attack->GetIsDestroy()))
+		{
+			attack = nullptr;
+			state = State::Move_Init;
+		}
 		break;
 	}
 }
@@ -179,9 +228,7 @@ void Player::UpdateMove(float elapsedTime)
 	auto dc = Graphics::Instance().GetDeviceContext();
 	Camera& camera = Camera::Instance();
 
-	const int moveRange = 2;
-
-	auto squares = Stage::Instance()->GetSquares(this->position.x, this->position.y, moveRange);
+	std::vector<Square*> squares = Stage::Instance()->GetSquares(this->position.x, this->position.y, moveRange);
 
 	for (auto& square : squares)
 	{
@@ -203,6 +250,51 @@ void Player::UpdateMove(float elapsedTime)
 	}
 	if (foundSq && mouse.GetButtonDown() & Mouse::BTN_LEFT)
 	{
-		//this->position = foundSq.getpo
-	}	
+		this->targetMovePos = foundSq->GetPos();
+	}
+}
+
+void Player::UpdateAttack(float elapsedTime)
+{
+	std::vector<Square*> squares = Stage::Instance()->GetSquaresEdgeAdjacent(this->position.x, this->position.y, 3);
+
+	for (auto& square : squares)
+	{
+		square->SetType(Square::Type::AttackArea);
+	}
+
+	Mouse& mouse = Input::Instance().GetMouse();
+	auto dc = Graphics::Instance().GetDeviceContext();
+	Camera& camera = Camera::Instance();
+
+	DirectX::XMFLOAT3 startMousePos = CommonClass::GetWorldStartPosition(dc, mouse.GetPositionX(), mouse.GetPositionY(), camera.GetView(), camera.GetProjection());
+	DirectX::XMFLOAT3 endMousePos = CommonClass::GetWorldEndPosition(dc, mouse.GetPositionX(), mouse.GetPositionY(), camera.GetView(), camera.GetProjection());
+
+	HitResult hit;
+	std::vector<Square*> attackSq;
+
+	for (auto& sq : squares)
+	{
+		if (sq->Raycast(startMousePos, endMousePos, hit))
+		{
+			SetDirection(sq->GetPos());
+			attackSq = Stage::Instance()->GetSquaresByDirection(this->position.x, this->position.y, 3, this->GetDirection());
+			for (auto& attSq : attackSq)
+			{
+				attSq->SetType(Square::Type::AttackAreaChosen);
+			}
+		}
+	}
+
+	if (!attackSq.empty() && mouse.GetButtonDown() & Mouse::BTN_LEFT)
+	{
+		Stage::Instance()->ResetAllSquare();
+		std::vector<DirectX::XMINT2> posVec;
+		for (auto& sq : attackSq)
+		{
+			posVec.emplace_back(sq->GetPos());
+		}
+		attack = new NormalAttack(this, 1, posVec);
+		AttackManager::Instance().Register(attack);
+	}
 }

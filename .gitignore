@@ -3,3 +3,11 @@ x64/
 obj/
 *.cso
 *.cod
+/.vs/Game/v16/Browse.VC.opendb
+/.vs/Game/v16/Browse.VC.db-wal
+/.vs/Game/v16/Browse.VC.db-shm
+/.vs/Game/v16/Browse.VC.db
+/.vs/Game/v16/.suo
+/.vs/Game/v16/ipch/AutoPCH/fd7a741d8d8bca03/COMMON.ipch
+*.ipch
+/Game.vcxproj.user

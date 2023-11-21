@@ -4,8 +4,8 @@
 #include "Card.h"
 #include "Stage.h"
 
-Square::Square(const DirectX::XMFLOAT3& pos) :
-	worldPos(pos),
+Square::Square(const DirectX::XMINT2& pos) :
+	pos(pos),
 	scale(5.0f * 0.2f, 0.01f, 5.0f * 0.2f),
 	rotate(),
 	card(nullptr),
@@ -13,18 +13,14 @@ Square::Square(const DirectX::XMFLOAT3& pos) :
 	SquareBorder(Stage::Instance()->squareBorder),
 	SquareArea(Stage::Instance()->squareArea)
 {
-	//TypeMaps‰Šú‰»
-	{
-		/*static DirectX::XMFLOAT4 colors[static_cast<int>(Square::Type::MAX)] = {
-			{1.0f,1.0f,1.0f,0.5f},
-			{1.0f,.0f,.0f,0.5f},
-		};*/
-		typeMaps.insert({ Type::NONE, TypeDetail{ "None", {1.0f,1.0f,1.0f,0.5f} } });
-		typeMaps.insert({ Type::AttackArea, TypeDetail{ "AttackArea", {1.0f,.0f,.0f,0.5f}, } });
-		typeMaps.insert({ Type::MoveArea, TypeDetail{ "MoveArea", {.2f,.2f,1.0f,0.5f}, } });
-		typeMaps.insert({ Type::MoveAreaChosen, TypeDetail{ "MoveAreaChosen", {1.0f,1.0f,.0f,0.5f}, } });
-		typeMaps.insert({ Type::MAX, TypeDetail{ "Max", {.0f,.0f,.0f,.0f} } });
-	}
+    this->worldPos = Stage::Instance()->GetWorldPos(pos);
+
+	typeMaps.insert({ Type::NONE, TypeDetail{ "None", {1.0f,1.0f,1.0f,0.5f} } });
+	typeMaps.insert({ Type::AttackArea, TypeDetail{ "AttackArea", {.85f,.1f,.1f,0.5f}, } });
+    typeMaps.insert({ Type::AttackAreaChosen, TypeDetail{ "AttackAreaChosen", {1.0f,.0f,.0f,0.8f}, } });
+	typeMaps.insert({ Type::MoveArea, TypeDetail{ "MoveArea", {.2f,.2f,1.0f,0.5f}, } });
+	typeMaps.insert({ Type::MoveAreaChosen, TypeDetail{ "MoveAreaChosen", {1.0f,1.0f,.0f,0.5f}, } });
+	typeMaps.insert({ Type::MAX, TypeDetail{ "Max", {.0f,.0f,.0f,.0f} } });
 }
 
 Square::~Square()
@@ -83,16 +79,15 @@ void Square::SetType(Type type)
 
 void Square::ResetSquare()
 {
+    
+	this->typeChanged = type==Type::NONE?false:true;
 	this->type = Type::NONE;
-	this->typeChanged = true;
 }
 
 void Square::UpdateDirty()
 {
-	if (typeChanged && !SquareBorder.expired())
+	if (typeChanged)
 	{
-
-		std::shared_ptr<Model> model = this->SquareArea.lock();
 		areaColor = typeMaps.find(type)->second.color;
 		typeChanged = false;
 	}
