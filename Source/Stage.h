@@ -36,7 +36,9 @@ public://functions
 	void Render(ID3D11DeviceContext* dc,Shader* shader);
 	void DrawIMGUI();
 
-	std::vector<Square*> GetSquares(const int& initX, const int& initY, int cost);
+	std::vector<Square*> GetSquares(const int& initX, const int& initY, const int& cost);
+	std::vector<Square*> GetSquaresEdgeAdjacent(const int& initX, const int& initY, const int& cost);
+	std::vector<Square*> GetSquaresByDirection(const int& initX, const int& initY, const int& cost, const int& direction);
 
 	const bool Raycast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end, HitResult& hit);
 	const bool IsInArea(int x, int y)const noexcept;

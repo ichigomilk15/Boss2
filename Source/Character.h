@@ -1,4 +1,6 @@
 #pragma once
+#include "Common.h"
+#include "AttackParent.h"
 #include <DirectXMath.h>
 
 enum class State
@@ -11,6 +13,10 @@ enum class State
 	Move,
 	Moving_Init, //移動している状態
 	Moving,
+	Attack_Init, //攻撃更新処理
+	Attack,
+	Attacking_Init, //攻撃している状態
+	Attacking,
 	Max,
 };
 
@@ -35,6 +41,11 @@ public:
 	//回転設定
 	void SetAngle(const DirectX::XMFLOAT3& angle) { this->angle = angle; }
 
+	//方向設定
+	void SetDirection(int dir);
+	void SetDirection(const DirectX::XMINT2 targetpos);
+	const int GetDirection() const { return this->direction; }
+
 	//スケール取得
 	const DirectX::XMFLOAT3& GetScale() const { return scale; }
 
@@ -48,7 +59,11 @@ public:
 	//ダメージを与える
 	bool ApplyDamage(int damage);
 
+	//移動中かの判定
 	bool IsMoving() const;
+
+	//攻撃中かの判定
+	bool IsAttacking() const;
 
 	//衝突を与える
 	void AddImpulse(const DirectX::XMFLOAT3& impulse);
@@ -86,17 +101,22 @@ protected:
 		0, 0, 0, 1
 	};
 	DirectX::XMFLOAT3 velocity = { 0, 0, 0 };
+	int direction = CommonClass::DirectionFace::Back;
 	int movePosX = 0;
 	int movePosY = 0;
 
 	float height = 2.0f;
 	int health = 1000;
 	int maxHealth = 1000;
+	int shield = 10;
 
 	State state;
 
 	DirectX::XMINT2 targetMovePos = { -1, -1 }; //移動するターゲットの位置
 	float moveTimer = 0.0f;
+	int moveRange = 2;
+
+	AttackParent* attack = nullptr;
 
 public:
 

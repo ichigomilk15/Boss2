@@ -122,13 +122,16 @@ void Stage::SearchSquare(const int x, const int y, const int cost, std::vector<D
 
 void Stage::ResetAllSquare()
 {
-	for (auto& sq : squares)
+	for (auto& y : squares)
 	{
-		sq->get()->ResetSquare();
+		for (auto& x : y)
+		{
+			x->ResetSquare();
+		}
 	}
 }
 
-std::vector<Square*> Stage::GetSquares(const int& initX, const int& initY, int cost)
+std::vector<Square*> Stage::GetSquares(const int& initX, const int& initY, const int& cost)
 {
 	std::vector<DirectX::XMINT2> squaresValid;
 
@@ -144,6 +147,84 @@ std::vector<Square*> Stage::GetSquares(const int& initX, const int& initY, int c
 	}
 
 	return foundSquares;
+}
+
+std::vector<Square*> Stage::GetSquaresEdgeAdjacent(const int& initX, const int& initY, const int& cost)
+{
+	std::vector<Square*> foundSq = GetSquares(initX, initY, cost);
+	std::vector<Square*> removeSq;
+	for (auto& sq : foundSq)
+	{
+		DirectX::XMINT2 sqPos = sq->GetPos();
+		if (sqPos.x != initX && sqPos.y != initY)
+		{
+			removeSq.emplace_back(sq);
+		}
+	}
+	for (auto& sq : removeSq)
+	{
+		std::vector<Square*>::iterator it = std::find(foundSq.begin(), foundSq.end(), sq);
+		if (it != foundSq.end())
+		{
+			foundSq.erase(it);
+		}
+	}
+	removeSq.clear();
+	return foundSq;
+}
+
+std::vector<Square*> Stage::GetSquaresByDirection(const int& initX, const int& initY, const int& cost, const int& direction)
+{
+	std::vector<Square*> foundSq = GetSquares(initX, initY, cost);
+	std::vector<Square*> removeSq;
+	for (auto& sq : foundSq)
+	{
+		DirectX::XMINT2 sqPos = sq->GetPos();
+		switch (direction)
+		{
+		case CommonClass::DirectionFace::Front:
+			if (sqPos.x != initX || sqPos.y > initY)
+			{
+				removeSq.emplace_back(sq);
+			}
+			break;
+		case CommonClass::DirectionFace::Back:
+			if (sqPos.x != initX || sqPos.y < initY)
+			{
+				removeSq.emplace_back(sq);
+			}
+			break;
+		case CommonClass::DirectionFace::Right:
+			if (sqPos.x < initX || sqPos.y != initY)
+			{
+				removeSq.emplace_back(sq);
+			}
+			break;
+		case CommonClass::DirectionFace::Left:
+			if (sqPos.x > initX || sqPos.y != initY)
+			{
+				removeSq.emplace_back(sq);
+			}
+			break;
+		default:
+			removeSq.emplace_back(sq);
+			break;
+		}
+		if (sqPos.x != initX && sqPos.y != initY)
+		{
+			removeSq.emplace_back(sq);
+		}
+	}
+	for (auto& sq : removeSq)
+	{
+		std::vector<Square*>::iterator it = std::find(foundSq.begin(), foundSq.end(), sq);
+		if (it != foundSq.end())
+		{
+			foundSq.erase(it);
+		}
+	}
+	removeSq.clear();
+	return foundSq;
 }
 
 const bool Stage::Raycast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end, HitResult& hit)

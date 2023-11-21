@@ -3,6 +3,7 @@
 #include <d3d11.h>
 
 #include <random>
+#include <map>
 
 class Square;
 
@@ -18,7 +19,7 @@ namespace Common
 	static const DirectX::XMFLOAT3 lefttop = { -SquareWidth * (SQUARE_NUM_X / 2.0f - 0.5f),0.0f,SquareHeight * (SQUARE_NUM_Y / 2.0f - 0.5f) };
 
 	//プレイヤーの移動速度
-	const float moveSpeed = 1.0f;
+	const float moveSpeed = 0.5f; //秒数
 }
 
 class CommonClass
@@ -46,8 +47,8 @@ public:
 		screenPosition.y = static_cast<float>(mouseY);
 
 		DirectX::XMVECTOR StartRay2D = DirectX::XMVectorSet(
-			mouseX,
-			mouseY,
+			static_cast<float>(mouseX),
+			static_cast<float>(mouseY),
 			viewport.MinDepth, 0);
 
 		DirectX::XMVECTOR StartRayVec = DirectX::XMVector3Unproject(
@@ -84,8 +85,8 @@ public:
 		screenPosition.y = static_cast<float>(screenY);
 
 		DirectX::XMVECTOR EndRay2D = DirectX::XMVectorSet(
-			screenX,
-			screenY,
+			static_cast<float>(screenX),
+			static_cast<float>(screenY),
 			viewport.MaxDepth, 0);
 
 		DirectX::XMVECTOR EndRayVec = DirectX::XMVector3Unproject(
@@ -104,4 +105,20 @@ public:
 		DirectX::XMStoreFloat3(&endPosition, EndRayVec);
 		return endPosition;
 	}
+public: 
+	enum DirectionFace
+	{
+		Front,
+		FrontRight,
+		Right,
+		BackRight,
+		Back,
+		BackLeft,
+		Left,
+		FrontLeft,
+		Max
+	};
+	static std::map<int, DirectX::XMFLOAT3> directionMaps;
+
+	static const int GetDirectionTarget(const DirectX::XMINT2 initPos, const DirectX::XMINT2& targetPos);
 };

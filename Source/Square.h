@@ -18,6 +18,7 @@ public://class
 	{
 		NONE,
 		AttackArea,
+		AttackAreaChosen,
 		MoveArea,
 		MoveAreaChosen,
 		MAX,

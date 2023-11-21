@@ -4,6 +4,10 @@
 #include "Camera.h"
 #include "EffectManager.h"
 #include "Stage.h"
+#include "AttackManager.h"
+#include "Common.h"
+
+std::map<int, DirectX::XMFLOAT3> CommonClass::directionMaps;
 
 // 初期化
 void SceneGame::Initialize()
@@ -43,6 +47,9 @@ void SceneGame::Initialize()
 		1000.0f
 	);
 	cameraController->setTarget(player->GetPosition());
+	
+	//方向マップ設定
+	SetGlobalDirection();
 }
 
 // 終了化l
@@ -74,6 +81,8 @@ void SceneGame::Update(float elapsedTime)
 	Stage::Instance()->Update(elapsedTime);
 	handCard->Update(elapsedTime);
 	player->Update(elapsedTime);
+	AttackManager::Instance().Update(elapsedTime);
+
 
 	//エフェクト更新処理
 	EffectManager::Instance().Update(elapsedTime);
@@ -109,9 +118,9 @@ void SceneGame::Render()
 		//ステージ描画
 		Stage::Instance()->Render(dc, shader);
 		player->Render(dc, shader);
+		AttackManager::Instance().Render(dc, shader);
 
 		shader->End(dc);
-
 	}
 
 	//エフェクト描画
@@ -257,4 +266,16 @@ void SceneGame::RenderEnemyGauge(ID3D11DeviceContext* dc,
 		DirectX::XMStoreFloat3(&startRay, StartRayVec);
 		DirectX::XMStoreFloat3(&endRay, EndRayVec);
 	}
+}
+
+void SceneGame::SetGlobalDirection()
+{
+	CommonClass::directionMaps.insert({ (int)CommonClass::Front, DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f) });
+	CommonClass::directionMaps.insert({ (int)CommonClass::DirectionFace::FrontRight, DirectX::XMFLOAT3(0.0f, DirectX::XMConvertToRadians(45), 0.0f) });
+	CommonClass::directionMaps.insert({ (int)CommonClass::DirectionFace::Right, DirectX::XMFLOAT3(0.0f, DirectX::XMConvertToRadians(90), 0.0f) });
+	CommonClass::directionMaps.insert({ (int)CommonClass::DirectionFace::BackRight, DirectX::XMFLOAT3(0.0f, DirectX::XMConvertToRadians(135), 0.0f) });
+	CommonClass::directionMaps.insert({ (int)CommonClass::DirectionFace::Back, DirectX::XMFLOAT3(0.0f, DirectX::XMConvertToRadians(180), 0.0f) });
+	CommonClass::directionMaps.insert({ (int)CommonClass::DirectionFace::BackLeft, DirectX::XMFLOAT3(0.0f, DirectX::XMConvertToRadians(225), 0.0f) });
+	CommonClass::directionMaps.insert({ (int)CommonClass::DirectionFace::Left, DirectX::XMFLOAT3(0.0f, DirectX::XMConvertToRadians(270), 0.0f) });
+	CommonClass::directionMaps.insert({ (int)CommonClass::DirectionFace::FrontLeft, DirectX::XMFLOAT3(0.0f, DirectX::XMConvertToRadians(315), 0.0f) });
 }
