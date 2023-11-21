@@ -151,14 +151,14 @@ void CardManager::DrawDebugGUI()
 		if (ImGui::InputInt("HaveSpecial", &size, 0)) {};
 		size = static_cast<int>(reservedCards.size());
 		if (ImGui::InputInt("ReservedCard", &size, 0)) {};
-		if (ImGui::CollapsingHeader("HaveCard"))
+		if (ImGui::CollapsingHeader("HaveCard",ImGuiTreeNodeFlags_::ImGuiTreeNodeFlags_DefaultOpen))
 		{
 			if (!haveCard.expired())
 			{
 				haveCard.lock()->DrawIMGUI();
 			}
 		}
-		if (ImGui::CollapsingHeader("OnMouseCard"))
+		if (ImGui::CollapsingHeader("OnMouseCard",ImGuiTreeNodeFlags_::ImGuiTreeNodeFlags_DefaultOpen))
 		{
 			if (auto& card = this->HitCheck(Input::Instance().GetMouse().GetPosition()))
 			{
