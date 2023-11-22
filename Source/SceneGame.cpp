@@ -47,8 +47,6 @@ void SceneGame::Initialize()
 	);
 	cameraController->setTarget({.0f,.0f,-7.f});
 
-	testCard = std::make_unique<Card>(CardManager::CARD_SPAWM_POS, CardManager::CARD_SIZE, Card::Type::ATTACK);
-	
 	//•ûŒüƒ}ƒbƒvİ’è
 	SetGlobalDirection();
 
