@@ -59,6 +59,9 @@
       <UniqueIdentifier>{87d632e1-27ff-48be-bbb7-6acbac4cc76f}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source\GameSystem">
+      <UniqueIdentifier>{54292f0c-3ad2-4abc-8428-dbd188c9816b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\GameSystem">
       <UniqueIdentifier>{9f881ea5-d2a7-4978-8302-a36fc2afe54f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -219,6 +222,9 @@
     <ClInclude Include="Source\AttackManager.h">
       <Filter>Source\Attacks</Filter>
     </ClInclude>
+    <ClInclude Include="Source\PhaseManager.h">
+      <Filter>Source\GameSystem</Filter>
+    </ClInclude>
     <ClInclude Include="Source\EnemyManager.h">
       <Filter>Source\Characters</Filter>
     </ClInclude>
@@ -370,6 +376,9 @@
     </ClCompile>
     <ClCompile Include="Source\AttackManager.cpp">
       <Filter>Source\Attacks</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\PhaseManager.cpp">
+      <Filter>Source\GameSystem</Filter>
     </ClCompile>
     <ClCompile Include="Source\EnemyManager.cpp">
       <Filter>Source\Characters</Filter>

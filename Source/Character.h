@@ -78,6 +78,11 @@ public:
 	//Å‘åŒ’Nó‘Ô‚ğæ“¾
 	int GetMaxHealth() const { return maxHealth; }
 
+	//Getter&Setter*****************************************************
+#if 1
+#endif // 1
+	//Getter&Setter*****************************************************
+
 protected:
 	//ˆÚ“®ˆ—
 	void Move(int vx, int vy);

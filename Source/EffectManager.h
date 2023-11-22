@@ -34,7 +34,10 @@ public:
 	//Effekseerマネージャーの取得
 	Effekseer::ManagerRef GetEffekseerManager() { return effekseerManager; }
 
+	const unsigned long long& GetTimer()const noexcept { return timer; }
+
 private:
 	Effekseer::ManagerRef effekseerManager;
 	EffekseerRenderer::RendererRef effekseerRenderer;
+	unsigned long long timer=0ull;
 };

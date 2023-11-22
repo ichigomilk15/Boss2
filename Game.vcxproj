@@ -152,6 +152,7 @@
     <ClInclude Include="Source\CustomMathf.h" />
     <ClInclude Include="Source\Misc.h" />
     <ClInclude Include="Source\NormalAttack.h" />
+    <ClInclude Include="Source\PhaseManager.h" />
     <ClInclude Include="Source\Player.h" />
     <ClInclude Include="Source\Projectile.h" />
     <ClInclude Include="Source\ProjectileHoming.h" />
@@ -205,6 +206,7 @@
     <ClCompile Include="Source\Main.cpp" />
     <ClCompile Include="Source\CustomMathf.cpp" />
     <ClCompile Include="Source\NormalAttack.cpp" />
+    <ClCompile Include="Source\PhaseManager.cpp" />
     <ClCompile Include="Source\Player.cpp" />
     <ClCompile Include="Source\Projectile.cpp" />
     <ClCompile Include="Source\ProjectileHoming.cpp" />

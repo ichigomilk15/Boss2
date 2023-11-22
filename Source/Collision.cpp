@@ -426,3 +426,7 @@ bool Collision::IntersectRayVsModel(const DirectX::XMFLOAT3& start, const Direct
 #endif
 }
 
+const bool Collision2D::BoxVsPos(const DirectX::XMFLOAT2& topleft,const  DirectX::XMFLOAT2& size,const DirectX::XMFLOAT2& pos)
+{
+	return (topleft.x < pos.x&& topleft.x + size.x > pos.x && topleft.y < pos.y&& topleft.y + size.y > pos.y);
+}
