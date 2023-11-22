@@ -38,6 +38,8 @@ void EffectManager::Update(float elapsedTime)
 {
 	//エフェクト更新処理（引数にはフレームの経過時間を渡す）
 	effekseerManager->Update(elapsedTime * 60.0f);
+
+	timer = effekseerManager->GetDrawTime();
 }
 
 //描画処理

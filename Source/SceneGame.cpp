@@ -3,6 +3,7 @@
 #include "SceneGame.h"
 #include "Camera.h"
 #include "EffectManager.h"
+#include "Effect.h"
 #include "Stage.h"
 #include "AttackManager.h"
 #include "Common.h"
@@ -43,6 +44,9 @@ void SceneGame::Initialize()
 	
 	//方向マップ設定
 	SetGlobalDirection();
+
+	effects.emplace_back(std::make_unique<Effect>("./Data/Effect/Stun0.efk"));
+	effects.emplace_back(std::make_unique<Effect>("./Data/Effect/Stun72.efk"));
 }
 
 // 終了化l
@@ -72,7 +76,6 @@ void SceneGame::Update(float elapsedTime)
 	CardManager::Instance().Update(elapsedTime);
 	player->Update(elapsedTime);
 	AttackManager::Instance().Update(elapsedTime);
-
 
 	//エフェクト更新処理
 	EffectManager::Instance().Update(elapsedTime);
@@ -133,15 +136,18 @@ void SceneGame::Render()
 	{
 		CardManager::Instance().Render(dc);
 
+		const DirectX::XMFLOAT2 pos = { 50.0f,50.0f };
 		const DirectX::XMFLOAT2 HpBarSize = { 250.0f,50.0f };
 		const DirectX::XMFLOAT2 HpBarBorderSize = { 2.0f,2.0f };
+		//外枠
 		playerHP->Render(dc,
-			50.0f - HpBarBorderSize.x, 50.0f - HpBarBorderSize.y,
+			pos.x - HpBarBorderSize.x, pos.y - HpBarBorderSize.y,
 			HpBarSize.x + HpBarBorderSize.x * 2.0f, HpBarSize.y + HpBarBorderSize.y * 2.0f,
 			.0f, .0f, static_cast<float>(playerHP->GetTextureWidth()), static_cast<float>(playerHP->GetTextureHeight()),
 			DirectX::XMConvertToRadians(.0f), .0f, .0f, .0f, 1.0f);
+		//中身
 		playerHP->Render(dc,
-			50.0f, 50.0f,
+			pos.x, pos.y,
 			HpBarSize.x, HpBarSize.y,
 			.0f, .0f, static_cast<float>(playerHP->GetTextureWidth()), static_cast<float>(playerHP->GetTextureHeight()),
 			DirectX::XMConvertToRadians(.0f),
@@ -158,53 +164,41 @@ void SceneGame::Render()
 		//DrawDebugGUI(player, cameraController);
 		CardManager::Instance().DrawDebugGUI();
 	}
+
+	auto&& manager = EffectManager::Instance().GetEffekseerManager().Get();
+	manager->GetSetting();
+	manager;
 }
 
 void SceneGame::DrawDebugGUI()
 {
 	ImGui::SetNextWindowPos(ImVec2(10, 10), ImGuiCond_FirstUseEver);
 	ImGui::SetNextWindowSize(ImVec2(300, 300), ImGuiCond_FirstUseEver);
-
-#if 0
-	if (ImGui::Begin("Window 1", nullptr, ImGuiWindowFlags_None))
+	if (ImGui::Begin("GameScene", nullptr, ImGuiWindowFlags_::ImGuiWindowFlags_None))
 	{
-		//トランスフォーム
-		if (ImGui::CollapsingHeader("Player", ImGuiTreeNodeFlags_DefaultOpen))
+		static int playEffectIndex = 0;
+		if (ImGui::InputInt("playEffectIndex", &playEffectIndex))
 		{
-			////位置
-			//ImGui::InputFloat3("Position", &(player->GetPosition()).x);
-
-			////回転
-
-			////スケール
-			//ImGui::InputFloat3("Scale", &scale.x);
-		}
-		if (ImGui::CollapsingHeader("Movement", ImGuiTreeNodeFlags_DefaultOpen))
-		{
+			playEffectIndex = std::clamp(playEffectIndex, 0, static_cast<int>(effects.size() - 1));
 		}
 
-		if (ImGui::CollapsingHeader("CameraController", ImGuiTreeNodeFlags_DefaultOpen))
+		if (ImGui::Button("playEffect"))
 		{
-			//位置
-			//DirectX::XMFLOAT3 tempAngle = CameraController::Instance().getAngle();
-			DirectX::XMFLOAT3 tempAngle = cameraController->getAngle();
-			//ImGui::InputFloat3("Angle", &tempAngle.x);
-
-			//回転
-			DirectX::XMFLOAT3 a;
-			a.x = DirectX::XMConvertToDegrees(tempAngle.x);
-			a.y = DirectX::XMConvertToDegrees(tempAngle.y);
-			a.z = DirectX::XMConvertToDegrees(tempAngle.z);
-			ImGui::InputFloat3("Angle", &a.x);
+			auto& effect = effects.at(playEffectIndex);
+			effect->Play(DirectX::XMFLOAT3{.0f,.0f,.0f},2.0f);
 		}
-
-		if (ImGui::CollapsingHeader("Ground", ImGuiTreeNodeFlags_DefaultOpen))
+		if (ImGui::Button("StopEffect"))
 		{
-			//回転
+			auto& effect = effects.at(playEffectIndex);
+			effect->Stop(effect->GetHandle());
 		}
-		ImGui::End();
+		if (ImGui::Button("sendTregger"))
+		{
+			auto& effect = effects.at(playEffectIndex);
+			EffectManager::Instance().GetEffekseerManager()->SendTrigger(effect->GetHandle(), 0);
+		}
 	}
-#endif
+	ImGui::End();
 }
 
 void SceneGame::RenderEnemyGauge(ID3D11DeviceContext* dc, 
@@ -276,7 +270,7 @@ void SceneGame::RenderEnemyGauge(ID3D11DeviceContext* dc,
 
 void SceneGame::SetGlobalDirection()
 {
-	CommonClass::directionMaps.insert({ (int)CommonClass::Front, DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f) });
+	CommonClass::directionMaps.insert({ (int)CommonClass::DirectionFace::Front, DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f) });
 	CommonClass::directionMaps.insert({ (int)CommonClass::DirectionFace::FrontRight, DirectX::XMFLOAT3(0.0f, DirectX::XMConvertToRadians(45), 0.0f) });
 	CommonClass::directionMaps.insert({ (int)CommonClass::DirectionFace::Right, DirectX::XMFLOAT3(0.0f, DirectX::XMConvertToRadians(90), 0.0f) });
 	CommonClass::directionMaps.insert({ (int)CommonClass::DirectionFace::BackRight, DirectX::XMFLOAT3(0.0f, DirectX::XMConvertToRadians(135), 0.0f) });

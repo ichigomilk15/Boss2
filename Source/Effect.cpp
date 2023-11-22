@@ -25,10 +25,14 @@ Effect::Effect(const char* filename)
 //Ä¶
 Effekseer::Handle Effect::Play(const DirectX::XMFLOAT3& positionWorld, float scale)
 {
+	if (handle >=0) this->Stop(this->handle);
+
 	Effekseer::ManagerRef effekseerManager = EffectManager::Instance().GetEffekseerManager();
 
 	Effekseer::Handle handle = effekseerManager->Play(effekseerEffect, positionWorld.x, positionWorld.y, positionWorld.z);
 	effekseerManager->SetScale(handle, scale, scale, scale);
+	startTime = EffectManager::Instance().GetTimer();
+	this->handle = handle;
 	return handle;
 }
 
@@ -38,6 +42,7 @@ void Effect::Stop(Effekseer::Handle handle)
 	Effekseer::ManagerRef effekseerManager = EffectManager::Instance().GetEffekseerManager();
 
 	effekseerManager->StopEffect(handle);
+	if (this->handle == handle)this->handle = -1;
 }
 
 //À•Wİ’è

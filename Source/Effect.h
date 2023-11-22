@@ -22,6 +22,11 @@ public:
 	//ÉXÉPÅ[Éãê›íË
 	void SetScale(Effekseer::Handle handle, const DirectX::XMFLOAT3& scale);
 
+	const Effekseer::Handle& GetHandle()const noexcept { return handle; }
+
 private:
 	Effekseer::EffectRef effekseerEffect;
+	Effekseer::Handle handle;
+	unsigned long long startTime = 0ull;
+	unsigned long long animationTime = 0ull;
 };

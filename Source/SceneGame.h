@@ -44,4 +44,5 @@ private://members
 	CameraController* cameraController = nullptr;
 	std::unique_ptr<Sprite> playerHP;
 	std::unique_ptr<Card> testCard;
+	std::vector<std::unique_ptr<Effect>> effects;
 };

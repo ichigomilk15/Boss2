@@ -58,6 +58,9 @@
     <Filter Include="Source\Attacks">
       <UniqueIdentifier>{87d632e1-27ff-48be-bbb7-6acbac4cc76f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\GameSystem">
+      <UniqueIdentifier>{54292f0c-3ad2-4abc-8428-dbd188c9816b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="External\imgui\imconfig.h">
@@ -216,6 +219,9 @@
     <ClInclude Include="Source\AttackManager.h">
       <Filter>Source\Attacks</Filter>
     </ClInclude>
+    <ClInclude Include="Source\PhaseManager.h">
+      <Filter>Source\GameSystem</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="External\imgui\imgui.cpp">
@@ -355,6 +361,9 @@
     </ClCompile>
     <ClCompile Include="Source\AttackManager.cpp">
       <Filter>Source\Attacks</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\PhaseManager.cpp">
+      <Filter>Source\GameSystem</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
