@@ -32,20 +32,6 @@ Player::~Player()
 
 void Player::Update(float elapsedTime)
 {
-#if 0
-	GamePad& gamePad = Input::Instance().GetGamePad();
-	//Bボタン押下でワンショットアニメーション再生
-	if (gamePad.GetButtonDown() & GamePad::BTN_B)
-	{
-		model->PlayAnimation(0, false, 0.1f);
-	}
-	// ワンショットアニメーション再生が終わったらループアニメーション再生 
-	if (!model->IsPlayAnimation())
-	{
-		model->PlayAnimation(1, true);
-	}
-#endif
-
 	//移動入力しょり
 	InputMove(elapsedTime);
 
@@ -139,8 +125,6 @@ void Player::InputMove(float elapsedTime)
 
 void Player::UpdateState(float elapsedTime)
 {
-	float elapsedFrame = 60.0f * elapsedTime;
-
 	switch (state)
 	{
 	case State::Idle_Init:
@@ -180,7 +164,8 @@ void Player::UpdateState(float elapsedTime)
 	case State::Moving:
 		if (!IsMoving())
 		{
-			this->state = State::Attack_Init;
+			//this->state = State::Attack_Init;
+			state = State::Move_Init;
 			break;
 		}
 		break;

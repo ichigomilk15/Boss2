@@ -6,6 +6,8 @@
 #include "Stage.h"
 #include "AttackManager.h"
 #include "Common.h"
+#include <EnemyManager.h>
+#include <EnemyBoss1.h>
 
 std::map<int, DirectX::XMFLOAT3> CommonClass::directionMaps;
 
@@ -18,9 +20,14 @@ void SceneGame::Initialize()
 	//ステージ
 	Stage::Instance()->CreateStage();
 
+	auto& enemyManager = EnemyManager::Instance();
 	player = new Player();
 	player->SetPositionWorld({ 3, 3 });
 	handCard = std::make_unique<CardList>();
+
+	EnemyBoss1* enemy = new EnemyBoss1(player);
+	enemyManager.Register(enemy);
+	enemy->SetPositionWorld({ 1, 1 });
 
 	//カメラ初期設定
 	Graphics& graphics = Graphics::Instance();
@@ -37,6 +44,10 @@ void SceneGame::Initialize()
 		1000.0f
 	);
 	cameraController->setTarget({.0f,.0f,-7.f});
+
+	this->SetGlobalDirection();
+	turnSystem = std::make_unique<TurnSystem>();
+	turnSystem->ChangeTurn();
 }
 
 // 終了化l
@@ -54,6 +65,9 @@ void SceneGame::Finalize()
 		delete player;
 		player = nullptr;
 	}
+
+	//エネミー終了化
+	EnemyManager::Instance().Clear();
 }
 
 // 更新処理
@@ -61,10 +75,12 @@ void SceneGame::Update(float elapsedTime)
 {
 	//カメラコントローラー更新処理
 	cameraController->Update(elapsedTime);
-
 	Stage::Instance()->Update(elapsedTime);
+
+	UpdateGameTurn();
 	handCard->Update(elapsedTime);
 	player->Update(elapsedTime);
+	EnemyManager::Instance().Update(elapsedTime, player);
 	AttackManager::Instance().Update(elapsedTime);
 
 
@@ -102,6 +118,7 @@ void SceneGame::Render()
 		//ステージ描画
 		Stage::Instance()->Render(dc, shader);
 		player->Render(dc, shader);
+		EnemyManager::Instance().Render(dc, shader);
 		AttackManager::Instance().Render(dc, shader);
 
 		shader->End(dc);
@@ -131,11 +148,11 @@ void SceneGame::Render()
 	{
 		//プレイヤーデバッグ描画
 		player->DrawDebugGUI();
+		EnemyManager::Instance().DrawDebugGUI();
 		DrawDebugGUI();
 		Stage::Instance()->DrawIMGUI();
 		cameraController->DrawIMGUI();
 		//DrawDebugGUI(player, cameraController);
-		
 	}
 }
 
@@ -263,4 +280,18 @@ void SceneGame::SetGlobalDirection()
 	CommonClass::directionMaps.insert({ (int)CommonClass::DirectionFace::BackLeft, DirectX::XMFLOAT3(0.0f, DirectX::XMConvertToRadians(225), 0.0f) });
 	CommonClass::directionMaps.insert({ (int)CommonClass::DirectionFace::Left, DirectX::XMFLOAT3(0.0f, DirectX::XMConvertToRadians(270), 0.0f) });
 	CommonClass::directionMaps.insert({ (int)CommonClass::DirectionFace::FrontLeft, DirectX::XMFLOAT3(0.0f, DirectX::XMConvertToRadians(315), 0.0f) });
+}
+
+void SceneGame::UpdateGameTurn()
+{
+	switch (turnSystem->getSubject())
+	{
+	case TurnSystem::TURN_ENUM::ENEMY_TURN:
+
+		break;
+
+	case TurnSystem::TURN_ENUM::PLAYER_TURN:
+
+		break;
+	}
 }

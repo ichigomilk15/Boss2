@@ -8,7 +8,7 @@ class Character;
 class AttackParent
 {
 public: //function
-	AttackParent(Character* parent, const float damage, const std::vector<DirectX::XMINT2> targetAttackPos = {}) :parent(parent), damage(damage)
+	AttackParent(Character* parent, const int damage, const std::vector<DirectX::XMINT2> targetAttackPos = {}) :parent(parent), damage(damage)
 	{
 		for (auto& pos : targetAttackPos)
 		{

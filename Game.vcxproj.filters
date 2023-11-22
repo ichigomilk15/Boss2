@@ -58,6 +58,9 @@
     <Filter Include="Source\Attacks">
       <UniqueIdentifier>{87d632e1-27ff-48be-bbb7-6acbac4cc76f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\GameSystem">
+      <UniqueIdentifier>{9f881ea5-d2a7-4978-8302-a36fc2afe54f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="External\imgui\imconfig.h">
@@ -216,6 +219,18 @@
     <ClInclude Include="Source\AttackManager.h">
       <Filter>Source\Attacks</Filter>
     </ClInclude>
+    <ClInclude Include="Source\EnemyManager.h">
+      <Filter>Source\Characters</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Enemy.h">
+      <Filter>Source\Characters</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\EnemyBoss1.h">
+      <Filter>Source\Characters</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\TurnSystem.h">
+      <Filter>Source\GameSystem</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="External\imgui\imgui.cpp">
@@ -355,6 +370,18 @@
     </ClCompile>
     <ClCompile Include="Source\AttackManager.cpp">
       <Filter>Source\Attacks</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\EnemyManager.cpp">
+      <Filter>Source\Characters</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Enemy.cpp">
+      <Filter>Source\Characters</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\EnemyBoss1.cpp">
+      <Filter>Source\Characters</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\TurnSystem.cpp">
+      <Filter>Source\GameSystem</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

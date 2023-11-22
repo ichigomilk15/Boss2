@@ -20,6 +20,11 @@ namespace Common
 
 	//プレイヤーの移動速度
 	const float moveSpeed = 0.5f; //秒数
+
+	//マス用の情報
+	/*static std::vector<int> listObstacle = {
+		1, 0
+	};*/
 }
 
 class CommonClass

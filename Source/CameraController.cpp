@@ -7,6 +7,7 @@
 #ifdef _DEBUG
 #include "Graphics/ImGuiRenderer.h"
 #endif // _DEBUG
+#include <algorithm>
 
 #undef NOMINMAX
 

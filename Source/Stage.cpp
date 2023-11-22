@@ -9,6 +9,7 @@
 #include "Square.h"
 #include "Graphics\DebugRenderer.h"
 #include "Graphics\Graphics.h"
+#include <EnemyManager.h>
 
 Stage::Stage() :
 	//squares(),
@@ -100,6 +101,7 @@ void Stage::SearchSquare(const int x, const int y, const int cost, std::vector<D
 {
 	if (!IsInArea(x, y)) return;
 	if (cost < 0) return;
+	if (!GetSquare(x, y)->GetIsaccessible()) return;
 
 	bool isChecked = false;
 	for (auto& sq : squaresChecked)
@@ -118,6 +120,15 @@ void Stage::SearchSquare(const int x, const int y, const int cost, std::vector<D
 	SearchSquare(x - 1, y, cost - 1, squaresChecked);      // ¶
 
 	SearchSquare(x + 1, y, cost - 1, squaresChecked);      // ‰E
+}
+
+void Stage::ResetSquaresAccessible()
+{
+	for (auto& enemy : EnemyManager::Instance().GetList())
+	{
+		DirectX::XMINT2 enemyPos = enemy->GetPosition();
+		squares[enemyPos.y][enemyPos.x]->SetIsaccessible(false);
+	}
 }
 
 void Stage::ResetAllSquare()
@@ -225,6 +236,63 @@ std::vector<Square*> Stage::GetSquaresByDirection(const int& initX, const int& i
 	}
 	removeSq.clear();
 	return foundSq;
+}
+
+const bool Stage::IsAdjacent(const DirectX::XMINT2& posInit, const DirectX::XMINT2& posTarget) const
+{
+	if (!IsInArea(posInit.x, posInit.y)) return false;
+	if (!IsInArea(posTarget.x, posTarget.y)) return false;
+
+	if (posTarget.x != posInit.x && posTarget.y != posInit.y) return false;
+	if (abs(posTarget.x - posInit.x) > 1) return false;
+	if (abs(posTarget.y - posInit.y) > 1) return false;
+	
+	return true;
+}
+int Stage::GetTargetPosCost(const DirectX::XMINT2& posInit, const DirectX::XMINT2& posTarget)
+{
+	int cost = 1;
+
+	/*struct CheckSquare
+	{
+		int x;
+		int y;
+		int cost;
+	};
+	std::vector<CheckSquare> checkSquares;
+	checkSquares.reserve(Common::SquareHeight * Common::SquareWidth);*/
+	std::vector<DirectX::XMINT2> checkSquares;
+
+	for (; cost < Common::SquareHeight * Common::SquareWidth; ++cost)
+	{
+		SearchSquare(posInit.x, posInit.y, cost, checkSquares);
+		for (auto& sq : checkSquares)
+		{
+			if (sq.x == posTarget.x && sq.y == posTarget.y)
+				return cost;
+		}
+	}
+
+	return -1;
+	/*for (; cost < Common::SquareHeight * Common::SquareWidth; ++cost)
+	{
+		bool isFound = false;
+		if (getSquare.empty())
+		{
+			SearchSquare(posInit.x, posInit.y, 1, getSquare);
+		}
+		else
+		{
+			std::vector<DirectX::XMINT2> getSquare2;
+			for (int i = 0; i < getSquare.size(); ++i)
+			{
+				SearchSquare(pos)
+			}
+		}
+
+	}*/
+
+	return 0;
 }
 
 const bool Stage::Raycast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end, HitResult& hit)

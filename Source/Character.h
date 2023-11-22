@@ -30,7 +30,8 @@ public:
 	void UpdateTransform();
 
 	//位置取得
-	const DirectX::XMFLOAT3& GetPosition() const { return positionWorld; }
+	const DirectX::XMFLOAT3& GetPositionWorld() const { return positionWorld; }
+	const DirectX::XMINT2& GetPosition() const { return position; }
 
 	//位置設定
 	void SetPositionWorld(const DirectX::XMINT2 & position);
@@ -114,7 +115,7 @@ protected:
 
 	DirectX::XMINT2 targetMovePos = { -1, -1 }; //移動するターゲットの位置
 	float moveTimer = 0.0f;
-	int moveRange = 2;
+	int moveRange = 2; //移動力（マス数）
 
 	AttackParent* attack = nullptr;
 

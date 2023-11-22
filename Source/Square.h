@@ -21,6 +21,7 @@ public://class
 		AttackAreaChosen,
 		MoveArea,
 		MoveAreaChosen,
+		Inaccessible,
 		MAX,
 	};
 
@@ -82,6 +83,8 @@ public://function
 
 	//Getter&Setter*************************************************************************
 #if 1
+	void SetIsaccessible(bool isAccessible) { isAccessible = isAccessible; }
+	const bool GetIsaccessible() const { return isAccessible; }
 	const DirectX::XMFLOAT3& GetWorldPos()const noexcept { return worldPos; }
 	const DirectX::XMINT2& GetPos() const noexcept { return pos; }
 	void SetType(Type type);
@@ -106,4 +109,5 @@ private://members
 	DirectX::XMFLOAT4 areaColor;
 
 	bool typeChanged = false; //É^ÉCÉvÇÃïœä∑Ç™Ç†Ç¡ÇΩèÍçátrueÇ…Ç∑ÇÈ
+	bool isAccessible = true;
 };

@@ -39,11 +39,14 @@ public://functions
 	std::vector<Square*> GetSquares(const int& initX, const int& initY, const int& cost);
 	std::vector<Square*> GetSquaresEdgeAdjacent(const int& initX, const int& initY, const int& cost);
 	std::vector<Square*> GetSquaresByDirection(const int& initX, const int& initY, const int& cost, const int& direction);
+	int GetTargetPosCost(const DirectX::XMINT2& posInit, const DirectX::XMINT2& posTarget);
+	const bool IsAdjacent(const DirectX::XMINT2& posInit, const DirectX::XMINT2& posTarget) const;
 
 	const bool Raycast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end, HitResult& hit);
 	const bool IsInArea(int x, int y)const noexcept;
 
 	void ResetAllSquare();
+	void ResetSquaresAccessible();
 
 private:
 	void SearchSquare(const int x, const int y, const int cost, std::vector<DirectX::XMINT2>& squaresChecked);

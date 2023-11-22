@@ -20,6 +20,7 @@ Square::Square(const DirectX::XMINT2& pos) :
     typeMaps.insert({ Type::AttackAreaChosen, TypeDetail{ "AttackAreaChosen", {1.0f,.0f,.0f,0.8f}, } });
 	typeMaps.insert({ Type::MoveArea, TypeDetail{ "MoveArea", {.2f,.2f,1.0f,0.5f}, } });
 	typeMaps.insert({ Type::MoveAreaChosen, TypeDetail{ "MoveAreaChosen", {1.0f,1.0f,.0f,0.5f}, } });
+    typeMaps.insert({ Type::MoveAreaChosen, TypeDetail{ "Inaccessible", {0.2f,0.2f,0.2f,0.3f}, } });
 	typeMaps.insert({ Type::MAX, TypeDetail{ "Max", {.0f,.0f,.0f,.0f} } });
 }
 

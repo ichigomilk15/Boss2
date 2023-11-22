@@ -130,6 +130,9 @@
     <ClInclude Include="Source\CardList.h" />
     <ClInclude Include="Source\Effect.h" />
     <ClInclude Include="Source\EffectManager.h" />
+    <ClInclude Include="Source\Enemy.h" />
+    <ClInclude Include="Source\EnemyBoss1.h" />
+    <ClInclude Include="Source\EnemyManager.h" />
     <ClInclude Include="Source\Framework.h" />
     <ClInclude Include="Source\Graphics\DebugRenderer.h" />
     <ClInclude Include="Source\Graphics\Graphics.h" />
@@ -161,6 +164,7 @@
     <ClInclude Include="Source\SceneTitle.h" />
     <ClInclude Include="Source\Square.h" />
     <ClInclude Include="Source\Stage.h" />
+    <ClInclude Include="Source\TurnSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="External\DirectXTex\WICTextureLoader.cpp" />
@@ -182,6 +186,9 @@
     <ClCompile Include="Source\Common.cpp" />
     <ClCompile Include="Source\Effect.cpp" />
     <ClCompile Include="Source\EffectManager.cpp" />
+    <ClCompile Include="Source\Enemy.cpp" />
+    <ClCompile Include="Source\EnemyBoss1.cpp" />
+    <ClCompile Include="Source\EnemyManager.cpp" />
     <ClCompile Include="Source\Framework.cpp" />
     <ClCompile Include="Source\Graphics\DebugRenderer.cpp" />
     <ClCompile Include="Source\Graphics\Graphics.cpp" />
@@ -209,6 +216,7 @@
     <ClCompile Include="Source\SceneTitle.cpp" />
     <ClCompile Include="Source\Square.cpp" />
     <ClCompile Include="Source\Stage.cpp" />
+    <ClCompile Include="Source\TurnSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="HLSL\Debug.hlsli" />
