@@ -3,15 +3,15 @@
 #include "Stage.h"
 
 EnemyBoss1::EnemyBoss1(Character* p) :
-    Enemy(p)
+	Enemy(p)
 {
-    this->model = std::make_unique<Model>("Data/Model/Mr.Incredible/Mr.Incredible.mdl");
+	this->model = std::make_unique<Model>("Data/Model/Mr.Incredible/Mr.Incredible.mdl");
 
-    //スケールの調整
-    scale.x = scale.y = scale.z = 0.03f;
+	//スケールの調整
+	scale.x = scale.y = scale.z = 0.03f;
 
-    height = 1.0f;
-    enemyType = ENEMY_TYPE::BOSS1;
+	height = 1.0f;
+	enemyType = ENEMY_TYPE::BOSS1;
 	state = State::Act_Init;
 }
 

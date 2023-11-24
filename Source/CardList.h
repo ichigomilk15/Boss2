@@ -9,6 +9,8 @@ class CardManager final
 private://constracter
 	CardManager();
 	~CardManager() = default;
+	CardManager(CardManager&) = delete;
+	CardManager operator=(CardManager&) = delete;
 public://functions
 	static CardManager& Instance()noexcept { static CardManager instance; return instance; }
 
@@ -22,10 +24,19 @@ public://functions
 	void AddCardReserved(std::shared_ptr<Card>& card);
 	void EraseItem(std::shared_ptr<Card>& item);
 	void QuickEraseItem(std::shared_ptr<Card>& item);
+	const bool IsMoveing()const noexcept;
 
 	void ALLClear();
-private://functions
 	void Replenish();
+
+	//Getter&Setter******************************************************************************************************
+#if 1
+	const bool& GetIsMoveable()const noexcept { return isMoveable; }
+	void SetIsMoveable(const bool flag)noexcept { isMoveable = flag; }
+#endif // 1
+	//Getter&Setter******************************************************************************************************
+
+private://functions
 	void Erase();
 
 	void ChangeHaveCard(std::shared_ptr<Card>* card);
@@ -46,6 +57,8 @@ private://members
 	std::shared_ptr<Card> SetCards[SET_CARD_MAX];//セットに置いてあるカード
 	std::weak_ptr<Card> haveCard;//マウスが操作しているカード
 	unsigned int haveSpecial = 0u;
+	bool isMoveable;
 
+	Card::Type PrevUseCardType = Card::Type::NONE;
 	Sprite sprite;
 };

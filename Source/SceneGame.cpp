@@ -9,6 +9,7 @@
 #include "Common.h"
 #include "EnemyManager.h"
 #include "EnemyBoss1.h"
+#include "PhaseManager.h"
 #include "PlayerManager.h"
 
 std::map<int, DirectX::XMFLOAT3> CommonClass::directionMaps;
@@ -26,7 +27,7 @@ void SceneGame::Initialize()
 	PlayerManager::Instance().Register(new Player);
 	Player* player = PlayerManager::Instance().GetFirstPlayer();
 	playerHP = std::make_unique<Sprite>();
-	player->SetPositionWorld({ 0, 0 });
+	player->SetPositionWorld({ 3, 3 });
 	CardManager::Instance().ALLClear();
 
 	EnemyBoss1* enemy = new EnemyBoss1(player);
@@ -55,10 +56,11 @@ void SceneGame::Initialize()
 	Stage::Instance()->ResetSquaresAccessible();
 
 	effects.emplace_back(std::make_unique<Effect>("./Data/Effect/Stun0.efk"));
-	effects.emplace_back(std::make_unique<Effect>("./Data/Effect/Stun72.efk"));
 
 	turnSystem = std::make_unique<TurnSystem>();
 	turnSystem->ChangeTurn();
+
+	PhaseManager::Instance().Initialize();
 }
 
 // 終了化l
@@ -90,6 +92,8 @@ void SceneGame::Update(float elapsedTime)
 	PlayerManager::Instance().Update(elapsedTime);
 	EnemyManager::Instance().Update(elapsedTime, PlayerManager::Instance().GetFirstPlayer());
 	AttackManager::Instance().Update(elapsedTime);
+
+	PhaseManager::Instance().Update(elapsedTime);
 
 	//エフェクト更新処理
 	EffectManager::Instance().Update(elapsedTime);
@@ -179,6 +183,8 @@ void SceneGame::Render()
 
 		//DrawDebugGUI(player, cameraController);
 		CardManager::Instance().DrawDebugGUI();
+
+		PhaseManager::Instance().DrawDebugGUI();
 	}
 
 	auto&& manager = EffectManager::Instance().GetEffekseerManager().Get();
