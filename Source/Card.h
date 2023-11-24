@@ -40,6 +40,8 @@ public://functions
 
     //Getter&Setter**********************************************************
 #if 1
+    const bool IsMoveing()const noexcept;
+
     const Type& GetType()const noexcept { return type; }
     void SetType(const Type type)noexcept { this->type = type; }
     const DirectX::XMFLOAT2& GetPosition()const noexcept { return pos; }

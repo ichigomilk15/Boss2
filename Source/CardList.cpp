@@ -10,7 +10,7 @@
 
 CardManager::CardManager():
 	HAND_CARDS_START_POS(DirectX::XMFLOAT2{ Graphics::Instance().GetScreenWidth() * 0.3f,Graphics::Instance().GetScreenHeight() - CARD_SIZE.y }),
-	SET_CARDS_START_POS({Graphics::Instance().GetScreenWidth()*0.1f,Graphics::Instance().GetScreenHeight()*0.2f}),
+	SET_CARDS_START_POS({Graphics::Instance().GetScreenWidth()*0.1f,Graphics::Instance().GetScreenHeight()*0.2f}),isMoveable(true),
 	sprite()
 {
 }
@@ -20,13 +20,11 @@ void CardManager::Update(float elapsedTime)
 	Mouse& mouse = Input::Instance().GetMouse();
 	const DirectX::XMFLOAT2 ScreenSize = { Graphics::Instance().GetScreenWidth(),Graphics::Instance().GetScreenHeight() };
 
-	Replenish();
-
-	if (cards.empty())return;
-
+	//手持ちにあるスペシャルカードのカウント
 	haveSpecial = 0u;
 
 	//手持ちカードの更新	
+	if (cards.empty())return;
 	DirectX::XMFLOAT2 pos = HAND_CARDS_START_POS;
 	for (auto& card : cards)
 	{
@@ -59,7 +57,7 @@ void CardManager::Update(float elapsedTime)
 	}
 
 	//マウスが持っているカードを更新	
-	if (!haveCard.expired())
+	if (isMoveable&&!haveCard.expired())
 	{
 		//マウスがカードを離したら
 		if (mouse.GetButtonUp() & Mouse::BTN_LEFT)
@@ -246,6 +244,20 @@ void CardManager::QuickEraseItem(std::shared_ptr<Card>& item)
 	}
 }
 
+const bool CardManager::IsMoveing() const noexcept
+{
+	for (auto& card : cards)
+	{
+		if (card->IsMoveing())return true;
+	}
+	for (auto& card : SetCards)
+	{
+		if (card == nullptr)continue;
+		if (card->IsMoveing())return true;
+	}
+	return false;
+}
+
 void CardManager::ALLClear()
 {
 	this->cards.clear();
@@ -264,7 +276,7 @@ void CardManager::ALLClear()
 
 void CardManager::Replenish()
 {
-	if (cards.size() < (CARD_MAX + haveSpecial) % std::numeric_limits<unsigned int>::max())
+	while(cards.size() < (CARD_MAX + haveSpecial) % std::numeric_limits<unsigned int>::max())
 	{
 		if (!reservedCards.empty())//引くカードが確定しているならば
 		{

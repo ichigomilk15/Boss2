@@ -1,29 +1,44 @@
 #pragma once
+#include <d3d11.h>
 
+#define PhaseCreate(name)	Phase_##name##_Init,\
+							Phase_##name
 
-class FhaseManager
+class PhaseManager
 {
 public://class
-	enum Fhase
+	enum class Phase : int
 	{
-
-		Max,
+		PhaseCreate(GameStart),
+		PhaseCreate(NextStage),
+		PhaseCreate(Start),
+		PhaseCreate(Player),
+		PhaseCreate(Enemy),
+		PhaseCreate(End),
+		Phase_Max,
 	};
 private://constructer
-	FhaseManager();
-	~FhaseManager();
+	PhaseManager() = default;
+	~PhaseManager() = default;
 public:
-	static FhaseManager& Instance()noexcept { static FhaseManager instance; return instance; }
+	static PhaseManager& Instance()noexcept { static PhaseManager instance; return instance; }
 
 	void Initialize();
 	void Update(float elapsedTime);
 	void Reset();
+	void DrawDebugGUI();
 
 //Getter&Setter*****************************************************************************
 #if 1
-	const Fhase& GetFhase()const noexcept { return fhase; }
+	const Phase& GetFhase()const noexcept { return static_cast<Phase>(phase); }
+	const unsigned int& GetTrunCount()const noexcept { return trunCount; }
 #endif // 1
 //Getter&Setter*****************************************************************************
 private:
-	Fhase fhase;
+	Phase phase = Phase::Phase_GameStart_Init;
+	int StageLevel = 0;
+	unsigned int trunCount = 0u;
+	float phaseTimer;
 };
+
+#undef PhaseCreate
