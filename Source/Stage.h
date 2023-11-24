@@ -36,8 +36,8 @@ public://functions
 	void Render(ID3D11DeviceContext* dc,Shader* shader);
 	void DrawIMGUI();
 
-	std::vector<Square*> GetSquares(const int& initX, const int& initY, const int& cost);
-	std::vector<Square*> GetSquaresEdgeAdjacent(const int& initX, const int& initY, const int& cost);
+	std::vector<Square*> GetSquares(const int& initX, const int& initY, const int& cost, const std::vector<Square::Type>& typesExclusion = {Square::Type::MAX});
+	std::vector<Square*> GetSquaresEdgeAdjacent(const int& initX, const int& initY, const int& cost, const std::vector<Square::Type>& typesExclusion = { Square::Type::MAX });
 	std::vector<Square*> GetSquaresByDirection(const int& initX, const int& initY, const int& cost, const int& direction);
 	int GetTargetPosCost(const DirectX::XMINT2& posInit, const DirectX::XMINT2& posTarget);
 	const bool IsAdjacent(const DirectX::XMINT2& posInit, const DirectX::XMINT2& posTarget) const;
@@ -45,11 +45,15 @@ public://functions
 	const bool Raycast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end, HitResult& hit);
 	const bool IsInArea(int x, int y)const noexcept;
 
+	//キャラクター位置によりマスタイプをType::Moveにする
+	void SetSquareTypeMove(const DirectX::XMINT2& pos, const int& cost, const std::vector<Square::Type>& typesExclusion = {Square::Type::MAX});
+	std::vector<std::shared_ptr<Square>> GetSquareTypeMove();
+
 	void ResetAllSquare();
 	void ResetSquaresAccessible();
 
 private:
-	void SearchSquare(const int x, const int y, const int cost, std::vector<DirectX::XMINT2>& squaresChecked);
+	void SearchSquare(const int x, const int y, const int cost, std::vector<DirectX::XMINT2>& squaresChecked, const std::vector<Square::Type>& typesExclusion = {Square::Type::MAX});
 
 private://static members
 private://members

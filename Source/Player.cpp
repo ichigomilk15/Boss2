@@ -32,14 +32,11 @@ Player::~Player()
 
 void Player::Update(float elapsedTime)
 {
-	//移動入力しょり
-	InputMove(elapsedTime);
+	//ステート更新処理
+	UpdateState(elapsedTime);
 
 	// 速力処理更新
 	UpdateVelocity(elapsedTime);
-
-	//ステート更新処理
-	UpdateState(elapsedTime);
 
 	//オブジェクト行列を更新
 	UpdateTransform();
@@ -89,40 +86,6 @@ void Player::DrawDebugPrimitive()
 	DebugRenderer* debugRenderer = Graphics::Instance().GetDebugRenderer();
 }
 
-
-DirectX::XMINT2 Player::GetMoveVec() const
-{
-	//入力情報を取得
-	GamePad& gamePad = Input::Instance().GetGamePad();
-	/*float ax = gamePad.GetAxisLX();
-	float ay = gamePad.GetAxisLY();*/
-	DirectX::XMINT2 move = { 0, 0 };
-	switch (gamePad.GetButtonDown() & (GamePad::BTN_LEFT | GamePad::BTN_RIGHT | GamePad::BTN_UP | GamePad::BTN_DOWN))
-	{
-	case GamePad::BTN_LEFT:
-		move.x = -1;
-		break;
-	case GamePad::BTN_RIGHT:
-		move.x = 1;
-		break;
-	case GamePad::BTN_UP:
-		move.y = -1;
-		break;
-	case GamePad::BTN_DOWN:
-		move.y = 1;
-		break;
-	}
-	return move;
-}
-
-void Player::InputMove(float elapsedTime)
-{
-	//進行マスの位置取得
-	DirectX::XMINT2 movePos = GetMoveVec();
-	//移動処理
-	Move(movePos.x, movePos.y);
-}
-
 void Player::UpdateState(float elapsedTime)
 {
 	switch (state)
@@ -144,7 +107,7 @@ void Player::UpdateState(float elapsedTime)
 		break;
 
 	case State::Move_Init:
-
+		Stage::Instance()->ResetAllSquare();
 		this->targetMovePos = { -1, -1 };
 		state = State::Move;
 		[[fallthrough]];
@@ -158,14 +121,15 @@ void Player::UpdateState(float elapsedTime)
 		}
 		break;
 	case State::Moving_Init:
-		this->SetDirection(this->targetMovePos);
 		state = State::Moving;
+		this->SetDirection(this->targetMovePos);
 		[[fallthrough]];
 	case State::Moving:
 		if (!IsMoving())
 		{
-			//this->state = State::Attack_Init;
-			state = State::Move_Init;
+			this->state = State::Attack_Init;
+			//this->state = State::Move_Init;
+			Stage::Instance()->ResetAllSquare();
 			break;
 		}
 		break;
@@ -201,36 +165,24 @@ void Player::UpdateState(float elapsedTime)
 
 void Player::UpdateMove(float elapsedTime)
 {
-	for (int y = 0; y < Common::SQUARE_NUM_Y; ++y)
-	{
-		for (int x = 0; x < Common::SQUARE_NUM_X; x++)
-		{
-			Stage::Instance()->GetSquare(x, y).get()->ResetSquare();
-		}
-	}
+	Stage::Instance()->SetSquareTypeMove(position, moveRange, {Square::Type::Inaccessible});
 
 	Mouse& mouse = Input::Instance().GetMouse();
 	auto dc = Graphics::Instance().GetDeviceContext();
 	Camera& camera = Camera::Instance();
 
-	std::vector<Square*> squares = Stage::Instance()->GetSquares(this->position.x, this->position.y, moveRange);
-
-	for (auto& square : squares)
-	{
-		square->SetType(Square::Type::MoveArea);
-	}
-
 	DirectX::XMFLOAT3 startMousePos = CommonClass::GetWorldStartPosition(dc, mouse.GetPositionX(), mouse.GetPositionY(), camera.GetView(), camera.GetProjection());
 	DirectX::XMFLOAT3 endMousePos = CommonClass::GetWorldEndPosition(dc, mouse.GetPositionX(), mouse.GetPositionY(), camera.GetView(), camera.GetProjection());
 
 	HitResult hit;
-	Square* foundSq = nullptr;
-	for (auto& sq : squares)
+	std::shared_ptr<Square> foundSq = nullptr;
+	for (auto& sq : Stage::Instance()->GetSquareTypeMove())
 	{
 		if (sq->Raycast(startMousePos, endMousePos, hit))
 		{
 			sq->SetType(Square::Type::MoveAreaChosen);
 			foundSq = sq;
+			this->SetDirection(sq->GetPos());
 		}
 	}
 	if (foundSq && mouse.GetButtonDown() & Mouse::BTN_LEFT)

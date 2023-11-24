@@ -237,6 +237,9 @@
     <ClInclude Include="Source\TurnSystem.h">
       <Filter>Source\GameSystem</Filter>
     </ClInclude>
+    <ClInclude Include="Source\PlayerManager.h">
+      <Filter>Source\Characters</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="External\imgui\imgui.cpp">
@@ -391,6 +394,9 @@
     </ClCompile>
     <ClCompile Include="Source\TurnSystem.cpp">
       <Filter>Source\GameSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\PlayerManager.cpp">
+      <Filter>Source\Characters</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

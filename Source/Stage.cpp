@@ -9,7 +9,9 @@
 #include "Square.h"
 #include "Graphics\DebugRenderer.h"
 #include "Graphics\Graphics.h"
-#include <EnemyManager.h>
+#include "EnemyManager.h"
+#include "PlayerManager.h"
+#include <Input\Input.h>
 
 Stage::Stage() :
 	//squares(),
@@ -97,11 +99,11 @@ void Stage::DrawIMGUI()
 }
 
 
-void Stage::SearchSquare(const int x, const int y, const int cost, std::vector<DirectX::XMINT2>& squaresChecked)
+void Stage::SearchSquare(const int x, const int y, const int cost, std::vector<DirectX::XMINT2>& squaresChecked, const std::vector<Square::Type>& typesExclusion)
 {
 	if (!IsInArea(x, y)) return;
 	if (cost < 0) return;
-	if (!GetSquare(x, y)->GetIsaccessible()) return;
+	//if (!GetSquare(x, y)->GetIsaccessible()) return;
 
 	bool isChecked = false;
 	for (auto& sq : squaresChecked)
@@ -110,45 +112,28 @@ void Stage::SearchSquare(const int x, const int y, const int cost, std::vector<D
 			isChecked = true;
 	}
 
-	if (!isChecked)
+	if (!isChecked && !GetSquare(x, y)->CheckSameType(typesExclusion))
 		squaresChecked.emplace_back(DirectX::XMINT2(x, y));
 
-	SearchSquare(x, y - 1, cost - 1, squaresChecked);      // ã
+	SearchSquare(x, y - 1, cost - 1, squaresChecked, typesExclusion);      // ã
 
-	SearchSquare(x, y + 1, cost - 1, squaresChecked);      // ‰º
+	SearchSquare(x, y + 1, cost - 1, squaresChecked, typesExclusion);      // ‰º
 
-	SearchSquare(x - 1, y, cost - 1, squaresChecked);      // ¶
+	SearchSquare(x - 1, y, cost - 1, squaresChecked, typesExclusion);      // ¶
 
-	SearchSquare(x + 1, y, cost - 1, squaresChecked);      // ‰E
+	SearchSquare(x + 1, y, cost - 1, squaresChecked, typesExclusion);      // ‰E
 }
 
-void Stage::ResetSquaresAccessible()
-{
-	for (auto& enemy : EnemyManager::Instance().GetList())
-	{
-		DirectX::XMINT2 enemyPos = enemy->GetPosition();
-		squares[enemyPos.y][enemyPos.x]->SetIsaccessible(false);
-	}
-}
-
-void Stage::ResetAllSquare()
-{
-	for (auto& y : squares)
-	{
-		for (auto& x : y)
-		{
-			x->ResetSquare();
-		}
-	}
-}
-
-std::vector<Square*> Stage::GetSquares(const int& initX, const int& initY, const int& cost)
+std::vector<Square*> Stage::GetSquares(const int& initX, const int& initY, const int& cost, const std::vector<Square::Type>& typesExclusion)
 {
 	std::vector<DirectX::XMINT2> squaresValid;
 
-	SearchSquare(initX, initY, cost, squaresValid);
+	SearchSquare(initX, initY, cost, squaresValid, typesExclusion);
 	if (!squaresValid.empty())
-		squaresValid.erase(squaresValid.begin());
+	{
+		if (squaresValid.at(0).x == initX && squaresValid.at(0).y == initY)
+			squaresValid.erase(squaresValid.begin());
+	}
 
 	std::vector<Square*> foundSquares;
 	for (auto& square : squaresValid)
@@ -160,7 +145,7 @@ std::vector<Square*> Stage::GetSquares(const int& initX, const int& initY, const
 	return foundSquares;
 }
 
-std::vector<Square*> Stage::GetSquaresEdgeAdjacent(const int& initX, const int& initY, const int& cost)
+std::vector<Square*> Stage::GetSquaresEdgeAdjacent(const int& initX, const int& initY, const int& cost, const std::vector<Square::Type>& typesExclusion)
 {
 	std::vector<Square*> foundSq = GetSquares(initX, initY, cost);
 	std::vector<Square*> removeSq;
@@ -246,9 +231,10 @@ const bool Stage::IsAdjacent(const DirectX::XMINT2& posInit, const DirectX::XMIN
 	if (posTarget.x != posInit.x && posTarget.y != posInit.y) return false;
 	if (abs(posTarget.x - posInit.x) > 1) return false;
 	if (abs(posTarget.y - posInit.y) > 1) return false;
-	
+
 	return true;
 }
+
 int Stage::GetTargetPosCost(const DirectX::XMINT2& posInit, const DirectX::XMINT2& posTarget)
 {
 	int cost = 1;
@@ -295,6 +281,29 @@ int Stage::GetTargetPosCost(const DirectX::XMINT2& posInit, const DirectX::XMINT
 	return 0;
 }
 
+void Stage::ResetSquaresAccessible()
+{
+	for (auto& enemy : EnemyManager::Instance().GetList())
+	{
+		DirectX::XMINT2 enemyPos = enemy->GetPosition();
+		squares[enemyPos.y][enemyPos.x]->SetIsaccessible(false);
+	}
+	DirectX::XMINT2 playerPos = PlayerManager::Instance().GetFirstPlayer()->GetPosition();
+	squares[playerPos.y][playerPos.x]->SetIsaccessible(false);
+}
+
+void Stage::ResetAllSquare()
+{
+	for (auto& y : squares)
+	{
+		for (auto& x : y)
+		{
+			x->ResetSquare();
+		}
+	}
+	ResetSquaresAccessible();
+}
+
 const bool Stage::Raycast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end, HitResult& hit)
 {
 	for (auto& y : squares)
@@ -315,4 +324,28 @@ const bool Stage::IsInArea(int x, int y) const noexcept
 		y >= 0 &&
 		x < Common::SQUARE_NUM_X&&
 		y < SQUARE_NUM_Y);
+}
+
+void Stage::SetSquareTypeMove(const DirectX::XMINT2& pos, const int& cost, const std::vector<Square::Type>& typesExclusion)
+{
+	std::vector<Square*> squares = GetSquares(pos.x, pos.y, cost, typesExclusion);
+
+	for (auto& square : squares)
+	{
+		square->SetType(Square::Type::MoveArea);
+	}
+}
+
+std::vector<std::shared_ptr<Square>> Stage::GetSquareTypeMove()
+{
+	std::vector<std::shared_ptr<Square>> moveSquares;
+	for (auto& y : squares)
+	{
+		for (auto& x : y)
+		{
+			if (x->GetType() == Square::Type::MoveArea)
+				moveSquares.emplace_back(x);
+		}
+	}
+	return moveSquares;
 }

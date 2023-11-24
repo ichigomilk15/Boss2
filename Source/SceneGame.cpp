@@ -7,8 +7,9 @@
 #include "Stage.h"
 #include "AttackManager.h"
 #include "Common.h"
-#include <EnemyManager.h>
-#include <EnemyBoss1.h>
+#include "EnemyManager.h"
+#include "EnemyBoss1.h"
+#include "PlayerManager.h"
 
 std::map<int, DirectX::XMFLOAT3> CommonClass::directionMaps;
 
@@ -22,9 +23,10 @@ void SceneGame::Initialize()
 	Stage::Instance()->CreateStage();
 
 	auto& enemyManager = EnemyManager::Instance();
-	player = new Player();
+	PlayerManager::Instance().Register(new Player);
+	Player* player = PlayerManager::Instance().GetFirstPlayer();
 	playerHP = std::make_unique<Sprite>();
-	player->SetPositionWorld({ 3, 3 });
+	player->SetPositionWorld({ 0, 0 });
 	CardManager::Instance().ALLClear();
 
 	EnemyBoss1* enemy = new EnemyBoss1(player);
@@ -49,6 +51,8 @@ void SceneGame::Initialize()
 
 	//方向マップ設定
 	SetGlobalDirection();
+	Stage::Instance()->ResetAllSquare();
+	Stage::Instance()->ResetSquaresAccessible();
 
 	effects.emplace_back(std::make_unique<Effect>("./Data/Effect/Stun0.efk"));
 	effects.emplace_back(std::make_unique<Effect>("./Data/Effect/Stun72.efk"));
@@ -67,11 +71,7 @@ void SceneGame::Finalize()
 		cameraController = nullptr;
 	}
 
-	if (player != nullptr)
-	{
-		delete player;
-		player = nullptr;
-	}
+	PlayerManager::Instance().Clear();
 
 	//エネミー終了化
 	EnemyManager::Instance().Clear();
@@ -87,8 +87,8 @@ void SceneGame::Update(float elapsedTime)
 	Stage::Instance()->Update(elapsedTime);
 	CardManager::Instance().Update(elapsedTime);
 	UpdateGameTurn();
-	player->Update(elapsedTime);
-	EnemyManager::Instance().Update(elapsedTime, player);
+	PlayerManager::Instance().Update(elapsedTime);
+	EnemyManager::Instance().Update(elapsedTime, PlayerManager::Instance().GetFirstPlayer());
 	AttackManager::Instance().Update(elapsedTime);
 
 	//エフェクト更新処理
@@ -124,7 +124,7 @@ void SceneGame::Render()
 		shader->Begin(dc, rc);
 		//ステージ描画
 		Stage::Instance()->Render(dc, shader);
-		player->Render(dc, shader);
+		PlayerManager::Instance().Render(dc, shader, rc);
 		EnemyManager::Instance().Render(dc, shader);
 		AttackManager::Instance().Render(dc, shader);
 
@@ -171,7 +171,7 @@ void SceneGame::Render()
 	// 2DデバッグGUI描画
 	{
 		//プレイヤーデバッグ描画
-		player->DrawDebugGUI();
+		PlayerManager::Instance().DrawDebugGUI();
 		EnemyManager::Instance().DrawDebugGUI();
 		DrawDebugGUI();
 		Stage::Instance()->DrawIMGUI();

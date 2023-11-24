@@ -42,7 +42,7 @@ private:
 	void UpdateGameTurn();
 
 private://members
-	Player* player = nullptr;
+	//Player* player = nullptr;
 	CameraController* cameraController = nullptr;
 	std::unique_ptr<Sprite> playerHP;
 	std::vector<std::unique_ptr<Effect>> effects;

@@ -81,9 +81,11 @@ public://function
 
 	void ResetSquare();
 
+	const bool CheckSameType(const std::vector<Type>& types) const;
+
 	//Getter&Setter*************************************************************************
 #if 1
-	void SetIsaccessible(bool isAccessible) { isAccessible = isAccessible; }
+	void SetIsaccessible(bool isAccessible);
 	const bool GetIsaccessible() const { return isAccessible; }
 	const DirectX::XMFLOAT3& GetWorldPos()const noexcept { return worldPos; }
 	const DirectX::XMINT2& GetPos() const noexcept { return pos; }

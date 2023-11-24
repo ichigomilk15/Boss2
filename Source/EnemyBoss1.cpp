@@ -31,7 +31,6 @@ void EnemyBoss1::UpdateState(float elapsedTime)
 	case State::Act_Init:
 		state = State::Act;
 		[[fallthrough]];
-		break;
 	case State::Act:
 		if (gamePad.GetButtonDown() & GamePad::BTN_Y)
 		{

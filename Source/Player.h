@@ -22,12 +22,6 @@ public:
 	//デバッグプリミティブ描画
 	void DrawDebugPrimitive();
 private:
-	//スティック入力値から移動ベクトルを取得
-	DirectX::XMINT2 GetMoveVec() const;
-
-	//移動入力しょり
-	void InputMove(float elapsedTime);
-
 	//ステート更新処理
 	void UpdateState(float elapsedTime) override;
 
