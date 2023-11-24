@@ -23,16 +23,10 @@ void SceneGame::Initialize()
 	//ステージ
 	Stage::Instance()->CreateStage();
 
-	auto& enemyManager = EnemyManager::Instance();
 	PlayerManager::Instance().Register(new Player);
 	Player* player = PlayerManager::Instance().GetFirstPlayer();
 	playerHP = std::make_unique<Sprite>();
-	player->SetPositionWorld({ 3, 3 });
 	CardManager::Instance().ALLClear();
-
-	EnemyBoss1* enemy = new EnemyBoss1(player);
-	enemyManager.Register(enemy);
-	enemy->SetPositionWorld({ 1, 1 });
 
 	//カメラ初期設定
 	Graphics& graphics = Graphics::Instance();
@@ -56,9 +50,6 @@ void SceneGame::Initialize()
 	Stage::Instance()->ResetSquaresAccessible();
 
 	effects.emplace_back(std::make_unique<Effect>("./Data/Effect/Stun0.efk"));
-
-	turnSystem = std::make_unique<TurnSystem>();
-	turnSystem->ChangeTurn();
 
 	PhaseManager::Instance().Initialize();
 }
@@ -88,7 +79,6 @@ void SceneGame::Update(float elapsedTime)
 
 	Stage::Instance()->Update(elapsedTime);
 	CardManager::Instance().Update(elapsedTime);
-	UpdateGameTurn();
 	PlayerManager::Instance().Update(elapsedTime);
 	EnemyManager::Instance().Update(elapsedTime, PlayerManager::Instance().GetFirstPlayer());
 	AttackManager::Instance().Update(elapsedTime);
@@ -300,18 +290,4 @@ void SceneGame::SetGlobalDirection()
 	CommonClass::directionMaps.insert({ (int)CommonClass::DirectionFace::BackLeft, DirectX::XMFLOAT3(0.0f, DirectX::XMConvertToRadians(225), 0.0f) });
 	CommonClass::directionMaps.insert({ (int)CommonClass::DirectionFace::Left, DirectX::XMFLOAT3(0.0f, DirectX::XMConvertToRadians(270), 0.0f) });
 	CommonClass::directionMaps.insert({ (int)CommonClass::DirectionFace::FrontLeft, DirectX::XMFLOAT3(0.0f, DirectX::XMConvertToRadians(315), 0.0f) });
-}
-
-void SceneGame::UpdateGameTurn()
-{
-	switch (turnSystem->getSubject())
-	{
-	case TurnSystem::TURN_ENUM::ENEMY_TURN:
-
-		break;
-
-	case TurnSystem::TURN_ENUM::PLAYER_TURN:
-
-		break;
-	}
 }

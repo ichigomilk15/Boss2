@@ -166,7 +166,6 @@
     <ClInclude Include="Source\SceneTitle.h" />
     <ClInclude Include="Source\Square.h" />
     <ClInclude Include="Source\Stage.h" />
-    <ClInclude Include="Source\TurnSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="External\DirectXTex\WICTextureLoader.cpp" />
@@ -220,7 +219,6 @@
     <ClCompile Include="Source\SceneTitle.cpp" />
     <ClCompile Include="Source\Square.cpp" />
     <ClCompile Include="Source\Stage.cpp" />
-    <ClCompile Include="Source\TurnSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="HLSL\Debug.hlsli" />

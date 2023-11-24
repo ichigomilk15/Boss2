@@ -40,7 +40,7 @@ Card::~Card()
 void Card::Update(float elapsedTime)
 {
     //ˆÚ“®
-    if (!moveLock&&IsMoveing())
+    if (!moveLock&&IsMoving())
     {
         DirectX::XMVECTOR Pos = DirectX::XMLoadFloat2(&pos);
         DirectX::XMVECTOR Target = DirectX::XMLoadFloat2(&targetPos);
@@ -85,12 +85,12 @@ const bool Card::HitMouse()
 
 const bool Card::HitCheck(DirectX::XMFLOAT2 screenPos)
 {
-    if (IsMoveing())return false;//ˆÚ“®’†‚Í”»’è‚ðŽæ‚ç‚È‚¢
+    if (IsMoving())return false;//ˆÚ“®’†‚Í”»’è‚ðŽæ‚ç‚È‚¢
     return (screenPos.x>pos.x&&screenPos.y>pos.y&&
         screenPos.x<pos.x+size.x&&screenPos.y<pos.y+size.y);
 }
 
-const bool Card::IsMoveing() const noexcept
+const bool Card::IsMoving() const noexcept
 {
     return (pos.x != targetPos.x || pos.y != targetPos.y);
 }

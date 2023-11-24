@@ -34,7 +34,10 @@ public:
 	const DirectX::XMINT2& GetPosition() const { return position; }
 
 	//位置設定
-	void SetPositionWorld(const DirectX::XMINT2 & position);
+	void SetPositionWorld(const DirectX::XMINT2& position);
+
+	//ターゲット位置設定
+	void SetTargetMovePosition(const DirectX::XMINT2& targetPos) { targetMovePos = targetPos; }
 
 	//回転取得
 	const DirectX::XMFLOAT3& GetAngle() const { return angle; }

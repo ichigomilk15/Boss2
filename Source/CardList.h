@@ -24,7 +24,7 @@ public://functions
 	void AddCardReserved(std::shared_ptr<Card>& card);
 	void EraseItem(std::shared_ptr<Card>& item);
 	void QuickEraseItem(std::shared_ptr<Card>& item);
-	const bool IsMoveing()const noexcept;
+	const bool IsMoving()const noexcept;
 
 	void ALLClear();
 	void Replenish();

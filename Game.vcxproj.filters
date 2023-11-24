@@ -234,9 +234,6 @@
     <ClInclude Include="Source\EnemyBoss1.h">
       <Filter>Source\Characters</Filter>
     </ClInclude>
-    <ClInclude Include="Source\TurnSystem.h">
-      <Filter>Source\GameSystem</Filter>
-    </ClInclude>
     <ClInclude Include="Source\PlayerManager.h">
       <Filter>Source\Characters</Filter>
     </ClInclude>
@@ -391,9 +388,6 @@
     </ClCompile>
     <ClCompile Include="Source\EnemyBoss1.cpp">
       <Filter>Source\Characters</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\TurnSystem.cpp">
-      <Filter>Source\GameSystem</Filter>
     </ClCompile>
     <ClCompile Include="Source\PlayerManager.cpp">
       <Filter>Source\Characters</Filter>

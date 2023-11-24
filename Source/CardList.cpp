@@ -244,16 +244,16 @@ void CardManager::QuickEraseItem(std::shared_ptr<Card>& item)
 	}
 }
 
-const bool CardManager::IsMoveing() const noexcept
+const bool CardManager::IsMoving() const noexcept
 {
 	for (auto& card : cards)
 	{
-		if (card->IsMoveing())return true;
+		if (card->IsMoving())return true;
 	}
 	for (auto& card : SetCards)
 	{
 		if (card == nullptr)continue;
-		if (card->IsMoveing())return true;
+		if (card->IsMoving())return true;
 	}
 	return false;
 }
