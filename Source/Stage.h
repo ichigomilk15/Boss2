@@ -52,11 +52,20 @@ public://functions
 	void ResetAllSquare();
 	void ResetSquaresAccessible();
 
+	//Getter&Setter***************************************************************************
+#if 1
+	const unsigned int& GetStageLevel()const noexcept { return stageLevel; }
+	void SetStageLevel(const unsigned int level)noexcept { stageLevel = level; }
+	const unsigned int& StageLevelStepUp()noexcept { return ++stageLevel; }
+#endif // 1
+	//Getter&Setter***************************************************************************
+
 private:
 	void SearchSquare(const int x, const int y, const int cost, std::vector<DirectX::XMINT2>& squaresChecked, const std::vector<Square::Type>& typesExclusion = {Square::Type::MAX});
 
 private://static members
 private://members
+	unsigned int stageLevel = 0u;
 	std::shared_ptr<Square> squares[Common::SQUARE_NUM_Y][Common::SQUARE_NUM_X];
 	std::unique_ptr<Model> model;
 	std::shared_ptr<Model> squareBorder;

@@ -18,20 +18,37 @@ public://functions
 	void Render(ID3D11DeviceContext* dc);
 	void DrawDebugGUI();
 	std::shared_ptr<Card> HitCheck(const DirectX::XMFLOAT2& screenPos)const;
-	std::shared_ptr<Card> DrowCard(const std::pair<Card::Type,unsigned int>* const pair,const size_t pairSize);
+	//ランダムでカードを生成*手持ちには追加されないのでAddCardなどを使用してください
+	std::shared_ptr<Card> DrawCard(const std::pair<Card::Type,unsigned int>* const pair,const size_t pairSize);
+	//手札にカードを追加
 	void AddCard(std::shared_ptr<Card>& card);
+	//手札の一番左に追加
 	const bool AddCardFront(std::shared_ptr<Card>& card);
+	//山札にかーどを追加
 	void AddCardReserved(std::shared_ptr<Card>& card);
+	//カードを削除
 	void EraseItem(std::shared_ptr<Card>& item);
+	//即座にカードを削除**for文を回している間は呼ばないでください
 	void QuickEraseItem(std::shared_ptr<Card>& item);
+	//移動しているカードがあるかどうか
 	const bool IsMoving()const noexcept;
+	//カード置き場全てにカードが置かれているか
+	const bool IsFillSetCards()const noexcept;
+	//カード置き場から次に使用するカードを取得する
+	const Card::Type& PopAndGetUseCard()noexcept;
+	//カード置き場にカードが残っているか動かを取得する
+	const bool IsSetCardsEmpty()const noexcept;
 
+	//全てのカードを削除
 	void ALLClear();
+	//カードを上限まで補充する
 	void Replenish();
 
 	//Getter&Setter******************************************************************************************************
 #if 1
+	//カードを持つことができるか
 	const bool& GetIsMoveable()const noexcept { return isMoveable; }
+	//カードを持つことができるか
 	void SetIsMoveable(const bool flag)noexcept { isMoveable = flag; }
 #endif // 1
 	//Getter&Setter******************************************************************************************************
@@ -39,6 +56,7 @@ public://functions
 private://functions
 	void Erase();
 
+	//マウスが持つカードの変更
 	void ChangeHaveCard(std::shared_ptr<Card>* card);
 public://static memberes
 	static constexpr unsigned int CARD_MAX = 5u;

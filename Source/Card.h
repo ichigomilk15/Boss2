@@ -32,6 +32,8 @@ public://functions
     const bool HitMouse();
     const bool HitCheck(DirectX::XMFLOAT2 screenPos);
 
+    void Swap(Card* card);
+
     /// <summary>
     /// カード使用時に実行する関数
     /// </summary>
