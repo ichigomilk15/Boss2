@@ -17,6 +17,8 @@ enum class State
 	Attack,
 	Attacking_Init, //攻撃している状態
 	Attacking,
+	Act_Finish_Init, //全てのアクションが終わった処理
+	Act_Finish,
 	Max,
 };
 
@@ -74,6 +76,9 @@ public:
 
 	// ステート設定
 	void SetState(State state) { this->state = state; }
+
+	//ステート取得
+	const State GetState() const { return this->state; }
 
 	//健康状態取得
 	int GetHealth() const { return health; }

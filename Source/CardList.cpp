@@ -298,6 +298,16 @@ void CardManager::Replenish()
 	}
 }
 
+const bool CardManager::IsSetCardsFinished() const
+{
+	for (auto& setCard : SetCards)
+	{
+		if (setCard == nullptr)
+			return false;
+	}
+	return true;
+}
+
 void CardManager::Erase()
 {
 	for (auto& erase : eraser)

@@ -24,14 +24,6 @@ class PhaseManager
 public://class
 	enum class Phase : int
 	{
-		/*PhaseCreate(GameStart),
-		PhaseCreate(NextStage),
-		PhaseCreate(Start),
-		PhaseCreate(Player),
-		PhaseCreate(PlayerAct),
-		PhaseCreate(Enemy),
-		PhaseCreate(EnemyAct),
-		PhaseCreate(End),*/
 #define X(name) name,
 		PHASE_LIST
 #undef X
@@ -51,7 +43,9 @@ public:
 	//Getter&Setter*****************************************************************************
 #if 1
 	const Phase& GetFhase()const noexcept { return static_cast<Phase>(phase); }
-	const unsigned int& GetTrunCount()const noexcept { return trunCount; }
+	const unsigned int& GetTrunCount()const noexcept { return turnCount; }
+	const void StepupUseCardIndex() { ++useCardIndex; }
+	const unsigned int GetUseCardIndex()const noexcept { return useCardIndex; }
 #endif // 1
 	//Getter&Setter*****************************************************************************
 
@@ -61,8 +55,7 @@ private:
 private:
 	Phase phase = Phase::Phase_GameStart_Init;
 	int StageLevel = 0;
-	unsigned int trunCount = 0u;
+	unsigned int turnCount = 0u;
 	float phaseTimer;
+	unsigned int useCardIndex = 0u; //プレイヤーが今使われているカード順番
 };
-
-#undef PhaseCreate

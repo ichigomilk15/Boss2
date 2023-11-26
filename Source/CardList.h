@@ -29,10 +29,13 @@ public://functions
 	void ALLClear();
 	void Replenish();
 
+	const bool IsSetCardsFinished()const;
+
 	//Getter&Setter******************************************************************************************************
 #if 1
 	const bool& GetIsMoveable()const noexcept { return isMoveable; }
 	void SetIsMoveable(const bool flag)noexcept { isMoveable = flag; }
+	const std::shared_ptr<Card> GetSetCards(int index) const noexcept { index %= SET_CARD_MAX; return SetCards[index]; }
 #endif // 1
 	//Getter&Setter******************************************************************************************************
 

@@ -3,12 +3,12 @@
 #include "EnemyManager.h"
 #include "CardList.h"
 #include "PlayerManager.h"
+#include "EnemyBoss1.h"
+#include "Stage.h"
 
 #ifdef _DEBUG
 #include "Graphics/ImGuiRenderer.h"
 #endif // _DEBUG
-#include <EnemyBoss1.h>
-#include <Stage.h>
 
 
 void PhaseManager::Initialize()
@@ -65,26 +65,35 @@ void PhaseManager::Update(float elapsedTime)
 	break;
 	case PhaseManager::Phase::Phase_Player_Init:
 	{
-		PlayerManager::Instance().GetFirstPlayer()->SetState(State::Act_Init);
 		phase = Phase::Phase_Player;
 	}
 	[[fallthrough]];
 	case PhaseManager::Phase::Phase_Player:
 	{
-		auto& manager = CardManager::Instance();
-		manager.GetIsMoveable();
+		if (CardManager::Instance().IsSetCardsFinished())
+		{
+			phase = Phase::Phase_PlayerAct_Init;
+			PlayerManager::Instance().GetFirstPlayer()->SetState(State::Act_Init);
+			break;
+		}
 	}
 	break;
 	case PhaseManager::Phase::Phase_PlayerAct_Init:
 	{
+		useCardIndex = 0u;
 		phase = Phase::Phase_PlayerAct;
 	}
 	[[fallthrough]];
 	case PhaseManager::Phase::Phase_PlayerAct:
 	{
-		UpdatePlayerAct(elapsedTime); 
+		UpdatePlayerAct(elapsedTime);
+		if (PlayerManager::Instance().GetFirstPlayer()->GetState() == State::Act_Finish)
+		{
+			phase = Phase::Phase_Enemy_Init;
+			break;
+		}
 	}
-		break;
+	break;
 	case PhaseManager::Phase::Phase_Enemy_Init:
 	{
 		for (auto& enemy : EnemyManager::Instance().GetList())
@@ -118,7 +127,7 @@ void PhaseManager::Update(float elapsedTime)
 void PhaseManager::Reset()
 {
 	phase = Phase::Phase_GameStart_Init;
-	trunCount = 0u;
+	turnCount = 0u;
 	StageLevel = 0;
 	phaseTimer = .0f;
 }
@@ -153,13 +162,11 @@ void PhaseManager::DrawDebugGUI()
 
 void PhaseManager::SetGameStart()
 {
-	//todo : playerの配置
 	Player* player = PlayerManager::Instance().GetFirstPlayer();
 	player->SetPositionWorld({ 3, 3 });
 	player->SetTargetMovePosition({ -1, -1 });
 	player->SetState(State::Idle_Init);
 
-	//todo : enemyのスポーン
 	EnemyBoss1* enemy = new EnemyBoss1(player);
 	EnemyManager::Instance().Register(enemy);
 	enemy->SetPositionWorld({ 1, 1 });
@@ -171,5 +178,6 @@ void PhaseManager::SetGameStart()
 
 void PhaseManager::UpdatePlayerAct(float elapsedTime)
 {
-
+	/*CardManager::Instance().GetIsMoveable
+	switch()*/
 }

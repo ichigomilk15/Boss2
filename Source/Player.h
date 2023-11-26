@@ -30,7 +30,12 @@ private:
 
 	//攻撃アクション更新処理
 	void UpdateAttack(float elapsedTime);
+
+	//セットカードによるアクションを決める更新処理
+	State ChooseAct(float elapsedTime);
 private:
 	Model* model = nullptr;
 	Effect* hitEffect = nullptr;
+
+	float actTimer = 0;
 };
