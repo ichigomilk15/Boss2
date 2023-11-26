@@ -12,6 +12,7 @@ void Enemy::Update(float elapsedTime)
 	//オブジェクト行列を更新
 	UpdateTransform();
 
+	this->model->UpdateAnimation(elapsedTime);
 	//モデル行列更新
 	model->UpdateTransform(transform);
 }
@@ -34,8 +35,14 @@ void Enemy::OnDead()
 {
 }
 
+void Enemy::ResetStatus()
+{
+	Character::ResetStatus();
+	actNo = 0;
+	isActEnd = false;
+}
+
 bool Enemy::UpdateMove(float elapsedTime)
 {
 	return false;
 }
-

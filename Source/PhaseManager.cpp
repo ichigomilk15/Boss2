@@ -3,7 +3,7 @@
 #include "EnemyManager.h"
 #include "CardList.h"
 #include "PlayerManager.h"
-#include "EnemyBoss1.h"
+#include "EnemyMinion1.h"
 #include "Stage.h"
 
 #ifdef _DEBUG
@@ -37,6 +37,9 @@ void PhaseManager::Update(float elapsedTime)
 		CardManager& cardManager = CardManager::Instance();
 		cardManager.SetIsMoveable(false);
 		cardManager.Replenish();
+
+		PlayerManager::Instance().GetFirstPlayer()->ResetStatus();
+		EnemyManager::Instance().ResetTurnEnemies();
 
 		phase = Phase::Phase_Start;
 		phaseTimer = 1.0f;
@@ -96,32 +99,65 @@ void PhaseManager::Update(float elapsedTime)
 	break;
 	case PhaseManager::Phase::Phase_Enemy_Init:
 	{
-		for (auto& enemy : EnemyManager::Instance().GetList())
-		{
-
-		}
+		phaseTimer = 1.0f;
+		Stage::Instance()->ResetAllSquare();
 		phase = Phase::Phase_Enemy;
+		break;
 	}
 	[[fallthrough]];
 	case PhaseManager::Phase::Phase_Enemy:
 	{
-
+		phaseTimer -= elapsedTime;
+		if (phaseTimer < 0.0f)
+		{
+			phase = Phase::Phase_EnemyAct_Init;
+			break;
+		}
 	}
 	break;
+	case PhaseManager::Phase::Phase_EnemyAct_Init:
+	{
+		Stage::Instance()->ResetAllSquare();
+		phase = Phase::Phase_EnemyAct;
+	}
+	[[fallthrough]];
+	case PhaseManager::Phase::Phase_EnemyAct:
+	{
+		if (EnemyManager::Instance().GetIsAllActEnd())
+		{
+			phase = Phase::Phase_End_Init;
+			break;
+		}
+	}
+	break;
+
 	case PhaseManager::Phase::Phase_End_Init:
 	{
-
+		phaseTimer = 3.0f;
 		phase = Phase::Phase_End;
 	}
 	[[fallthrough]];
 	case PhaseManager::Phase::Phase_End:
 	{
-
+		phaseTimer -= elapsedTime;
+		if (phaseTimer < 0.0f)
+		{
+			ResetTurn();
+			break;
+		}
 	}
 	break;
+
 	default:
 		break;
 	}
+}
+
+void PhaseManager::ResetTurn()
+{
+	phase = Phase::Phase_Start_Init;
+	phaseTimer = 0.0f;
+	++turnCount;
 }
 
 void PhaseManager::Reset()
@@ -167,7 +203,7 @@ void PhaseManager::SetGameStart()
 	player->SetTargetMovePosition({ -1, -1 });
 	player->SetState(State::Idle_Init);
 
-	EnemyBoss1* enemy = new EnemyBoss1(player);
+	EnemyMinion1* enemy = new EnemyMinion1(player);
 	EnemyManager::Instance().Register(enemy);
 	enemy->SetPositionWorld({ 1, 1 });
 	enemy->SetTargetMovePosition({ -1, -1 });

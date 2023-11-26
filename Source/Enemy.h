@@ -38,6 +38,9 @@ public:
 	void OnDead()override;
 
 	bool GetIsDestroyed() { return destroyedStatus.isDestroyed; }
+	const bool GetIsActEnd() const { return isActEnd; }
+
+	virtual void ResetStatus() override;
 
 protected:
 	//移動の更新処理
@@ -45,12 +48,18 @@ protected:
 
 	//ステート更新処理
 	void UpdateState(float elapsedTime) override {}
+	//攻撃アクション更新処理
+	virtual void InitializeAttack(float elapsedTime) {}
 
 
 protected:
 	std::unique_ptr<Model> model;
 
 	int moveMax = 2;
+	int actMax = 3;				//1ターンに行動数
+	int actNo = 0;				//行動回数・ターン始まりにリセット
+
+	bool isActEnd = false;		//ターンにアクションが終わったの判定
 
 	struct DestroyedStatus
 	{

@@ -65,6 +65,11 @@ void Character::UpdateVelocity(float elapsedTime)
 	}
 }
 
+void Character::ResetStatus()
+{
+	shield = 0;
+}
+
 bool Character::ApplyDamage(int damage)
 {
 	//ダメージを０の場合は健康状態を変更する必要がない
@@ -96,10 +101,10 @@ bool Character::IsMoving() const
 		Stage::Instance()->IsInArea(targetMovePos.x, targetMovePos.y));
 }
 
-bool Character::IsAttacking() const
-{
-	return false;
-}
+//bool Character::IsAttacking() const
+//{
+//	return false;
+//}
 
 void Character::AddImpulse(const DirectX::XMFLOAT3& impulse)
 {

@@ -36,6 +36,4 @@ private:
 private:
 	Model* model = nullptr;
 	Effect* hitEffect = nullptr;
-
-	float actTimer = 0;
 };

@@ -17,10 +17,18 @@ enum class State
 	Attack,
 	Attacking_Init, //攻撃している状態
 	Attacking,
+	Defence_Init, //防御アップ
+	Defence,
 	Act_Finish_Init, //全てのアクションが終わった処理
 	Act_Finish,
 	Max,
 };
+
+//enum class Status
+//{
+//	Shield,
+//	Max_Status
+//};
 
 class Character
 {
@@ -30,6 +38,9 @@ public:
 
 	//行列更新処理
 	void UpdateTransform();
+
+	//ステータスのリセット
+	virtual void ResetStatus();
 
 	//位置取得
 	const DirectX::XMFLOAT3& GetPositionWorld() const { return positionWorld; }
@@ -69,7 +80,7 @@ public:
 	bool IsMoving() const;
 
 	//攻撃中かの判定
-	bool IsAttacking() const;
+	//bool IsAttacking() const;
 
 	//衝突を与える
 	void AddImpulse(const DirectX::XMFLOAT3& impulse);
@@ -122,13 +133,16 @@ protected:
 	float height = 2.0f;
 	int health = 1000;
 	int maxHealth = 1000;
-	int shield = 10;
+	int attackPower = 0; //アタック力
+	int shield = 0; //一時的な防御
 
 	State state;
+	float actTimer = 0; //ステート遷移タイマー
 
 	DirectX::XMINT2 targetMovePos = { -1, -1 }; //移動するターゲットの位置
 	float moveTimer = 0.0f;
 	int moveRange = 2; //移動力（マス数）
+	int attackAdjacentRange = 0;
 
 	AttackParent* attack = nullptr;
 

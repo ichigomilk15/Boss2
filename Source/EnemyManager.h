@@ -59,7 +59,15 @@ public:
 
     void DrawDebugGUI();
 
+    void ResetTurnEnemies(); //ターン終了に敵をリセット
+
+    const bool GetIsAllActEnd() const;
+
+private:
+    void UpdateEnemiesTurn(float elapsedTime); //敵のターン更新処理
+
 private:
     std::vector<Enemy*> enemies;
     std::set<Enemy*>    removes;
+    static int enemyTurnIndex; //敵の行動順番
 };

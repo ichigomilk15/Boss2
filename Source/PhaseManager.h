@@ -37,7 +37,8 @@ public:
 
 	void Initialize();
 	void Update(float elapsedTime);
-	void Reset();
+	void ResetTurn(); //ターンのリセット
+	void Reset(); //ゲームのリセット
 	void DrawDebugGUI();
 
 	//Getter&Setter*****************************************************************************
