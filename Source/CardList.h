@@ -34,7 +34,10 @@ public://functions
 	const bool IsMoving()const noexcept;
 	//カード置き場全てにカードが置かれているか
 	const bool IsFillSetCards()const noexcept;
+
 	//カード置き場から次に使用するカードを取得する
+	const Card::Type& GetUseCard()noexcept;
+	//カード置き場から次に使用するカードを削除&取得する
 	const Card::Type& PopAndGetUseCard()noexcept;
 	//カード置き場にカードが残っているか動かを取得する
 	const bool IsSetCardsEmpty()const noexcept;
@@ -50,6 +53,7 @@ public://functions
 	const bool& GetIsMoveable()const noexcept { return isMoveable; }
 	//カードを持つことができるか
 	void SetIsMoveable(const bool flag)noexcept { isMoveable = flag; }
+	const std::shared_ptr<Card> GetSetCards(int index) const noexcept { index %= SET_CARD_MAX; return SetCards[index]; }
 #endif // 1
 	//Getter&Setter******************************************************************************************************
 

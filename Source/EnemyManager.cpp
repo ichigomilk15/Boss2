@@ -1,5 +1,7 @@
 #include "EnemyManager.h"
+#include "PhaseManager.h"
 
+int EnemyManager::enemyTurnIndex = -1;
 
 EnemyManager::EnemyManager()
 {
@@ -7,6 +9,8 @@ EnemyManager::EnemyManager()
 
 void EnemyManager::Update(float elapsedTime, Character* player)
 {
+	UpdateEnemiesTurn(elapsedTime);
+
 	for (auto&& enemy : enemies)
 	{
 		enemy->Update(elapsedTime);
@@ -57,4 +61,42 @@ void EnemyManager::Remove(Enemy* enemy)
 
 void EnemyManager::DrawDebugGUI()
 {
+}
+
+void EnemyManager::ResetTurnEnemies()
+{
+	enemyTurnIndex = -1;
+	for (auto& e : enemies)
+	{
+		e->ResetStatus();
+	}
+}
+
+const bool EnemyManager::GetIsAllActEnd() const
+{
+	for (auto& enemy : enemies)
+	{
+		if (!enemy->GetIsActEnd())
+			return false;
+	}
+	enemyTurnIndex = -1;
+	return true;
+}
+
+void EnemyManager::UpdateEnemiesTurn(float elapsedTime)
+{
+	if (PhaseManager::Instance().GetFhase() != PhaseManager::Phase::Phase_EnemyAct)
+		return;
+
+	if (enemyTurnIndex < 0)
+	{
+		enemyTurnIndex = 0;
+		enemies.at(enemyTurnIndex)->SetState(State::Act_Init);
+	}
+
+	if (enemies.at(enemyTurnIndex)->GetIsActEnd())
+	{
+		if (++enemyTurnIndex < enemies.size())
+			enemies.at(enemyTurnIndex)->SetState(State::Act_Init);
+	}
 }

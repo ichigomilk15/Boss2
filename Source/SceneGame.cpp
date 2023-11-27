@@ -8,7 +8,7 @@
 #include "AttackManager.h"
 #include "Common.h"
 #include "EnemyManager.h"
-#include "EnemyBoss1.h"
+#include "EnemyMinion1.h"
 #include "PhaseManager.h"
 #include "PlayerManager.h"
 

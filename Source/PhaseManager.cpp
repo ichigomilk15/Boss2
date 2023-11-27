@@ -4,13 +4,12 @@
 #include "EnemyManager.h"
 #include "CardList.h"
 #include "PlayerManager.h"
+#include "EnemyMinion1.h"
 #include "Stage.h"
 
 #ifdef _DEBUG
 #include "Graphics/ImGuiRenderer.h"
 #endif // _DEBUG
-#include <EnemyBoss1.h>
-#include <Stage.h>
 
 PhaseManager::PhaseManager()
 {
@@ -65,9 +64,11 @@ void PhaseManager::Update(float elapsedTime)
 		cardManager.SetIsMoveable(false);
 		cardManager.Replenish();
 
+		PlayerManager::Instance().GetFirstPlayer()->ResetStatus();
+		EnemyManager::Instance().ResetTurnEnemies();
+
 		//todo : enemyの次の行動の決定
 
-		phaseTimer = NEXT_PHASE_WAIT_TIMER;
 		NextPhase();//次のフェーズへ
 	}
 	[[fallthrough]];
@@ -86,7 +87,6 @@ void PhaseManager::Update(float elapsedTime)
 	//***********************************************************************************
 	case PhaseManager::Phase::Phase_Player_Init:
 	{
-		PlayerManager::Instance().GetFirstPlayer()->SetState(State::Act_Init);
 		NextPhase();//次のフェーズへ
 	}
 	[[fallthrough]];
@@ -94,9 +94,10 @@ void PhaseManager::Update(float elapsedTime)
 	{
 		Mouse& mouse = Input::Instance().GetMouse();
 		//todo : ここの条件にプレイヤーとエネミーの行動終了判定を追加
-		if (mouse.GetButtonDown()&Mouse::BTN_LEFT&&
-			okButtonCollision.Hit(mouse.GetPosition()) && CardManager::Instance().IsFillSetCards())
+		if (IsQuickNextPhase(mouse.GetButtonDown()&Mouse::BTN_LEFT&&
+			okButtonCollision.Hit(mouse.GetPosition()) && CardManager::Instance().IsFillSetCards()))
 		{
+			PlayerManager::Instance().GetFirstPlayer()->SetState(State::Act_Init);
 			NextPhase();//次のフェーズへ
 			break;
 		}
@@ -106,30 +107,26 @@ void PhaseManager::Update(float elapsedTime)
 	//***********************************************************************************
 	case PhaseManager::Phase::Phase_PlayerAct_Init:
 	{
+		useCardIndex = 0u;
 		NextPhase();//次のフェーズへ
 	}
 	[[fallthrough]];
 	case PhaseManager::Phase::Phase_PlayerAct:
 	{
-		Mouse& mouse = Input::Instance().GetMouse();
-		//todo : ここの判定式をプレイヤーとエネミーが行動中じゃなければに変更
-		if (mouse.GetButtonDown() & Mouse::BTN_LEFT && okButtonCollision.Hit(mouse.GetPosition()))
-		{
-			CardManager::Instance().PopAndGetUseCard();
-		}
+		const bool isPlayseActFinished = PlayerManager::Instance().GetFirstPlayer()->GetState() == State::Act_Finish;
 
 		UpdatePlayerAct(elapsedTime); 
 
 		//todo : enemyが全員死んでいたらフェーズをphase_nextstage_init　に変更
 		if (/*IsSlowNextPhase(elapsedTime, true)*/false)
 		{
-			phase = Phase::Phase_NextStage_Init;
+			phase = Phase::Phase_NextStage_Init;//hack : changephaseに変更
 		}
 
 
-		//todo : ここにもプレイヤーとエネミーの行動終了判定を追加
+		//todo : ここにもエネミーの行動終了判定を追加
 		//カード置き場のカードがなくなれば
-		if (IsSlowNextPhase(CardManager::Instance().IsSetCardsEmpty()))
+		if (IsQuickNextPhase(CardManager::Instance().IsSetCardsEmpty()&&isPlayseActFinished))
 		{
 			NextPhase();//次のフェーズへ
 		}
@@ -140,42 +137,36 @@ void PhaseManager::Update(float elapsedTime)
 		//***********************************************************************************
 	case PhaseManager::Phase::Phase_Enemy_Init:
 	{
-		//todo : ここで行動順番を変えるならばソート?
-		for (auto& enemy : EnemyManager::Instance().GetList())
-		{
-			
-		}
-		NextPhase();//次のフェーズへ
+		Stage::Instance()->ResetAllSquare();
+		NextPhase();
+		break;
 	}
 	[[fallthrough]];
 	case PhaseManager::Phase::Phase_Enemy:
 	{
-
-
+		//一定時間待機して次のフェーズへ
 		if (IsSlowNextPhase(true))
 		{
-			NextPhase();//次のフェーズへ
-			break;
+			NextPhase();
 		}
 	}
 	break;
 	//***********************************************************************************
 	case PhaseManager::Phase::Phase_EnemyAct_Init:
 	{
-
-		NextPhase();
+		Stage::Instance()->ResetAllSquare();
+		NextPhase();//次のフェーズへ
 	}
 	[[fallthrough]];
 	case PhaseManager::Phase::Phase_EnemyAct:
 	{
-		//todo : enemyの行動を呼び出す
-
-		//todo : enemyが全員行動を完了していたら
-		if (IsSlowNextPhase(true))
+		//enemyが全員行動を完了していたら
+		if (IsSlowNextPhase(EnemyManager::Instance().GetIsAllActEnd()))
 		{
 			NextPhase();
 		}
 	}
+	break;
 	//***********************************************************************************
 	case PhaseManager::Phase::Phase_End_Init:
 	{
@@ -188,7 +179,7 @@ void PhaseManager::Update(float elapsedTime)
 		//todo : 何らかの演出など
 		if (IsSlowNextPhase(true))
 		{
-			NextPhase();//次のフェーズへ
+			ResetTurn();
 			break;
 		}
 	}
@@ -200,6 +191,12 @@ void PhaseManager::Update(float elapsedTime)
 	//全てのフェーズで実行するもの
 	phaseTimer = (isNextPhase ? phaseTimer - elapsedTime : NEXT_PHASE_WAIT_TIMER);
 	isNextPhase = false;
+}
+
+void PhaseManager::ResetTurn()
+{
+	ChangePhase(Phase::Phase_Start_Init);
+	++turnCount;
 }
 
 void PhaseManager::Render(ID3D11DeviceContext* dc)
@@ -222,9 +219,8 @@ void PhaseManager::Render(ID3D11DeviceContext* dc)
 
 void PhaseManager::Reset()
 {
-	phase = Phase::Phase_GameStart_Init;
-	trunCount = 0u;
-	phaseTimer = .0f;
+	turnCount = 0u;
+	ChangePhase(Phase::Phase_GameStart_Init);
 }
 
 void PhaseManager::DrawDebugGUI()
@@ -260,8 +256,13 @@ void PhaseManager::DrawDebugGUI()
 
 void PhaseManager::NextPhase()
 {
+	ChangePhase(static_cast<Phase>(static_cast<int>(phase) + 1%static_cast<int>(Phase::Phase_Max)));
+}
+
+void PhaseManager::ChangePhase(const Phase&& next)noexcept
+{
 	phaseTimer = NEXT_PHASE_WAIT_TIMER;
-	phase = static_cast<Phase>(static_cast<int>(phase) + 1);
+	phase = next;
 }
 
 void PhaseManager::SetGameStart()
@@ -272,8 +273,8 @@ void PhaseManager::SetGameStart()
 	player->SetTargetMovePosition({ -1, -1 });
 	player->SetState(State::Idle_Init);
 
-	//enemyのスポーン
-	EnemyBoss1* enemy = new EnemyBoss1(player);
+	//enemyの配置
+	EnemyMinion1* enemy = new EnemyMinion1(player);
 	EnemyManager::Instance().Register(enemy);
 	enemy->SetPositionWorld({ 1, 1 });
 	enemy->SetTargetMovePosition({ -1, -1 });

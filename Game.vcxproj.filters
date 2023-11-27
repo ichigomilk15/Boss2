@@ -231,7 +231,7 @@
     <ClInclude Include="Source\Enemy.h">
       <Filter>Source\Characters</Filter>
     </ClInclude>
-    <ClInclude Include="Source\EnemyBoss1.h">
+    <ClInclude Include="Source\EnemyMinion1.h">
       <Filter>Source\Characters</Filter>
     </ClInclude>
     <ClInclude Include="Source\PlayerManager.h">
@@ -389,7 +389,7 @@
     <ClCompile Include="Source\Enemy.cpp">
       <Filter>Source\Characters</Filter>
     </ClCompile>
-    <ClCompile Include="Source\EnemyBoss1.cpp">
+    <ClCompile Include="Source\EnemyMinion1.cpp">
       <Filter>Source\Characters</Filter>
     </ClCompile>
     <ClCompile Include="Source\PlayerManager.cpp">

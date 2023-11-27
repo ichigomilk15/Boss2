@@ -132,7 +132,7 @@
     <ClInclude Include="Source\Effect.h" />
     <ClInclude Include="Source\EffectManager.h" />
     <ClInclude Include="Source\Enemy.h" />
-    <ClInclude Include="Source\EnemyBoss1.h" />
+    <ClInclude Include="Source\EnemyMinion1.h" />
     <ClInclude Include="Source\EnemyManager.h" />
     <ClInclude Include="Source\Framework.h" />
     <ClInclude Include="Source\Graphics\DebugRenderer.h" />
@@ -189,7 +189,7 @@
     <ClCompile Include="Source\Effect.cpp" />
     <ClCompile Include="Source\EffectManager.cpp" />
     <ClCompile Include="Source\Enemy.cpp" />
-    <ClCompile Include="Source\EnemyBoss1.cpp" />
+    <ClCompile Include="Source\EnemyMinion1.cpp" />
     <ClCompile Include="Source\EnemyManager.cpp" />
     <ClCompile Include="Source\Framework.cpp" />
     <ClCompile Include="Source\Graphics\DebugRenderer.cpp" />

@@ -42,14 +42,17 @@ public:
 
 	void Initialize();
 	void Update(float elapsedTime);
+	void ResetTurn(); //ターンのリセット
+	void Reset(); //ゲームのリセット
 	void Render(ID3D11DeviceContext* dc);
-	void Reset();
 	void DrawDebugGUI();
 
 	//Getter&Setter*****************************************************************************
 #if 1
 	const Phase& GetFhase()const noexcept { return static_cast<Phase>(phase); }
-	const unsigned int& GetTrunCount()const noexcept { return trunCount; }
+	const unsigned int& GetTrunCount()const noexcept { return turnCount; }
+	const void StepupUseCardIndex() { ++useCardIndex; }
+	const unsigned int GetUseCardIndex()const noexcept { return useCardIndex; }
 #endif // 1
 	//Getter&Setter*****************************************************************************
 
@@ -57,6 +60,7 @@ private:
 	void SetGameStart();
 	void UpdatePlayerAct(float elapsedTime);
 	void NextPhase();
+	void ChangePhase(const Phase&& next)noexcept;
 
 	//一定時間条件を満たし続けていたらtrueを返す
 	const bool IsSlowNextPhase(const bool flag);
@@ -66,9 +70,10 @@ public:
 	static constexpr float NEXT_PHASE_WAIT_TIMER = 1.0f;
 private:
 	Phase phase = Phase::Phase_GameStart_Init;
-	unsigned int trunCount = 0u;
+	unsigned int turnCount = 0u;
 	float phaseTimer = -1.0f;
 	bool isNextPhase = false;
+	unsigned int useCardIndex = 0u;
 
 	HitBox2D okButtonCollision;
 	std::unique_ptr<Sprite> okButton;

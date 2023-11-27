@@ -7,8 +7,9 @@
 #include "ProjectileStraight.h"
 #include "ProjectileHoming.h"
 #include "Stage.h"
-#include <NormalAttack.h>
-#include <AttackManager.h>
+#include "NormalAttack.h"
+#include "AttackManager.h"
+#include "PhaseManager.h"
 
 Player::Player()
 {
@@ -21,6 +22,10 @@ Player::Player()
 
 	state = State::Move_Init;
 	//state = State::Attack;
+
+	attackPower = 10;
+	health = 75;
+	attackAdjacentRange = 3;
 }
 
 Player::~Player()
@@ -76,6 +81,9 @@ void Player::DrawDebugGUI()
 			angle.x = DirectX::XMConvertToRadians(a.x);
 			angle.y = DirectX::XMConvertToRadians(a.y);
 			angle.z = DirectX::XMConvertToRadians(a.z);
+
+			//Status
+			ImGui::Text("Shield %d", shield);
 		}
 	}
 	ImGui::End();
@@ -99,11 +107,19 @@ void Player::UpdateState(float elapsedTime)
 		break;
 
 	case State::Act_Init:
-
-		state = State::Act;
+		actTimer = 0.5f;
+		SetState(State::Act);
 		[[fallthrough]];
 	case State::Act:
-
+		if (actTimer > 0.0f)
+		{
+			actTimer -= elapsedTime;
+		}
+		else
+		{
+			SetState(ChooseAct(elapsedTime));
+			break;
+		}
 		break;
 
 	case State::Move_Init:
@@ -116,7 +132,7 @@ void Player::UpdateState(float elapsedTime)
 
 		if (IsMoving())
 		{
-			this->state = State::Moving_Init;
+			SetState(State::Moving_Init);
 			break;
 		}
 		break;
@@ -127,8 +143,7 @@ void Player::UpdateState(float elapsedTime)
 	case State::Moving:
 		if (!IsMoving())
 		{
-			this->state = State::Attack_Init;
-			//this->state = State::Move_Init;
+			SetState(State::Act_Init);
 			Stage::Instance()->ResetAllSquare();
 			break;
 		}
@@ -142,7 +157,7 @@ void Player::UpdateState(float elapsedTime)
 		UpdateAttack(elapsedTime);
 		if (attack && !attack->GetIsDestroy())
 		{
-			state = State::Attacking_Init;
+			SetState(State::Attacking_Init);
 			break;
 		}
 		break;
@@ -150,14 +165,41 @@ void Player::UpdateState(float elapsedTime)
 	case State::Attacking_Init:
 		this->model->PlayAnimation(0, false);
 		state = State::Attacking;
-		//todo :: set direction
 		[[fallthrough]];
 	case State::Attacking:
-		if (!attack ||
-			(attack && attack->GetIsDestroy()))
+		if (!attack || (attack && attack->GetIsDestroy()))
 		{
 			attack = nullptr;
-			state = State::Move_Init;
+			SetState(State::Act_Init);
+		}
+		break;
+
+	case State::Defence_Init:
+		actTimer = 1.0f;
+		Stage::Instance()->ResetAllSquare();
+		shield += 4;
+		state = State::Defence;
+		[[fallthrough]];
+	case State::Defence:
+		actTimer -= elapsedTime;
+		if (actTimer < 0.0f)
+		{
+			SetState(State::Act_Init);
+			break;
+		}
+		break;
+
+	case State::Act_Finish_Init:
+		actTimer = 1.0f;
+		state = State::Act_Finish;
+		//CardManager::Instance().PopAndGetUseCard();
+		[[fallthrough]];
+	case State::Act_Finish:
+		actTimer -= elapsedTime;
+		if (actTimer < 0.0f)
+		{
+			SetState(State::Idle_Init);
+			break;
 		}
 		break;
 	}
@@ -193,7 +235,7 @@ void Player::UpdateMove(float elapsedTime)
 
 void Player::UpdateAttack(float elapsedTime)
 {
-	std::vector<Square*> squares = Stage::Instance()->GetSquaresEdgeAdjacent(this->position.x, this->position.y, 3);
+	std::vector<Square*> squares = Stage::Instance()->GetSquaresEdgeAdjacent(this->position.x, this->position.y, attackAdjacentRange);
 
 	for (auto& square : squares)
 	{
@@ -233,5 +275,28 @@ void Player::UpdateAttack(float elapsedTime)
 		}
 		attack = new NormalAttack(this, 1, posVec);
 		AttackManager::Instance().Register(attack);
+	}
+}
+
+State Player::ChooseAct(float elapsedTime)
+{
+	Card::Type cardType = CardManager::Instance().PopAndGetUseCard();
+	switch (cardType)
+	{
+	case Card::Type::MOVE:
+		return State::Move_Init;
+		break;
+	case Card::Type::ATTACK:
+		return State::Attack_Init;
+		break;
+	case Card::Type::DEFENCE:
+		return State::Defence_Init;
+		break;
+	case Card::Type::NONE:
+		return State::Act_Finish_Init;
+		break;
+	default:
+		return State::Act_Init;
+		break;
 	}
 }

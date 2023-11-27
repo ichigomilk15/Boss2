@@ -272,6 +272,16 @@ const bool CardManager::IsFillSetCards() const noexcept
 	return true;
 }
 
+const Card::Type& CardManager::GetUseCard() noexcept
+{
+	for (auto& card : SetCards)
+	{
+		if (card == nullptr)continue;
+		return card->GetType();
+	}
+	return Card::Type::NONE;
+}
+
 const Card::Type& CardManager::PopAndGetUseCard() noexcept
 {
 	for (auto& card : SetCards)

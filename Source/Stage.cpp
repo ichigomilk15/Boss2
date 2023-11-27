@@ -147,7 +147,7 @@ std::vector<Square*> Stage::GetSquares(const int& initX, const int& initY, const
 
 std::vector<Square*> Stage::GetSquaresEdgeAdjacent(const int& initX, const int& initY, const int& cost, const std::vector<Square::Type>& typesExclusion)
 {
-	std::vector<Square*> foundSq = GetSquares(initX, initY, cost);
+	std::vector<Square*> foundSq = GetSquares(initX, initY, cost, typesExclusion);
 	std::vector<Square*> removeSq;
 	for (auto& sq : foundSq)
 	{
