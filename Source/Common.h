@@ -21,6 +21,9 @@ namespace Common
 	//プレイヤーの移動速度
 	const float moveSpeed = 0.5f; //秒数
 
+	//プレイヤーの初期値
+	static const DirectX::XMINT2 PlayerPosInit = { 3, 3 };
+
 	//マス用の情報
 	/*static std::vector<int> listObstacle = {
 		1, 0

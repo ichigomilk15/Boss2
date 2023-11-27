@@ -20,9 +20,6 @@ Player::Player()
 
 	hitEffect = new Effect("Data/Effect/Hit.efk");
 
-	state = State::Move_Init;
-	//state = State::Attack;
-
 	attackPower = 10;
 	health = 75;
 	attackAdjacentRange = 3;
@@ -82,10 +79,8 @@ void Player::DrawDebugGUI()
 			angle.z = DirectX::XMConvertToRadians(a.z);
 
 			//Status
-			ImGui::Text("Shield %d", shield);
-			auto hp = &health;
-			ImGui::InputInt("HP", hp);
-			this->health = *hp;
+			ImGui::InputInt("Shield", &shield, 0);
+			ImGui::InputInt("HP", &health, 0);
 		}
 	}
 	ImGui::End();

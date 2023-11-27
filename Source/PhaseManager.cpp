@@ -48,7 +48,7 @@ void PhaseManager::Update(float elapsedTime)
 		//todo : ステージのレベルを参照してenemyをセットする
 		//Stage::Instance()->GetStageLevel();
 
-		//todo : playerの位置を初期位置に戻す
+		PlayerManager::Instance().GetFirstPlayer()->SetPositionWorld(Common::PlayerPosInit);
 		NextPhase();//次のフェーズへ
 	}
 	[[fallthrough]];
@@ -66,8 +66,6 @@ void PhaseManager::Update(float elapsedTime)
 
 		PlayerManager::Instance().GetFirstPlayer()->ResetStatus();
 		EnemyManager::Instance().ResetTurnEnemies();
-
-		//todo : enemyの次の行動の決定
 
 		NextPhase();//次のフェーズへ
 	}
@@ -120,11 +118,10 @@ void PhaseManager::Update(float elapsedTime)
 		//todo : enemyが全員死んでいたらフェーズをphase_nextstage_init　に変更
 		if (/*IsSlowNextPhase(elapsedTime, true)*/false)
 		{
-			phase = Phase::Phase_NextStage_Init;//hack : changephaseに変更
+			ChangePhase(Phase::Phase_NextStage_Init);
 		}
 
 
-		//todo : ここにもエネミーの行動終了判定を追加
 		//カード置き場のカードがなくなれば
 		if (IsQuickNextPhase(CardManager::Instance().IsSetCardsEmpty()&&isPlayseActFinished))
 		{
@@ -170,7 +167,6 @@ void PhaseManager::Update(float elapsedTime)
 	//***********************************************************************************
 	case PhaseManager::Phase::Phase_End_Init:
 	{
-		//todo : playerのシールドのリセット
 		NextPhase();//次のフェーズへ
 	}
 	[[fallthrough]];
@@ -269,7 +265,7 @@ void PhaseManager::SetGameStart()
 {
 	//playerの配置
 	Player* player = PlayerManager::Instance().GetFirstPlayer();
-	player->SetPositionWorld({ 3, 3 });
+	player->SetPositionWorld(Common::PlayerPosInit);
 	player->SetTargetMovePosition({ -1, -1 });
 	player->SetState(State::Idle_Init);
 
