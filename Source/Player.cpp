@@ -197,6 +197,7 @@ void Player::UpdateState(float elapsedTime)
 	case State::Act_Finish_Init:
 		actTimer = 0.5f;
 		state = State::Act_Finish;
+		//CardManager::Instance().PopAndGetUseCard();
 		[[fallthrough]];
 	case State::Act_Finish:
 		actTimer -= elapsedTime;
@@ -284,12 +285,7 @@ void Player::UpdateAttack(float elapsedTime)
 
 State Player::ChooseAct(float elapsedTime)
 {
-	unsigned int num = PhaseManager::Instance().GetUseCardIndex();
-	if (num >= CardManager::SET_CARD_MAX)
-		return State::Act_Finish_Init;
-
-	Card::Type cardType = CardManager::Instance().GetSetCards(num)->GetType();
-	PhaseManager::Instance().StepupUseCardIndex();
+	Card::Type cardType = CardManager::Instance().PopAndGetUseCard();
 	switch (cardType)
 	{
 	case Card::Type::MOVE:
@@ -300,6 +296,9 @@ State Player::ChooseAct(float elapsedTime)
 		break;
 	case Card::Type::DEFENCE:
 		return State::Defence_Init;
+		break;
+	case Card::Type::NONE:
+		return State::Act_Finish_Init;
 		break;
 	default:
 		return State::Act_Init;

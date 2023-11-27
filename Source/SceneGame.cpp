@@ -162,6 +162,8 @@ void SceneGame::Render()
 			.0f, .0f, static_cast<float>(playerHP->GetTextureWidth()), static_cast<float>(playerHP->GetTextureHeight()),
 			DirectX::XMConvertToRadians(.0f),
 			1.0f, .0f, .0f, 1.0f);
+
+		PhaseManager::Instance().Render(dc);
 	}
 	// 2DデバッグGUI描画
 	{

@@ -43,6 +43,9 @@ public:
 	// スクリーン高さ取得
 	float GetScreenHeight() const { return screenHeight; }
 
+	//画面サイズの取得
+	const DirectX::XMFLOAT2 GetScreenSize()const noexcept { return DirectX::XMFLOAT2{ screenWidth,screenHeight }; }
+
 	// デバッグレンダラ取得
 	DebugRenderer* GetDebugRenderer() const { return debugRenderer.get(); }
 

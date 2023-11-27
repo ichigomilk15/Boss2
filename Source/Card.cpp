@@ -90,6 +90,15 @@ const bool Card::HitCheck(DirectX::XMFLOAT2 screenPos)
         screenPos.x<pos.x+size.x&&screenPos.y<pos.y+size.y);
 }
 
+void Card::Swap(Card* card)
+{
+    std::swap(card->type, this->type);
+    std::swap(card->targetPos, this->targetPos);
+    std::swap(card->pos, this->pos);
+
+    this->sprite.swap(card->sprite);
+}
+
 const bool Card::IsMoving() const noexcept
 {
     return (pos.x != targetPos.x || pos.y != targetPos.y);

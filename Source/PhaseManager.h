@@ -1,23 +1,26 @@
 #pragma once
 #include <d3d11.h>
+#include <memory>
+#include "Graphics/Sprite.h"
+#include "HitCollisions.h"
 
 #define PHASE_LIST \
-    X(Phase_GameStart_Init)   \
-    X(Phase_GameStart)   \
+	X(Phase_GameStart_Init)   \
+	X(Phase_GameStart)   \
 	X(Phase_NextStage_Init)   \
-    X(Phase_NextStage)   \
+	X(Phase_NextStage)   \
 	X(Phase_Start_Init)   \
-    X(Phase_Start)   \
+	X(Phase_Start)   \
 	X(Phase_Player_Init)   \
-    X(Phase_Player)   \
+	X(Phase_Player)   \
 	X(Phase_PlayerAct_Init)   \
-    X(Phase_PlayerAct)   \
+	X(Phase_PlayerAct)   \
 	X(Phase_Enemy_Init)   \
-    X(Phase_Enemy)   \
+	X(Phase_Enemy)   \
 	X(Phase_EnemyAct_Init) \
 	X(Phase_EnemyAct) \
 	X(Phase_End_Init)   \
-    X(Phase_End)   \
+	X(Phase_End)   \
 
 class PhaseManager
 {
@@ -30,8 +33,10 @@ public://class
 		Phase_Max,
 	};
 private://constructer
-	PhaseManager() = default;
+	PhaseManager();
 	~PhaseManager() = default;
+	PhaseManager(PhaseManager&) = delete;
+	PhaseManager operator=(PhaseManager&) = delete;
 public:
 	static PhaseManager& Instance()noexcept { static PhaseManager instance; return instance; }
 
@@ -39,6 +44,7 @@ public:
 	void Update(float elapsedTime);
 	void ResetTurn(); //ターンのリセット
 	void Reset(); //ゲームのリセット
+	void Render(ID3D11DeviceContext* dc);
 	void DrawDebugGUI();
 
 	//Getter&Setter*****************************************************************************
@@ -53,10 +59,22 @@ public:
 private:
 	void SetGameStart();
 	void UpdatePlayerAct(float elapsedTime);
+	void NextPhase();
+	void ChangePhase(const Phase&& next)noexcept;
+
+	//一定時間条件を満たし続けていたらtrueを返す
+	const bool IsSlowNextPhase(const bool flag);
+	//条件を満たした瞬間にtrueを返す
+	const bool IsQuickNextPhase(const bool flag);
+public:
+	static constexpr float NEXT_PHASE_WAIT_TIMER = 1.0f;
 private:
 	Phase phase = Phase::Phase_GameStart_Init;
-	int StageLevel = 0;
 	unsigned int turnCount = 0u;
-	float phaseTimer;
-	unsigned int useCardIndex = 0u; //プレイヤーが今使われているカード順番
+	float phaseTimer = -1.0f;
+	bool isNextPhase = false;
+	unsigned int useCardIndex = 0u;
+
+	HitBox2D okButtonCollision;
+	std::unique_ptr<Sprite> okButton;
 };

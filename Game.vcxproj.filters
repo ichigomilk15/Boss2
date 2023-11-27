@@ -237,6 +237,9 @@
     <ClInclude Include="Source\PlayerManager.h">
       <Filter>Source\Characters</Filter>
     </ClInclude>
+    <ClInclude Include="Source\HitCollisions.h">
+      <Filter>Source\System\Math</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="External\imgui\imgui.cpp">
@@ -391,6 +394,9 @@
     </ClCompile>
     <ClCompile Include="Source\PlayerManager.cpp">
       <Filter>Source\Characters</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\HitCollisitons.cpp">
+      <Filter>Source\System\Math</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

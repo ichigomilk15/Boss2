@@ -1,5 +1,6 @@
 #include "PhaseManager.h"
 
+#include "Input/Input.h"
 #include "EnemyManager.h"
 #include "CardList.h"
 #include "PlayerManager.h"
@@ -10,6 +11,15 @@
 #include "Graphics/ImGuiRenderer.h"
 #endif // _DEBUG
 
+PhaseManager::PhaseManager()
+{
+	const DirectX::XMFLOAT2& screenSize = Graphics::Instance().GetScreenSize();
+	okButtonCollision = HitBox2D(DirectX::XMFLOAT2(screenSize.x * 0.8f, screenSize.y * 0.85f),
+		DirectX::XMFLOAT2(screenSize.x * 0.1f, screenSize.y * 0.1f));
+	okButton = std::make_unique<Sprite>();//todo : okボタンの画像読み込み
+
+	phaseTimer = NEXT_PHASE_WAIT_TIMER;
+}
 
 void PhaseManager::Initialize()
 {
@@ -23,14 +33,30 @@ void PhaseManager::Update(float elapsedTime)
 	case PhaseManager::Phase::Phase_GameStart_Init:
 	{
 		SetGameStart();
-		phase = Phase::Phase_GameStart;
+		NextPhase();//次のフェーズへ
 	}
 	[[fallthrough]];
 	case PhaseManager::Phase::Phase_GameStart:
 	{
-		phase = Phase::Phase_Start_Init;
+		NextPhase();//次のフェーズへ
 	}
 	break;
+
+	//***********************************************************************************
+	case PhaseManager::Phase::Phase_NextStage_Init:
+	{
+		//todo : ステージのレベルを参照してenemyをセットする
+		//Stage::Instance()->GetStageLevel();
+
+		//todo : playerの位置を初期位置に戻す
+		NextPhase();//次のフェーズへ
+	}
+	[[fallthrough]];
+	case PhaseManager::Phase::Phase_NextStage:
+	{
+		NextPhase();//次のフェーズへ
+	}
+	//***********************************************************************************
 	case PhaseManager::Phase::Phase_Start_Init:
 	{
 		//カードを最大値まで引く
@@ -41,131 +67,160 @@ void PhaseManager::Update(float elapsedTime)
 		PlayerManager::Instance().GetFirstPlayer()->ResetStatus();
 		EnemyManager::Instance().ResetTurnEnemies();
 
-		phase = Phase::Phase_Start;
-		phaseTimer = 1.0f;
+		//todo : enemyの次の行動の決定
+
+		NextPhase();//次のフェーズへ
 	}
 	[[fallthrough]];
 	case PhaseManager::Phase::Phase_Start:
 	{
-		//条件を満たしてる間時間を減らす
-		if (!CardManager::Instance().IsMoving())
-		{
-			phaseTimer -= elapsedTime;
-		}
-		//条件を満たさなかったらリセット
-		else
-		{
-			phaseTimer = 1.0f;
-		}
-
 		//条件を見たし続けたら次のフェーズへ
-		if (phaseTimer < 0.0f)
+		if (IsSlowNextPhase(!CardManager::Instance().IsMoving()))
 		{
 			CardManager::Instance().SetIsMoveable(true);
-			phase = Phase::Phase_Player_Init;
+			NextPhase();//次のフェーズへ
+			break;
 		}
 	}
 	break;
+
+	//***********************************************************************************
 	case PhaseManager::Phase::Phase_Player_Init:
 	{
-		phase = Phase::Phase_Player;
+		NextPhase();//次のフェーズへ
 	}
 	[[fallthrough]];
 	case PhaseManager::Phase::Phase_Player:
 	{
-		if (CardManager::Instance().IsSetCardsFinished())
+		Mouse& mouse = Input::Instance().GetMouse();
+		//todo : ここの条件にプレイヤーとエネミーの行動終了判定を追加
+		if (IsQuickNextPhase(mouse.GetButtonDown()&Mouse::BTN_LEFT&&
+			okButtonCollision.Hit(mouse.GetPosition()) && CardManager::Instance().IsFillSetCards()))
 		{
-			phase = Phase::Phase_PlayerAct_Init;
 			PlayerManager::Instance().GetFirstPlayer()->SetState(State::Act_Init);
+			NextPhase();//次のフェーズへ
 			break;
 		}
 	}
 	break;
+
+	//***********************************************************************************
 	case PhaseManager::Phase::Phase_PlayerAct_Init:
 	{
 		useCardIndex = 0u;
-		phase = Phase::Phase_PlayerAct;
+		NextPhase();//次のフェーズへ
 	}
 	[[fallthrough]];
 	case PhaseManager::Phase::Phase_PlayerAct:
 	{
-		UpdatePlayerAct(elapsedTime);
-		if (PlayerManager::Instance().GetFirstPlayer()->GetState() == State::Act_Finish)
+		const bool isPlayseActFinished = PlayerManager::Instance().GetFirstPlayer()->GetState() == State::Act_Finish;
+
+		UpdatePlayerAct(elapsedTime); 
+
+		//todo : enemyが全員死んでいたらフェーズをphase_nextstage_init　に変更
+		if (/*IsSlowNextPhase(elapsedTime, true)*/false)
 		{
-			phase = Phase::Phase_Enemy_Init;
-			break;
+			phase = Phase::Phase_NextStage_Init;//hack : changephaseに変更
 		}
+
+
+		//todo : ここにもエネミーの行動終了判定を追加
+		//カード置き場のカードがなくなれば
+		if (IsQuickNextPhase(CardManager::Instance().IsSetCardsEmpty()&&isPlayseActFinished))
+		{
+			NextPhase();//次のフェーズへ
+		}
+
 	}
-	break;
+		break;
+
+		//***********************************************************************************
 	case PhaseManager::Phase::Phase_Enemy_Init:
 	{
-		phaseTimer = 1.0f;
 		Stage::Instance()->ResetAllSquare();
-		phase = Phase::Phase_Enemy;
+		NextPhase();
 		break;
 	}
 	[[fallthrough]];
 	case PhaseManager::Phase::Phase_Enemy:
 	{
-		phaseTimer -= elapsedTime;
-		if (phaseTimer < 0.0f)
+		//一定時間待機して次のフェーズへ
+		if (IsSlowNextPhase(true))
 		{
-			phase = Phase::Phase_EnemyAct_Init;
-			break;
+			NextPhase();
 		}
 	}
 	break;
+	//***********************************************************************************
 	case PhaseManager::Phase::Phase_EnemyAct_Init:
 	{
 		Stage::Instance()->ResetAllSquare();
-		phase = Phase::Phase_EnemyAct;
+		NextPhase();//次のフェーズへ
 	}
 	[[fallthrough]];
 	case PhaseManager::Phase::Phase_EnemyAct:
 	{
-		if (EnemyManager::Instance().GetIsAllActEnd())
+		//enemyが全員行動を完了していたら
+		if (IsSlowNextPhase(EnemyManager::Instance().GetIsAllActEnd()))
 		{
-			phase = Phase::Phase_End_Init;
-			break;
+			NextPhase();
 		}
 	}
 	break;
-
+	//***********************************************************************************
 	case PhaseManager::Phase::Phase_End_Init:
 	{
-		phaseTimer = 3.0f;
-		phase = Phase::Phase_End;
+		//todo : playerのシールドのリセット
+		NextPhase();//次のフェーズへ
 	}
 	[[fallthrough]];
 	case PhaseManager::Phase::Phase_End:
 	{
-		phaseTimer -= elapsedTime;
-		if (phaseTimer < 0.0f)
+		//todo : 何らかの演出など
+		if (IsSlowNextPhase(true))
 		{
 			ResetTurn();
 			break;
 		}
 	}
 	break;
-
 	default:
 		break;
 	}
+
+	//全てのフェーズで実行するもの
+	phaseTimer = (isNextPhase ? phaseTimer - elapsedTime : NEXT_PHASE_WAIT_TIMER);
+	isNextPhase = false;
 }
 
 void PhaseManager::ResetTurn()
 {
-	phase = Phase::Phase_Start_Init;
-	phaseTimer = 0.0f;
+	ChangePhase(Phase::Phase_Start_Init);
 	++turnCount;
+}
+
+void PhaseManager::Render(ID3D11DeviceContext* dc)
+{
+	const DirectX::XMFLOAT2 ScreenSize = Graphics::Instance().GetScreenSize();
+
+	//完了ボタン描画
+	{
+		const DirectX::XMFLOAT2& lefttop = okButtonCollision.GetLeftTop();
+		const DirectX::XMFLOAT2& Size = okButtonCollision.GetBoxSize();
+		okButton->Render(dc,
+			lefttop.x, lefttop.y,
+			Size.x, Size.y,
+			.0f, .0f,
+			okButton->GetTextureWidthf(), okButton->GetTextureHeightf(),
+			.0f,
+			1.0f, .0f, .0f, 1.0f);
+	}
 }
 
 void PhaseManager::Reset()
 {
-	phase = Phase::Phase_GameStart_Init;
 	turnCount = 0u;
-	StageLevel = 0;
-	phaseTimer = .0f;
+	ChangePhase(Phase::Phase_GameStart_Init);
 }
 
 void PhaseManager::DrawDebugGUI()
@@ -173,6 +228,7 @@ void PhaseManager::DrawDebugGUI()
 #ifdef _DEBUG
 	if (ImGui::Begin("PhaseManager", nullptr, ImGuiWindowFlags_::ImGuiWindowFlags_None))
 	{
+		//フェーズの表示
 		const char* phaseName[static_cast<int>(Phase::Phase_Max)] =
 		{
 #define X(name) #name,
@@ -191,29 +247,56 @@ void PhaseManager::DrawDebugGUI()
 			}
 			ImGui::EndCombo();
 		}
+		
+		if (ImGui::InputFloat("timer", &phaseTimer), .0f) {};
 	}
 	ImGui::End();
 #endif // _DEBUG
 }
 
+void PhaseManager::NextPhase()
+{
+	ChangePhase(static_cast<Phase>(static_cast<int>(phase) + 1%static_cast<int>(Phase::Phase_Max)));
+}
+
+void PhaseManager::ChangePhase(const Phase&& next)noexcept
+{
+	phaseTimer = NEXT_PHASE_WAIT_TIMER;
+	phase = next;
+}
+
 void PhaseManager::SetGameStart()
 {
+	//playerの配置
 	Player* player = PlayerManager::Instance().GetFirstPlayer();
 	player->SetPositionWorld({ 3, 3 });
 	player->SetTargetMovePosition({ -1, -1 });
 	player->SetState(State::Idle_Init);
 
+	//enemyの配置
 	EnemyMinion1* enemy = new EnemyMinion1(player);
 	EnemyManager::Instance().Register(enemy);
 	enemy->SetPositionWorld({ 1, 1 });
 	enemy->SetTargetMovePosition({ -1, -1 });
 	enemy->SetState(State::Idle_Init);
 
+	//盤面のリセット
 	Stage::Instance()->ResetAllSquare();
 }
 
 void PhaseManager::UpdatePlayerAct(float elapsedTime)
 {
-	/*CardManager::Instance().GetIsMoveable
-	switch()*/
+
+}
+
+const bool PhaseManager::IsSlowNextPhase(const bool flag)
+{
+	isNextPhase |= flag;
+	return phaseTimer < 0.f && flag;
+}
+
+const bool PhaseManager::IsQuickNextPhase(const bool flag)
+{
+	isNextPhase |= flag;
+	return flag;
 }

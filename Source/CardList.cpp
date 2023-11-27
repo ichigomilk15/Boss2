@@ -20,16 +20,16 @@ void CardManager::Update(float elapsedTime)
 	Mouse& mouse = Input::Instance().GetMouse();
 	const DirectX::XMFLOAT2 ScreenSize = { Graphics::Instance().GetScreenWidth(),Graphics::Instance().GetScreenHeight() };
 
-	//手持ちにあるスペシャルカードのカウント
+	//全てのスペシャルカードのカウント
 	haveSpecial = 0u;
 
-	//手持ちカードの更新	
+	//手札カードの更新	
 	if (cards.empty())return;
 	DirectX::XMFLOAT2 pos = HAND_CARDS_START_POS;
 	for (auto& card : cards)
 	{
 		if (card->GetType() == Card::Type::SPECIAL)++haveSpecial;
-		if (mouse.GetButtonDown() & Mouse::BTN_LEFT && card->HitCheck(mouse.GetPosition()))
+		if (isMoveable&& mouse.GetButtonDown() & Mouse::BTN_LEFT && card->HitCheck(mouse.GetPosition()))
 		{
 			ChangeHaveCard(&card);
 		}
@@ -49,7 +49,7 @@ void CardManager::Update(float elapsedTime)
 		if (card.get() == nullptr)continue;
 		if (card->GetType() == Card::Type::SPECIAL)++haveSpecial;
 
-		if (mouse.GetButtonDown() & Mouse::BTN_LEFT && card->HitCheck(mouse.GetPosition()))
+		if (isMoveable&& mouse.GetButtonDown() & Mouse::BTN_LEFT && card->HitCheck(mouse.GetPosition()))
 			ChangeHaveCard(&card);
 
 		card->SetPosition(pos);
@@ -65,7 +65,8 @@ void CardManager::Update(float elapsedTime)
 			std::shared_ptr<Card> card = haveCard.lock();
 			
 			//手札との判定
-			DirectX::XMFLOAT2 boxSize = DirectX::XMFLOAT2{ (CARD_SIZE.x + CARD_DISTANCE) * cards.size(),CARD_SIZE.y };
+			DirectX::XMFLOAT2 boxSize = DirectX::XMFLOAT2{
+				(CARD_SIZE.x + CARD_DISTANCE) * std::max(cards.size(),static_cast<size_t>(CARD_MAX)),CARD_SIZE.y };
 			if (Collision2D::BoxVsPos(HAND_CARDS_START_POS, boxSize, mouse.GetPosition()))
 			{
 				auto& it = std::find(cards.begin(), cards.end(), card);
@@ -78,11 +79,12 @@ void CardManager::Update(float elapsedTime)
 			//セットとの判定
 			else 
 			{
-				DirectX::XMFLOAT2 pos = SET_CARDS_START_POS;
 				boxSize = CARD_SIZE;
 				for (size_t i = 0; i < SET_CARD_MAX; i++)
 				{
 					if (SetCards[i] == card)continue;
+					DirectX::XMFLOAT2 pos = SET_CARDS_START_POS;
+					pos.y += (CARD_SIZE.y + CARD_DISTANCE) * i;
 					if (Collision2D::BoxVsPos(pos, boxSize, mouse.GetPosition()))
 					{
 						if (SetCards[i] == nullptr)
@@ -90,8 +92,11 @@ void CardManager::Update(float elapsedTime)
 							QuickEraseItem(card);
 							SetCards[i] = card;
 						}
+						else
+						{
+							SetCards[i]->Swap(card.get());
+						}
 					}
-					pos.y += CARD_SIZE.y + CARD_DISTANCE;
 				}
 			}
 			ChangeHaveCard(nullptr);
@@ -163,7 +168,7 @@ void CardManager::DrawDebugGUI()
 				card->DrawIMGUI();
 			}
 		}
-		if (ImGui::Button("DrowCard"))
+		if (ImGui::Button("DrawCard"))
 		{
 			Replenish();
 		}
@@ -193,7 +198,7 @@ std::shared_ptr<Card> CardManager::HitCheck(const DirectX::XMFLOAT2& screenPos)c
 	return nullptr;
 }
 
-std::shared_ptr<Card> CardManager::DrowCard(const std::pair<Card::Type, unsigned int>* const pair, const size_t pairSize)
+std::shared_ptr<Card> CardManager::DrawCard(const std::pair<Card::Type, unsigned int>* const pair, const size_t pairSize)
 {
 	unsigned int sumPercent = 0;
 	for (size_t i = 0; i < pairSize; i++)
@@ -258,6 +263,46 @@ const bool CardManager::IsMoving() const noexcept
 	return false;
 }
 
+const bool CardManager::IsFillSetCards() const noexcept
+{
+	for (auto& card : SetCards)
+	{
+		if (card == nullptr)return false;
+	}
+	return true;
+}
+
+const Card::Type& CardManager::GetUseCard() noexcept
+{
+	for (auto& card : SetCards)
+	{
+		if (card == nullptr)continue;
+		return card->GetType();
+	}
+	return Card::Type::NONE;
+}
+
+const Card::Type& CardManager::PopAndGetUseCard() noexcept
+{
+	for (auto& card : SetCards)
+	{
+		if (card == nullptr)continue;
+		PrevUseCardType = card->GetType();
+		EraseItem(card);
+		return PrevUseCardType;
+	}
+	return Card::Type::NONE;
+}
+
+const bool CardManager::IsSetCardsEmpty() const noexcept
+{
+	for (auto& card : SetCards)
+	{
+		if (card != nullptr)return false;
+	}
+	return true;
+}
+
 void CardManager::ALLClear()
 {
 	this->cards.clear();
@@ -285,6 +330,7 @@ void CardManager::Replenish()
 		}
 		else//引く予定のカードがないならば
 		{
+			//確率を設定
 			const std::pair<Card::Type, unsigned int> param[] =
 			{
 				{Card::Type::ATTACK,100},
@@ -292,20 +338,10 @@ void CardManager::Replenish()
 				{Card::Type::DEFENCE,100},
 			};
 			size_t paramSize = std::size(param);
-			std::shared_ptr<Card> drow = DrowCard(param, paramSize);
-			AddCard(drow);
+			std::shared_ptr<Card> draw = DrawCard(param, paramSize);
+			AddCard(draw);
 		}
 	}
-}
-
-const bool CardManager::IsSetCardsFinished() const
-{
-	for (auto& setCard : SetCards)
-	{
-		if (setCard == nullptr)
-			return false;
-	}
-	return true;
 }
 
 void CardManager::Erase()
@@ -314,10 +350,10 @@ void CardManager::Erase()
 	{
 		cards.remove_if([&](std::shared_ptr<Card> src) {return src == erase; });
 
-		{
-			const auto& it = std::find(std::begin(SetCards), std::end(SetCards), erase);
-			if (true) {};
 
+		for (size_t i = 0; i < SET_CARD_MAX; i++)
+		{
+			if (SetCards[i] == erase)SetCards[i].reset();
 		}
 	}
 	eraser.clear();
