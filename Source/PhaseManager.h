@@ -58,15 +58,17 @@ private:
 	void UpdatePlayerAct(float elapsedTime);
 	void NextPhase();
 
-	//条件を判定して満たしていればタイマーを減らし時間になればtrueを返す
-	//todo : この関数を2回以上呼び出すとダメなため変更すること
-	const bool IsNextPhase(float elapsedTime, const bool flag);
+	//一定時間条件を満たし続けていたらtrueを返す
+	const bool IsSlowNextPhase(const bool flag);
+	//条件を満たした瞬間にtrueを返す
+	const bool IsQuickNextPhase(const bool flag);
 public:
 	static constexpr float NEXT_PHASE_WAIT_TIMER = 1.0f;
 private:
 	Phase phase = Phase::Phase_GameStart_Init;
 	unsigned int trunCount = 0u;
 	float phaseTimer = -1.0f;
+	bool isNextPhase = false;
 
 	HitBox2D okButtonCollision;
 	std::unique_ptr<Sprite> okButton;

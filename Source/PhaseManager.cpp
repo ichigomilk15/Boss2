@@ -74,7 +74,7 @@ void PhaseManager::Update(float elapsedTime)
 	case PhaseManager::Phase::Phase_Start:
 	{
 		//条件を見たし続けたら次のフェーズへ
-		if (IsNextPhase(elapsedTime,!CardManager::Instance().IsMoving()))
+		if (IsSlowNextPhase(!CardManager::Instance().IsMoving()))
 		{
 			CardManager::Instance().SetIsMoveable(true);
 			NextPhase();//次のフェーズへ
@@ -121,7 +121,7 @@ void PhaseManager::Update(float elapsedTime)
 		UpdatePlayerAct(elapsedTime); 
 
 		//todo : enemyが全員死んでいたらフェーズをphase_nextstage_init　に変更
-		if (/*IsNextPhase(elapsedTime, true)*/false)
+		if (/*IsSlowNextPhase(elapsedTime, true)*/false)
 		{
 			phase = Phase::Phase_NextStage_Init;
 		}
@@ -129,7 +129,7 @@ void PhaseManager::Update(float elapsedTime)
 
 		//todo : ここにもプレイヤーとエネミーの行動終了判定を追加
 		//カード置き場のカードがなくなれば
-		if (IsNextPhase(elapsedTime,CardManager::Instance().IsSetCardsEmpty()))
+		if (IsSlowNextPhase(CardManager::Instance().IsSetCardsEmpty()))
 		{
 			NextPhase();//次のフェーズへ
 		}
@@ -150,17 +150,32 @@ void PhaseManager::Update(float elapsedTime)
 	[[fallthrough]];
 	case PhaseManager::Phase::Phase_Enemy:
 	{
-		//todo : enemyの行動を呼び出す
 
 
-		if (IsNextPhase(elapsedTime,true))
+		if (IsSlowNextPhase(true))
 		{
 			NextPhase();//次のフェーズへ
 			break;
 		}
 	}
 	break;
+	//***********************************************************************************
+	case PhaseManager::Phase::Phase_EnemyAct_Init:
+	{
 
+		NextPhase();
+	}
+	[[fallthrough]];
+	case PhaseManager::Phase::Phase_EnemyAct:
+	{
+		//todo : enemyの行動を呼び出す
+
+		//todo : enemyが全員行動を完了していたら
+		if (IsSlowNextPhase(true))
+		{
+			NextPhase();
+		}
+	}
 	//***********************************************************************************
 	case PhaseManager::Phase::Phase_End_Init:
 	{
@@ -171,7 +186,7 @@ void PhaseManager::Update(float elapsedTime)
 	case PhaseManager::Phase::Phase_End:
 	{
 		//todo : 何らかの演出など
-		if (IsNextPhase(elapsedTime, true))
+		if (IsSlowNextPhase(true))
 		{
 			NextPhase();//次のフェーズへ
 			break;
@@ -181,6 +196,10 @@ void PhaseManager::Update(float elapsedTime)
 	default:
 		break;
 	}
+
+	//全てのフェーズで実行するもの
+	phaseTimer = (isNextPhase ? phaseTimer - elapsedTime : NEXT_PHASE_WAIT_TIMER);
+	isNextPhase = false;
 }
 
 void PhaseManager::Render(ID3D11DeviceContext* dc)
@@ -241,6 +260,7 @@ void PhaseManager::DrawDebugGUI()
 
 void PhaseManager::NextPhase()
 {
+	phaseTimer = NEXT_PHASE_WAIT_TIMER;
 	phase = static_cast<Phase>(static_cast<int>(phase) + 1);
 }
 
@@ -268,13 +288,14 @@ void PhaseManager::UpdatePlayerAct(float elapsedTime)
 
 }
 
-const bool PhaseManager::IsNextPhase(float elapsedTime, const bool flag)
+const bool PhaseManager::IsSlowNextPhase(const bool flag)
 {
-	phaseTimer = flag ? phaseTimer - elapsedTime : NEXT_PHASE_WAIT_TIMER;
-	if (phaseTimer < .0f)
-	{
-		phaseTimer = NEXT_PHASE_WAIT_TIMER;
-		return true;
-	}
-	return false;
+	isNextPhase |= flag;
+	return phaseTimer < 0.f && flag;
+}
+
+const bool PhaseManager::IsQuickNextPhase(const bool flag)
+{
+	isNextPhase |= flag;
+	return flag;
 }
