@@ -65,8 +65,6 @@ void Player::DrawDebugGUI()
 
 	if (ImGui::Begin("Player", nullptr, ImGuiWindowFlags_None))
 	{
-		//トランスフォーム
-		//if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
 		{
 			//位置
 			ImGui::InputInt2("Position Square", &position.x);
@@ -85,6 +83,9 @@ void Player::DrawDebugGUI()
 
 			//Status
 			ImGui::Text("Shield %d", shield);
+			auto hp = &health;
+			ImGui::InputInt("HP", hp);
+			this->health = *hp;
 		}
 	}
 	ImGui::End();
@@ -194,6 +195,19 @@ void Player::UpdateState(float elapsedTime)
 		}
 		break;
 
+	case State::Damage_Init:
+		model->PlayAnimation(Animation::Damage, false, 0.1f);
+		actTimer = 0.5f;
+		state = State::Defence;
+		[[fallthrough]];
+	case State::Damage:
+		actTimer -= elapsedTime;
+		if (actTimer < 0.0f &&  !model->IsPlayAnimation())
+		{
+			SetState(State::Act_Init);
+			break;
+		}
+
 	case State::Act_Finish_Init:
 		actTimer = 0.5f;
 		state = State::Act_Finish;
@@ -278,7 +292,7 @@ void Player::UpdateAttack(float elapsedTime)
 		{
 			posVec.emplace_back(sq->GetPos());
 		}
-		attack = new NormalAttack(this, 1, posVec);
+		attack = new NormalAttack(this, attackPower, TargetAttackEnum::Target_Enemy, posVec, 0.5f);
 		AttackManager::Instance().Register(attack);
 	}
 }
@@ -304,4 +318,9 @@ State Player::ChooseAct(float elapsedTime)
 		return State::Act_Init;
 		break;
 	}
+}
+
+void Player::OnDamaged()
+{
+	state = State::Damage_Init;
 }

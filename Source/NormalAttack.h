@@ -4,8 +4,8 @@
 class NormalAttack : public AttackParent
 {
 public:
-    NormalAttack(Character* parent, const int damage, const std::vector<DirectX::XMINT2> targetAttackPos) :
-        AttackParent(parent, damage, targetAttackPos)
+    NormalAttack(Character* parent, const int damage, const TargetAttackEnum target, const std::vector<DirectX::XMINT2> targetAttackPos, const float damageTimer = 0.0f) :
+        AttackParent(parent, damage, target, targetAttackPos, damageTimer)
     {
         Initialize();
     };
@@ -18,6 +18,5 @@ private:
     void Initialize() override;
 
 private:
-    float lifeTimer = 0.0f;
     float startAppearTimer = 0.0f;
 };

@@ -22,6 +22,7 @@ EnemyMinion1::EnemyMinion1(Character* p) :
 	attackPower = 7;
 	attackAdjacentRange = 2;
 	isActEnd = false;
+	health = 100;
 	SetDirection(CommonClass::DirectionFace::BackRight);
 }
 
@@ -188,7 +189,7 @@ void EnemyMinion1::InitializeAttack(float elapsedTime)
 	{
 		posVec.emplace_back(sq->GetPos());
 	}
-	attack = new NormalAttack(this, 1, posVec);
+	attack = new NormalAttack(this, attackPower, TargetAttackEnum::Target_Player, posVec, 0.5f);
 	AttackManager::Instance().Register(attack);
 
 	for (auto& square : attackSq)

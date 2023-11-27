@@ -24,6 +24,7 @@ void Enemy::Render(ID3D11DeviceContext* dc, Shader* shader)
 
 void Enemy::DrawDebugGUI()
 {
+	ImGui::Text("HP %d", health);
 }
 
 void Enemy::Destroy()

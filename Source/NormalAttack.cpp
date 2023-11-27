@@ -1,5 +1,6 @@
 #include "NormalAttack.h"
 #include "Stage.h"
+#include "Character.h"
 
 void NormalAttack::Update(float elapsedTime)
 {
@@ -7,6 +8,20 @@ void NormalAttack::Update(float elapsedTime)
 	{
 		startAppearTimer -= elapsedTime;
 		return;
+	}
+
+	//ƒ_ƒ[ƒW‚ğ—^‚¦‚éŠúŠÔˆ—
+	this->damageTimer -= elapsedTime;
+	if (damageTimer <= 0.0f)
+	{
+		for (auto& e : targetAttack)
+		{
+			if (!e.isAttacked)
+			{
+				e.targetChara->ApplyDamage(damage);
+				e.isAttacked = true;
+			}
+		}
 	}
 
 	// õ–½ˆ—

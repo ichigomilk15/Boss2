@@ -5,6 +5,7 @@
 #include <d3d11.h>
 
 #include "Collision.h"
+#include "Character.h"
 #include <optional>
 #include <map>
 
@@ -93,7 +94,11 @@ public://function
 	const Type& GetType()const noexcept { return type; }
 	Card* GetCard()const noexcept { return card.get(); }
 	std::shared_ptr<Card> GetUniqueCard()noexcept { return std::move(card); }
+	
 	//std::shared_ptr<Card> GetUniqueCard()noexcept { std::shared_ptr<Card> temp = card; card.reset(); return temp; }
+
+	void SetCharacter(Character* chara) { character = chara; }
+	const Character* GetCharacter() const { return character; }
 #endif // 1
 	//Getter&Setter*************************************************************************
 private://function
@@ -112,4 +117,6 @@ private://members
 
 	bool typeChanged = false; //タイプの変換があった場合trueにする
 	bool isAccessible = true;
+
+	Character* character = nullptr; //マスに立っているキャラクター
 };

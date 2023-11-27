@@ -27,6 +27,8 @@ enum class State
 	Attacking,
 	Defence_Init, //防御アップ
 	Defence,
+	Damage_Init, //ダメージを受けた処理
+	Damage,
 	Act_Finish_Init, //全てのアクションが終わった処理
 	Act_Finish,
 	Max,
