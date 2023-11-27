@@ -3,6 +3,14 @@
 #include "AttackParent.h"
 #include <DirectXMath.h>
 
+enum Animation
+{
+	Idle,
+	Run,
+	Attack,
+	Damage,
+};
+
 enum class State
 {
 	Idle_Init, //‡”Ô‘Ò‚¿

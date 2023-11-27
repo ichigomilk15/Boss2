@@ -7,11 +7,11 @@
 EnemyMinion1::EnemyMinion1(Character* p) :
 	Enemy(p)
 {
-	//this->model = std::make_unique<Model>("Data/Model/Mr.Incredible/Mr.Incredible.mdl");
-	model = std::make_unique<Model>("Data/Model/Jammo/Jammo.mdl");
+	//model = std::make_unique<Model>("Data/Model/Jammo/Jammo.mdl");
+	model = std::make_unique<Model>("Data/Model/Enemy/Normal1/NormalEnemy1.mdl");
 
 	//ƒXƒP[ƒ‹‚Ì’²®
-	scale.x = scale.y = scale.z = 0.03f;
+	scale.x = scale.y = scale.z = 0.15f;
 
 	height = 1.0f;
 	enemyType = ENEMY_TYPE::BOSS1;
@@ -22,6 +22,7 @@ EnemyMinion1::EnemyMinion1(Character* p) :
 	attackPower = 7;
 	attackAdjacentRange = 2;
 	isActEnd = false;
+	SetDirection(CommonClass::DirectionFace::BackRight);
 }
 
 void EnemyMinion1::UpdateState(float elapsedTime)
@@ -30,7 +31,7 @@ void EnemyMinion1::UpdateState(float elapsedTime)
 	switch (state)
 	{
 	case State::Idle_Init:
-
+		this->model->PlayAnimation(Animation::Idle, true);
 		state = State::Idle;
 		[[fallthrough]];
 	case State::Idle:
@@ -38,6 +39,7 @@ void EnemyMinion1::UpdateState(float elapsedTime)
 		break;
 
 	case State::Act_Init:
+		this->model->PlayAnimation(Animation::Idle, true);
 		actTimer = 0.5f;
 		state = State::Act;
 		Stage::Instance()->ResetAllSquare();
@@ -89,12 +91,13 @@ void EnemyMinion1::UpdateState(float elapsedTime)
 		break;
 
 	case State::Attack_Init:
+		this->model->PlayAnimation(Animation::Run, false);
 		actTimer = 1.0f;
 		state = State::Attack;
 		[[fallthrough]];
 	case State::Attack:
 		actTimer -= elapsedTime;
-		if (actTimer < 0.0f)
+		if (actTimer < 0.0f || !model->IsPlayAnimation())
 		{
 			if (attack && !attack->GetIsDestroy())
 			{
@@ -109,11 +112,11 @@ void EnemyMinion1::UpdateState(float elapsedTime)
 		break;
 
 	case State::Attacking_Init:
-		this->model->PlayAnimation(0, false);
+		this->model->PlayAnimation(Animation::Attack, false, 0.0f);
 		state = State::Attacking;
 		[[fallthrough]];
 	case State::Attacking:
-		if (!attack || (attack && attack->GetIsDestroy()))
+		if (!attack || (attack && attack->GetIsDestroy()) || !model->IsPlayAnimation())
 		{
 			attack = nullptr;
 			SetState(State::Act_Init);

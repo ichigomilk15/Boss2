@@ -20,6 +20,9 @@ void SceneGame::Initialize()
 	//カメラコントローラー初期化
 	cameraController = new CameraController();
 
+	//方向マップ設定
+	SetGlobalDirection();
+
 	//ステージ
 	Stage::Instance()->CreateStage();
 
@@ -44,8 +47,6 @@ void SceneGame::Initialize()
 	);
 	cameraController->setTarget({.0f,.0f,-7.f});
 
-	//方向マップ設定
-	SetGlobalDirection();
 	Stage::Instance()->ResetAllSquare();
 	Stage::Instance()->ResetSquaresAccessible();
 

@@ -67,7 +67,7 @@ void Model::UpdateTransform(const DirectX::XMFLOAT4X4& transform)
 
 void Model::UpdateAnimation(float elapsedTime)
 {
-	elapsedTime *= 0.5f;
+	//elapsedTime *= 0.5f;
 	//çƒê∂íÜÇ≈Ç»Ç¢Ç»ÇÁèàóùÇµÇ»Ç¢
 	if (!IsPlayAnimation()) return;
 
@@ -191,6 +191,13 @@ void Model::PlayAnimation(int index, bool loop, float blendSeconds)
 bool Model::IsPlayAnimation() const
 {
 	if (currentAnimationIndex < 0) return false;
+	if (currentAnimationIndex >= resource->GetAnimations().size()) return false;
+	return true;
+}
+
+bool Model::IsPlayAnimation(const int index) const
+{
+	if (currentAnimationIndex < 0 != currentAnimationIndex != index) return false;
 	if (currentAnimationIndex >= resource->GetAnimations().size()) return false;
 	return true;
 }

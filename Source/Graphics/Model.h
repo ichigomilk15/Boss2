@@ -50,6 +50,7 @@ public:
 
 	//アニメーション再生中か
 	bool IsPlayAnimation() const;
+	bool IsPlayAnimation(const int index) const;
 
 private:
 	std::shared_ptr<ModelResource>	resource;
