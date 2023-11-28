@@ -49,8 +49,10 @@ protected:
 	//ステート更新処理
 	void UpdateState(float elapsedTime) override {}
 	//攻撃アクション更新処理
-	virtual void InitializeAttack(float elapsedTime) {}
+	virtual void InitializeAttack(float elapsedTime);
 
+	//セットカードによるアクションを決める更新処理
+	virtual State ChooseAct(float elapsedTime);
 
 protected:
 	std::unique_ptr<Model> model;

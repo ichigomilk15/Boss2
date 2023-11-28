@@ -72,9 +72,11 @@ void Card::Render(ID3D11DeviceContext* dc)
 
 void Card::DrawIMGUI()
 {
+#if _DEBUG
     if (ImGui::InputFloat2("position", &pos.x)) {};
     if (ImGui::InputFloat2("target", &targetPos.x)) {};
     if (ImGui::RadioButton("isMoveLock", moveLock)) {};
+#endif
 }
 
 const bool Card::HitMouse()

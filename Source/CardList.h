@@ -23,9 +23,9 @@ public://functions
 	//手札にカードを追加
 	void AddCard(std::shared_ptr<Card>& card);
 	//手札の一番左に追加
-	const bool AddCardFront(std::shared_ptr<Card>& card);
+	const bool AddCardFront(const std::shared_ptr<Card>& card);
 	//山札にかーどを追加
-	void AddCardReserved(std::shared_ptr<Card>& card);
+	void AddCardReserved(const std::shared_ptr<Card>& card);
 	//カードを削除
 	void EraseItem(std::shared_ptr<Card>& item);
 	//即座にカードを削除**for文を回している間は呼ばないでください

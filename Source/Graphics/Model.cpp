@@ -67,7 +67,6 @@ void Model::UpdateTransform(const DirectX::XMFLOAT4X4& transform)
 
 void Model::UpdateAnimation(float elapsedTime)
 {
-	//elapsedTime *= 0.5f;
 	//Ä¶’†‚Å‚È‚¢‚È‚çˆ—‚µ‚È‚¢
 	if (!IsPlayAnimation()) return;
 

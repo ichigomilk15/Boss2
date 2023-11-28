@@ -69,7 +69,7 @@ void CardManager::Update(float elapsedTime)
 				(CARD_SIZE.x + CARD_DISTANCE) * std::max(cards.size(),static_cast<size_t>(CARD_MAX)),CARD_SIZE.y };
 			if (Collision2D::BoxVsPos(HAND_CARDS_START_POS, boxSize, mouse.GetPosition()))
 			{
-				auto& it = std::find(cards.begin(), cards.end(), card);
+				const auto& it = std::find(cards.begin(), cards.end(), card);
 				if (it == cards.end())
 				{
 					QuickEraseItem(card);
@@ -104,7 +104,7 @@ void CardManager::Update(float elapsedTime)
 		//ƒ}ƒEƒX‚ð’Ç”ö
 		else
 		{
-			auto& card = haveCard.lock();
+			auto card = haveCard.lock();
 			pos = card->GetPosition();
 			pos.x += mouse.GetPositionX() - mouse.GetOldPositionX();
 			pos.y += mouse.GetPositionY() - mouse.GetOldPositionY();
@@ -163,7 +163,7 @@ void CardManager::DrawDebugGUI()
 		}
 		if (ImGui::CollapsingHeader("OnMouseCard",ImGuiTreeNodeFlags_::ImGuiTreeNodeFlags_DefaultOpen))
 		{
-			if (auto& card = this->HitCheck(Input::Instance().GetMouse().GetPosition()))
+			if (auto card = this->HitCheck(Input::Instance().GetMouse().GetPosition()))
 			{
 				card->DrawIMGUI();
 			}
@@ -221,7 +221,7 @@ void CardManager::AddCard(std::shared_ptr<Card>& card)
 	cards.emplace_back(card);
 }
 
-const bool CardManager::AddCardFront(std::shared_ptr<Card>& card)
+const bool CardManager::AddCardFront(const std::shared_ptr<Card>& card)
 {
 	if (haveSpecial >= SPECIAL_CARD_MAX)
 		return false;
@@ -230,7 +230,7 @@ const bool CardManager::AddCardFront(std::shared_ptr<Card>& card)
 	return true;
 }
 
-void CardManager::AddCardReserved(std::shared_ptr<Card>& card)
+void CardManager::AddCardReserved(const std::shared_ptr<Card>& card)
 {
 	reservedCards.push(card);
 }

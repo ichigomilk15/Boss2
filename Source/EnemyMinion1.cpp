@@ -31,7 +31,8 @@ void EnemyMinion1::UpdateState(float elapsedTime)
 	switch (state)
 	{
 	case State::Idle_Init:
-		this->model->PlayAnimation(Animation::Idle, true);
+		if (this->model->IsPlayAnimation(Animation::Idle))
+			this->model->PlayAnimation(Animation::Idle, true);
 		state = State::Idle;
 		[[fallthrough]];
 	case State::Idle:
@@ -68,7 +69,7 @@ void EnemyMinion1::UpdateState(float elapsedTime)
 		actTimer -= elapsedTime;
 		if (actTimer < 0.0f)
 		{
-			if (ChooseTargetMove(elapsedTime))
+			if (!ChooseTargetMove(elapsedTime))
 			{
 				SetState(State::Act_Init);
 				break;
@@ -143,157 +144,4 @@ void EnemyMinion1::UpdateState(float elapsedTime)
 	default:
 		break;
 	}
-}
-
-State EnemyMinion1::ChooseAct(float elapsedTime)
-{
-	const DirectX::XMINT2 playerPos = player->GetPosition();
-	if (Stage::Instance()->IsAdjacent({ position.x, position.y }, playerPos))
-	{
-		InitializeAttack(elapsedTime);
-		return State::Attack_Init;
-	}
-
-	//攻撃範囲にプレイヤーを検索
-	auto attackSquares = Stage::Instance()->GetSquaresEdgeAdjacent(position.x, position.y, attackAdjacentRange);
-	for (auto& sq : attackSquares)
-	{
-		const auto sqPos = sq->GetPos();
-		if (sqPos.x == playerPos.x && sqPos.y == playerPos.y)
-		{
-			InitializeAttack(elapsedTime);
-			return State::Attack_Init;
-			break;
-		}
-	}
-
-	return State::Move_Init;
-}
-
-void EnemyMinion1::InitializeAttack(float elapsedTime)
-{
-	if (attack && !attack->GetIsDestroy()) return;
-	std::vector<Square*> attackSq;
-	DirectX::XMINT2 dirPos = { player->GetPosition().x - position.x, player->GetPosition().y - position.y };
-
-	if (dirPos.x > 0)
-		SetDirection(CommonClass::DirectionFace::Right);
-	else if (dirPos.x < 0)
-		SetDirection(CommonClass::DirectionFace::Left);
-	else if (dirPos.y > 0)
-		SetDirection(CommonClass::DirectionFace::Back);
-	else if (dirPos.y < 0)
-		SetDirection(CommonClass::DirectionFace::Front);
-
-	attackSq = Stage::Instance()->GetSquaresByDirection(this->position.x, this->position.y, attackAdjacentRange, this->GetDirection());
-	std::vector<DirectX::XMINT2> posVec;
-	for (auto& sq : attackSq)
-	{
-		posVec.emplace_back(sq->GetPos());
-	}
-	attack = new NormalAttack(this, attackPower, TargetAttackEnum::Target_Player, posVec, 0.5f);
-	AttackManager::Instance().Register(attack);
-
-	for (auto& square : attackSq)
-	{
-		square->SetType(Square::Type::AttackArea);
-	}
-}
-
-bool EnemyMinion1::ChooseTargetMove(float elapsedTime)
-{
-	int difX = player->GetPosition().x - position.x;
-	int difY = player->GetPosition().y - position.y;
-
-	if (difX == 0 && difY == 0) return false;
-	if (Stage::Instance()->IsAdjacent({ position.x, position.y }, player->GetPosition())) return false;
-
-	bool isValidHorizontal = false;
-	bool isValidVertical = false;
-
-	//水平チェック
-	{
-		if (difX != 0)
-		{
-			float targetX = position.x + (difX / abs(difX));
-			float targetY = position.y;
-			if (Stage::Instance()->GetSquare(targetX, targetY)->GetType() != Square::Type::Inaccessible)
-			{
-				isValidHorizontal = true;
-			}
-		}
-	}
-	//垂直チェック
-	{
-		if (difY != 0)
-		{
-			float targetX = position.x;
-			float targetY = position.y + (difY / abs(difY));
-			if (Stage::Instance()->GetSquare(targetX, targetY)->GetType() != Square::Type::Inaccessible)
-			{
-				isValidVertical = true;
-			}
-		}
-	}
-
-	if (isValidHorizontal && !isValidVertical)
-	{
-		float targetX = position.x + (difX / abs(difX));
-		float targetY = position.y;
-		if (Stage::Instance()->GetSquare(targetX, targetY)->GetType() != Square::Type::Inaccessible)
-		{
-			targetMovePos.x = targetX;
-			targetMovePos.y = targetY;
-			return true;
-		}
-	}
-	if (isValidVertical && !isValidHorizontal /*&& abs(difY) > abs(difX)*/)
-	{
-		float targetX = position.x;
-		float targetY = position.y + (difY / abs(difY));
-		if (Stage::Instance()->GetSquare(targetX, targetY)->GetType() != Square::Type::Inaccessible)
-		{
-			targetMovePos.x = targetX;
-			targetMovePos.y = targetY;
-			return true;
-		}
-	}
-
-	if (isValidHorizontal && isValidVertical)
-	{
-		if (abs(difX) > abs(difY))
-		{
-			float targetX = position.x + (difX / abs(difX));
-			float targetY = position.y;
-			if (Stage::Instance()->GetSquare(targetX, targetY)->GetType() != Square::Type::Inaccessible)
-			{
-				targetMovePos.x = targetX;
-				targetMovePos.y = targetY;
-				return true;
-			}
-		}
-		float targetX = position.x;
-		float targetY = position.y + (difY / abs(difY));
-		if (Stage::Instance()->GetSquare(targetX, targetY)->GetType() != Square::Type::Inaccessible)
-		{
-			targetMovePos.x = targetX;
-			targetMovePos.y = targetY;
-			return true;
-		}
-	}
-	/*float targetX = position.x + (difX / abs(difY));
-	float targetY = position.y;
-
-	if (Stage::Instance()->GetSquare(targetX, targetY)->GetType() == Square::Type::Inaccessible)
-	{
-		targetX = position.x;
-		targetY = position.y + (difY / abs(difY));
-	}
-	if (Stage::Instance()->GetSquare(targetX, targetY)->GetType() != Square::Type::Inaccessible)
-	{
-		targetMovePos.x = targetX;
-		targetMovePos.y = targetY;
-	}*/
-
-	return false;
 }
