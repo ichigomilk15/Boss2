@@ -5,10 +5,11 @@
 EnemyBoss1::EnemyBoss1(Character* p) :
 	Enemy(p)
 {
-	model = std::make_unique<Model>("Data/Model/Jammo/Jammo.mdl");
+	//model = std::make_unique<Model>("Data/Model/Jammo/Jammo.mdl");
+	model = std::make_unique<Model>("Data/Model/Enemy/Normal1/NormalEnemy1.mdl");
 
 	//ƒXƒP[ƒ‹‚Ì’²®
-	scale.x = scale.y = scale.z = 0.1f;
+	scale.x = scale.y = scale.z = 0.6f;
 
 	height = 1.0f;
 	enemyType = ENEMY_TYPE::BOSS1;
@@ -125,7 +126,6 @@ void EnemyBoss1::UpdateState(float elapsedTime)
 		break;
 
 	case State::Act_Finish_Init:
-		this->model->PlayAnimation(Animation::Idle, true);
 		actTimer = 1.0f;
 		isActEnd = true;
 		state = State::Act_Finish;

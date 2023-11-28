@@ -309,11 +309,8 @@ State Player::ChooseAct(float elapsedTime)
 	case Card::Type::DEFENCE:
 		return State::Defence_Init;
 		break;
-	case Card::Type::NONE:
-		return State::Act_Finish_Init;
-		break;
 	default:
-		return State::Act_Init;
+		return State::Act_Finish_Init;
 		break;
 	}
 }

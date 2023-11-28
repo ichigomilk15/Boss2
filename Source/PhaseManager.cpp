@@ -160,7 +160,7 @@ void PhaseManager::Update(float elapsedTime)
 	case PhaseManager::Phase::Phase_EnemyAct:
 	{
 		//enemy‚ª‘Sˆõs“®‚ðŠ®—¹‚µ‚Ä‚¢‚½‚ç
-		if (IsSlowNextPhase(EnemyManager::Instance().GetIsAllActEnd()))
+		if (IsQuickNextPhase(EnemyManager::Instance().GetIsAllActEnd()))
 		{
 			NextPhase();
 		}
@@ -283,7 +283,7 @@ void PhaseManager::SetGameStart()
 	boss1->SetPositionWorld({ 5, 5 });
 	boss1->SetTargetMovePosition({ -1, -1 });
 	boss1->SetSize({ 2, 2 });
-	DirectX::XMFLOAT3 pivot = { Common::SquareWidth / 2, 0, -Common::SquareHeight / 2 };
+	DirectX::XMFLOAT3 pivot = { Common::SquareWidth / 2, -5.0f, -Common::SquareHeight / 2 };
 	boss1->SetPivotAdjustPosWorld(pivot);
 	boss1->SetState(State::Idle_Init);
 
