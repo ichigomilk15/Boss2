@@ -5,6 +5,7 @@
 #include <d3d11.h>
 #include <DirectXMath.h>
 #include <utility>
+#include <random>
 
 #include "Collision.h"
 #include "Common.h"
@@ -27,7 +28,6 @@ private://constructors
 	~Stage() {};
 public://functions
 	static Stage* Instance()noexcept { static Stage instance; return &instance; }
-	std::shared_ptr<Square> GetSquare(unsigned int x, unsigned int y)const noexcept { return squares[y][x]; }
 	void ClearStage()noexcept;
 	void CreateStage();
 	const DirectX::XMFLOAT3 GetWorldPos(const DirectX::XMINT2& pos) const;
@@ -49,11 +49,14 @@ public://functions
 	void SetSquareTypeMove(const DirectX::XMINT2& pos, const int& cost, const std::vector<Square::Type>& typesExclusion = {Square::Type::MAX});
 	std::vector<std::shared_ptr<Square>> GetSquareTypeMove();
 
+	//スペシャルカードの再配置
+	void ReFleshCard();
 	void ResetAllSquare();
 	void ResetSquaresAccessible();
 
 	//Getter&Setter***************************************************************************
 #if 1
+	std::shared_ptr<Square> GetSquare(unsigned int x, unsigned int y)const noexcept { return squares[y][x]; }
 	const unsigned int& GetStageLevel()const noexcept { return stageLevel; }
 	void SetStageLevel(const unsigned int level)noexcept { stageLevel = level; }
 	const unsigned int& StageLevelStepUp()noexcept { return ++stageLevel; }
@@ -74,6 +77,8 @@ private://members
 	DirectX::XMFLOAT3 position{};
 	DirectX::XMFLOAT3 scale{};
 	DirectX::XMFLOAT4 rotate{};
+
+	std::uniform_int_distribution<unsigned int> random;
 
 	//bool isSquareDirty = false; //一つのマスでも変換があった場合trueにする
 };

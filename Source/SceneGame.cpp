@@ -74,8 +74,10 @@ void SceneGame::Finalize()
 // 更新処理
 void SceneGame::Update(float elapsedTime)
 {
+#ifdef _DEBUG
 	//カメラコントローラー更新処理
 	cameraController->Update(elapsedTime);
+#endif // _DEBUG
 	Stage::Instance()->Update(elapsedTime);
 
 	Stage::Instance()->Update(elapsedTime);
@@ -144,7 +146,6 @@ void SceneGame::Render()
 
 	//2D表示
 	{
-		CardManager::Instance().Render(dc);
 
 		const DirectX::XMFLOAT2 pos = { 50.0f,50.0f };
 		const DirectX::XMFLOAT2 HpBarSize = { 250.0f,50.0f };
@@ -155,15 +156,29 @@ void SceneGame::Render()
 			HpBarSize.x + HpBarBorderSize.x * 2.0f, HpBarSize.y + HpBarBorderSize.y * 2.0f,
 			.0f, .0f, static_cast<float>(playerHP->GetTextureWidth()), static_cast<float>(playerHP->GetTextureHeight()),
 			DirectX::XMConvertToRadians(.0f), .0f, .0f, .0f, 1.0f);
+
+		auto player = PlayerManager::Instance().GetFirstPlayer();
+
 		//中身
 		playerHP->Render(dc,
 			pos.x, pos.y,
-			HpBarSize.x, HpBarSize.y,
+			HpBarSize.x*player->GetHealth()/static_cast<float>(player->GetMaxHealth()), HpBarSize.y,
 			.0f, .0f, static_cast<float>(playerHP->GetTextureWidth()), static_cast<float>(playerHP->GetTextureHeight()),
 			DirectX::XMConvertToRadians(.0f),
 			1.0f, .0f, .0f, 1.0f);
 
+
+		//シールドの描画
+		playerHP->Render(dc,
+			pos.x, pos.y,
+			HpBarSize.x*0.5f/**(player->Getshield()/static_cast<float>(player->GetMaxHealth()))*/, HpBarSize.y,
+			.0f, .0f, static_cast<float>(playerHP->GetTextureWidth()), static_cast<float>(playerHP->GetTextureHeight()),
+			DirectX::XMConvertToRadians(.0f),
+			.0f, 1.0f, .0f, .6f);
+
 		PhaseManager::Instance().Render(dc);
+
+		CardManager::Instance().Render(dc);
 	}
 	// 2DデバッグGUI描画
 	{
@@ -175,9 +190,9 @@ void SceneGame::Render()
 		cameraController->DrawIMGUI();
 
 		//DrawDebugGUI(player, cameraController);
-		CardManager::Instance().DrawDebugGUI();
 
 		PhaseManager::Instance().DrawDebugGUI();
+		CardManager::Instance().DrawDebugGUI();
 	}
 
 	auto&& manager = EffectManager::Instance().GetEffekseerManager().Get();

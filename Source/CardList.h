@@ -2,7 +2,50 @@
 
 #include <list>
 #include <stack>
+#include <map>
 #include "Card.h"
+
+struct CardComboDataBase
+{
+	Card::Type type;
+};
+
+struct CardComboAttack final : public CardComboDataBase
+{
+	unsigned int Attackcost;
+	int AttackDamage;
+	unsigned int AreaAttackCost;
+	unsigned int VAreaAttackCost;
+	bool UseShield;
+};
+
+struct CardComboDefence final : public CardComboDataBase
+{
+	int getShield;
+	int GetBlock;
+	bool movecostGetShield;
+	int heal;
+};
+
+struct CardComboMove final : public CardComboDataBase
+{
+	int moveCost;
+	int attackDamege;
+	int knockbackCost;
+	int knockbackDamege;
+	int knockbackTakeDamege;
+};
+
+struct CardComboDebuff final : public CardComboDataBase
+{
+	int takeDamage;
+	int heal;
+};
+
+struct CardComboNoUseing final : public CardComboDataBase
+{
+	bool isNodata = true;
+};
 
 class CardManager final
 {
@@ -19,7 +62,7 @@ public://functions
 	void DrawDebugGUI();
 	std::shared_ptr<Card> HitCheck(const DirectX::XMFLOAT2& screenPos)const;
 	//ランダムでカードを生成*手持ちには追加されないのでAddCardなどを使用してください
-	std::shared_ptr<Card> DrawCard(const std::pair<Card::Type,unsigned int>* const pair,const size_t pairSize);
+	std::shared_ptr<Card> DrawCard(const std::pair<Card::Type, unsigned int>* const pair, const size_t pairSize);
 	//手札にカードを追加
 	void AddCard(std::shared_ptr<Card>& card);
 	//手札の一番左に追加
@@ -36,9 +79,9 @@ public://functions
 	const bool IsFillSetCards()const noexcept;
 
 	//カード置き場から次に使用するカードを取得する
-	const Card::Type& GetUseCard()noexcept;
+	const Card::Type GetUseCard()noexcept;
 	//カード置き場から次に使用するカードを削除&取得する
-	const Card::Type& PopAndGetUseCard()noexcept;
+	const CardComboDataBase* PopAndGetUseCard()noexcept;
 	//カード置き場にカードが残っているか動かを取得する
 	const bool IsSetCardsEmpty()const noexcept;
 
@@ -83,4 +126,5 @@ private://members
 
 	Card::Type PrevUseCardType = Card::Type::NONE;
 	Sprite sprite;
+	std::shared_ptr<CardComboDataBase> CardComboDatas[static_cast<int>(Card::Type::MAX)][static_cast<int>(Card::Type::MAX)];
 };

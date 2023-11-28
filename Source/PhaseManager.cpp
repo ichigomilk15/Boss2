@@ -57,6 +57,7 @@ void PhaseManager::Update(float elapsedTime)
 	{
 		NextPhase();//次のフェーズへ
 	}
+	break;
 	//***********************************************************************************
 	case PhaseManager::Phase::Phase_Start_Init:
 	{

@@ -13,6 +13,193 @@ CardManager::CardManager():
 	SET_CARDS_START_POS({Graphics::Instance().GetScreenWidth()*0.1f,Graphics::Instance().GetScreenHeight()*0.2f}),isMoveable(true),
 	sprite()
 {
+	const int typeNone = (int)Card::Type::NONE;
+	const int typeAttack = (int)Card::Type::ATTACK;
+	const int typeDefence = (int)Card::Type::DEFENCE;
+	const int typeMove = (int)Card::Type::MOVE;
+	const int typeSpecial = (int)Card::Type::SPECIAL;
+	const int typeDebuff = (int)Card::Type::DEBUFF;
+
+	//UŒ‚ƒRƒ“ƒ{‚Ì“o˜^
+	{
+		CardComboAttack data;
+		data.type = Card::Type::ATTACK;
+		//UŒ‚’P”­
+		data.Attackcost = 1u;
+		data.AttackDamage = 9;
+		data.AreaAttackCost = false;
+		data.VAreaAttackCost = false;
+		data.UseShield = false;
+		auto Data = std::make_shared<CardComboAttack>(data);
+		CardComboDatas[typeNone][typeAttack] = Data;
+		CardComboDatas[typeDebuff][typeAttack] = Data;		
+
+		//	UŒ‚–UŒ‚
+		data.Attackcost = 1u;
+		data.AttackDamage = 12;
+		data.AreaAttackCost = true;
+		data.VAreaAttackCost = false;
+		data.UseShield = false;
+		CardComboDatas[typeAttack][typeAttack] = std::make_shared<CardComboAttack>(data);
+
+		//ˆÚ“®–UŒ‚
+		data.Attackcost = 1u;
+		data.AttackDamage = 8;
+		data.AreaAttackCost = false;
+		data.VAreaAttackCost = 1u;
+		data.UseShield = false;
+		CardComboDatas[typeMove][typeAttack] = std::make_shared<CardComboAttack>(data);
+		
+		//–hŒä–UŒ‚
+		data.Attackcost = 1u;
+		data.AttackDamage = 9;
+		data.AreaAttackCost = false;
+		data.VAreaAttackCost = false;
+		data.UseShield = true;
+		CardComboDatas[typeDefence][typeAttack] = std::make_shared<CardComboAttack>(data);
+
+		//ƒXƒyƒVƒƒƒ‹–UŒ‚
+		data.Attackcost = 1u;
+		data.AttackDamage = 30;
+		data.AreaAttackCost = false;
+		data.VAreaAttackCost = false;
+		data.UseShield = false;
+		CardComboDatas[typeSpecial][typeAttack] = std::make_shared<CardComboAttack>(data);
+	}
+
+	//ˆÚ“®ƒRƒ“ƒ{‚Ì“o˜^
+	{
+		CardComboMove data;
+		data.type = Card::Type::MOVE;
+
+		//ˆÚ“®’P”­
+		data.moveCost = 1;
+		data.attackDamege = 0u;
+		data.knockbackCost = 0u;
+		data.knockbackDamege = 0u;
+		data.knockbackTakeDamege = 0u;
+		auto Data = std::make_shared<CardComboMove>(data);
+		CardComboDatas[typeNone][typeMove] = Data;
+		CardComboDatas[typeDebuff][typeMove] = Data;
+		
+		//UŒ‚*ˆÚ“®
+		data.moveCost = 1u;
+		data.attackDamege = 3;
+		data.knockbackCost = 0;
+		data.knockbackDamege = 0;
+		data.knockbackTakeDamege = 0;
+		CardComboDatas[typeAttack][typeMove] = std::make_shared<CardComboMove>(data);
+
+		//ˆÚ“®*ˆÚ“®
+		data.moveCost = 2u;
+		data.attackDamege = 0;
+		data.knockbackCost = 0;
+		data.knockbackDamege = 0;
+		data.knockbackTakeDamege = 0;
+		CardComboDatas[typeMove][typeMove] = std::make_shared<CardComboMove>(data);
+
+		//–hŒä*ˆÚ“®
+		data.moveCost = 1u;
+		data.attackDamege = 0;
+		data.knockbackCost = 2;
+		data.knockbackDamege = 1;
+		data.knockbackTakeDamege = 2;
+		CardComboDatas[typeDefence][typeMove] = std::make_shared<CardComboMove>(data);
+
+		//ƒXƒyƒVƒƒƒ‹*ˆÚ“®
+		data.moveCost = 5u;
+		data.attackDamege = 0;
+		data.knockbackCost = 0;
+		data.knockbackDamege = 0;
+		data.knockbackTakeDamege = 0;
+		CardComboDatas[typeSpecial][typeMove] = std::make_shared<CardComboMove>(data);
+	}
+
+	//–hŒäƒRƒ“ƒ{‚Ì“o˜^
+	{
+		CardComboDefence data;
+		data.type = Card::Type::DEFENCE;
+
+		//–hŒä’P‘Ì
+		data.getShield = 4;
+		data.GetBlock = 0;
+		data.heal = 0;
+		data.movecostGetShield = false;
+		auto Data = std::make_shared<CardComboDefence>(data);
+		CardComboDatas[typeNone][typeDefence] = Data;
+		CardComboDatas[typeDebuff][typeDefence] = Data;
+
+		//UŒ‚*–hŒä
+		data.getShield = 0;
+		data.GetBlock = -4;
+		data.heal = 0;
+		data.movecostGetShield = false;
+		CardComboDatas[typeAttack][typeDefence] = std::make_shared<CardComboDefence>(data);
+
+		//ˆÚ“®*–hŒä
+		data.getShield = 3;
+		data.GetBlock = 0;
+		data.heal = 0;
+		data.movecostGetShield = true;
+		CardComboDatas[typeMove][typeDefence] = std::make_shared<CardComboDefence>(data);
+
+		//–hŒä*–hŒä
+		data.getShield = 6;
+		data.GetBlock = 0;
+		data.heal = 5;
+		data.movecostGetShield = false;
+		CardComboDatas[typeDefence][typeDefence] = std::make_shared<CardComboDefence>(data);
+
+		//ƒXƒyƒVƒƒƒ‹*–hŒä
+		data.getShield = 10;
+		data.GetBlock = 0;
+		data.heal = 10;
+		data.movecostGetShield = false;
+		CardComboDatas[typeSpecial][typeDefence] = std::make_shared<CardComboDefence>(data);
+	}
+
+	//ƒfƒoƒtƒRƒ“ƒ{‚Ì“o˜^
+	{
+		CardComboDebuff data;
+		data.type = Card::Type::DEBUFF;
+
+		//ƒfƒoƒt’P‘Ì
+		data.heal = 0;
+		data.takeDamage = 5;
+		auto Data = std::make_shared<CardComboDebuff>(data);
+		CardComboDatas[typeNone][typeDebuff] = Data;
+		CardComboDatas[typeAttack][typeDebuff] = Data;
+		CardComboDatas[typeMove][typeDebuff] = Data;
+		CardComboDatas[typeDefence][typeDebuff] = Data;
+
+		//ƒfƒoƒt*ƒfƒoƒt
+		data.heal = 5;
+		data.takeDamage = 0;
+		CardComboDatas[typeDebuff][typeDebuff] = std::make_shared<CardComboDebuff>(data);
+
+		//ƒoƒt*ƒfƒoƒt
+		data.heal = 10;
+		data.takeDamage = 10;
+		CardComboDatas[typeSpecial][typeDebuff] = std::make_shared<CardComboDebuff>(data);
+	}
+
+	//ƒRƒ“ƒ{–³‚µ‚Ì“o˜^
+	{
+		CardComboNoUseing data;
+		//ƒRƒ“ƒ{–³‚µ
+		auto Data = std::make_shared<CardComboNoUseing>(data);
+		CardComboDatas[typeNone][typeNone] = Data;
+		CardComboDatas[typeNone][typeSpecial] = Data;
+		CardComboDatas[typeAttack][typeSpecial] = Data;
+		CardComboDatas[typeMove][typeSpecial] = Data;
+		CardComboDatas[typeDefence][typeSpecial] = Data;
+		CardComboDatas[typeDebuff][typeSpecial] = Data;
+		CardComboDatas[typeAttack][typeNone] = Data;
+		CardComboDatas[typeMove][typeNone] = Data;
+		CardComboDatas[typeDefence][typeNone] = Data;
+		CardComboDatas[typeDebuff][typeNone] = Data;
+		CardComboDatas[typeSpecial][typeNone] = Data;
+	}
 }
 
 void CardManager::Update(float elapsedTime)
@@ -80,7 +267,7 @@ void CardManager::Update(float elapsedTime)
 			else 
 			{
 				boxSize = CARD_SIZE;
-				for (size_t i = 0; i < SET_CARD_MAX; i++)
+				for (size_t i = 0,end = (card->GetType()==Card::Type::SPECIAL?SET_CARD_MAX-1:SET_CARD_MAX); i < end; i++)
 				{
 					if (SetCards[i] == card)continue;
 					DirectX::XMFLOAT2 pos = SET_CARDS_START_POS;
@@ -178,7 +365,7 @@ void CardManager::DrawDebugGUI()
 		}
 		if (ImGui::Button("GetDebuff"))
 		{
-			AddCardReserved(std::make_shared<Card>(DirectX::XMFLOAT2{ .0f,.0f }, CARD_SIZE, Card::Type::BAD));
+			AddCardReserved(std::make_shared<Card>(DirectX::XMFLOAT2{ .0f,.0f }, CARD_SIZE, Card::Type::DEBUFF));
 		}
 	}
 	ImGui::End();
@@ -206,14 +393,14 @@ std::shared_ptr<Card> CardManager::DrawCard(const std::pair<Card::Type, unsigned
 		sumPercent += pair[i].second;
 	}
 	std::uniform_int_distribution<unsigned int> random(0, sumPercent);//ƒ‰ƒ“ƒ_ƒ€¶¬
-	int result = random(CommonClass::random_engine);
+	int result = random(CommonClass::random);
 	for (size_t i = 0; i < pairSize; i++)
 	{
 		result -= pair[i].second;
-		if (result <= 0)return std::make_unique<Card>(CARD_SPAWM_POS, CARD_SIZE,pair[i].first);
+		if (result <= 0)return std::make_shared<Card>(CARD_SPAWM_POS, CARD_SIZE,pair[i].first);
 	}
 
-	return std::make_unique<Card>(CARD_SPAWM_POS, CARD_SIZE,pair[pairSize-1].first);
+	return std::make_shared<Card>(CARD_SPAWM_POS, CARD_SIZE,pair[pairSize-1].first);
 }
 
 void CardManager::AddCard(std::shared_ptr<Card>& card)
@@ -272,7 +459,7 @@ const bool CardManager::IsFillSetCards() const noexcept
 	return true;
 }
 
-const Card::Type& CardManager::GetUseCard() noexcept
+const Card::Type CardManager::GetUseCard() noexcept
 {
 	for (auto& card : SetCards)
 	{
@@ -282,16 +469,22 @@ const Card::Type& CardManager::GetUseCard() noexcept
 	return Card::Type::NONE;
 }
 
-const Card::Type& CardManager::PopAndGetUseCard() noexcept
+const CardComboDataBase* CardManager::PopAndGetUseCard() noexcept
 {
-	for (auto& card : SetCards)
+
+	for (size_t i = 0; i < std::size(SetCards); i++)
 	{
+		auto card = SetCards[i];
 		if (card == nullptr)continue;
-		PrevUseCardType = card->GetType();
+		const Card::Type leftType = (i == 0 ? Card::Type::NONE : PrevUseCardType);
+		const Card::Type RightType = card->GetType();
 		EraseItem(card);
-		return PrevUseCardType;
+		auto& data = CardComboDatas[static_cast<int>(leftType)][static_cast<int>(RightType)];
+		data->type = RightType;
+		PrevUseCardType = RightType;
+		return data.get();
 	}
-	return Card::Type::NONE;
+	return CardComboDatas[static_cast<int>(Card::Type::NONE)][static_cast<int>(Card::Type::NONE)].get();
 }
 
 const bool CardManager::IsSetCardsEmpty() const noexcept

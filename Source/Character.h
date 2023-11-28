@@ -121,6 +121,7 @@ public:
 	//pivot位置の設定
 	void SetPivotAdjustPosWorld(DirectX::XMFLOAT3 pivot) { pivotAdjustPosWorld = pivot; }
 
+	const int& Getshield()const { return shield; }
 #endif // 1
 	//Getter&Setter*****************************************************
 
@@ -158,7 +159,7 @@ protected:
 
 	float height = 2.0f;
 	int health = 1000;
-	int maxHealth = 1000;
+	int maxHealth = 75;
 	int attackPower = 0; //アタック力
 	int shield = 0; //一時的な防御
 	DirectX::XMINT2 size = { 1, 1 };

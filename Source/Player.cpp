@@ -21,6 +21,7 @@ Player::Player()
 	hitEffect = new Effect("Data/Effect/Hit.efk");
 
 	attackPower = 10;
+	maxHealth = 75;
 	health = 75;
 	maxHealth = 75;
 	attackAdjacentRange = 3;
@@ -295,8 +296,9 @@ void Player::UpdateAttack(float elapsedTime)
 
 State Player::ChooseAct(float elapsedTime)
 {
-	Card::Type cardType = CardManager::Instance().PopAndGetUseCard();
-	switch (cardType)
+	//todo : ‘±‚«‚¨Šè‚¢‚µ‚Ü‚·
+	const CardComboDataBase* data = CardManager::Instance().PopAndGetUseCard();
+	switch (data->type)
 	{
 	case Card::Type::MOVE:
 		return State::Move_Init;
