@@ -22,6 +22,7 @@ Player::Player()
 
 	attackPower = 10;
 	health = 75;
+	maxHealth = 75;
 	attackAdjacentRange = 3;
 	SetDirection(CommonClass::DirectionFace::BackRight);
 }

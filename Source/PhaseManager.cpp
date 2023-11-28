@@ -5,6 +5,7 @@
 #include "CardList.h"
 #include "PlayerManager.h"
 #include "EnemyMinion1.h"
+#include "EnemyBoss1.h"
 #include "Stage.h"
 
 #ifdef _DEBUG
@@ -275,6 +276,15 @@ void PhaseManager::SetGameStart()
 	enemy->SetPositionWorld({ 1, 1 });
 	enemy->SetTargetMovePosition({ -1, -1 });
 	enemy->SetState(State::Idle_Init);
+
+	EnemyBoss1* boss1 = new EnemyBoss1(player);
+	EnemyManager::Instance().Register(boss1);
+	boss1->SetPositionWorld({ 5, 5 });
+	boss1->SetTargetMovePosition({ -1, -1 });
+	boss1->SetSize({ 2, 2 });
+	DirectX::XMFLOAT3 pivot = { Common::SquareWidth / 2, 0, -Common::SquareHeight / 2 };
+	boss1->SetPivotAdjustPosWorld(pivot);
+	boss1->SetState(State::Idle_Init);
 
 	//”Õ–Ê‚ÌƒŠƒZƒbƒg
 	Stage::Instance()->ResetAllSquare();

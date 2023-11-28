@@ -5,7 +5,10 @@
 void Character::UpdateTransform()
 {
 	SetAngle(CommonClass::directionMaps.find(direction)->second);
-	
+	float posWorldFinalX = positionWorld.x + pivotAdjustPosWorld.x;
+	float posWorldFinalY = positionWorld.y + pivotAdjustPosWorld.y;
+	float posWorldFinalZ = positionWorld.z + pivotAdjustPosWorld.z;
+
 	//スケール行列
 	DirectX::XMMATRIX S = DirectX::XMMatrixScaling(scale.x, scale.y, scale.z);
 	//回転行列を作成
@@ -15,7 +18,7 @@ void Character::UpdateTransform()
 	DirectX::XMMATRIX Z = DirectX::XMMatrixRotationZ(angle.z);
 	DirectX::XMMATRIX R = Y * X * Z;
 	//位置行列を作る
-	DirectX::XMMATRIX T = DirectX::XMMatrixTranslation(positionWorld.x, positionWorld.y, positionWorld.z);
+	DirectX::XMMATRIX T = DirectX::XMMatrixTranslation(posWorldFinalX, posWorldFinalY, posWorldFinalZ);
 
 	//三つの行物を組み合わせ, ワールド行列を作成
 	DirectX::XMMATRIX W = S * R * T;
@@ -28,6 +31,28 @@ void Character::SetPositionWorld(const DirectX::XMINT2& position)
 {
 	this->position = position;
 	this->positionWorld = Stage::Instance()->GetSquare(position.x, position.y)->GetWorldPos();
+}
+
+void Character::SetTargetMoveTranslation(const DirectX::XMINT2& moveDir)
+{
+	if (IsTargetMovePosValid({ position.x + moveDir.x, position.y + moveDir.y }))
+	{
+		targetMovePos.x = position.x + moveDir.x;
+		targetMovePos.y = position.y + moveDir.y;
+	}
+}
+
+const std::vector<DirectX::XMINT2> Character::GetSquaresPosition() const
+{
+	std::vector<DirectX::XMINT2> squaresPos;
+	for (int y = position.y; y < position.y + size.y; ++y)
+	{
+		for (int x = position.x; x < position.x + size.x; ++x)
+		{
+			squaresPos.emplace_back(DirectX::XMINT2{ x, y });
+		}
+	}
+	return squaresPos;
 }
 
 void Character::SetDirection(int dir)
@@ -63,6 +88,24 @@ void Character::UpdateVelocity(float elapsedTime)
 		}
 		moveTimer += elapsedTime;
 	}
+}
+
+bool Character::IsTargetMovePosValid(const DirectX::XMINT2& targetPos)
+{
+	for (int y = targetPos.y; y < targetPos.y + size.y; ++y)
+	{
+		for (int x = targetPos.x; x < targetPos.x + size.x; ++x)
+		{
+			if (!Stage::Instance()->IsInArea(x, y))
+				return false;
+			auto findChara = Stage::Instance()->GetSquare(x, y)->GetCharacter();
+			if (findChara != nullptr && findChara != this)
+			{
+				return false;
+			}
+		}
+	}
+	return true;
 }
 
 void Character::ResetStatus()

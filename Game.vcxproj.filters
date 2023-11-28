@@ -240,6 +240,9 @@
     <ClInclude Include="Source\HitCollisions.h">
       <Filter>Source\System\Math</Filter>
     </ClInclude>
+    <ClInclude Include="Source\EnemyBoss1.h">
+      <Filter>Source\Characters</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="External\imgui\imgui.cpp">
@@ -397,6 +400,9 @@
     </ClCompile>
     <ClCompile Include="Source\HitCollisitons.cpp">
       <Filter>Source\System\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\EnemyBoss1.cpp">
+      <Filter>Source\Characters</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

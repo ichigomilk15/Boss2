@@ -43,7 +43,7 @@ void Enemy::ResetStatus()
 	isActEnd = false;
 }
 
-bool Enemy::UpdateMove(float elapsedTime)
+bool Enemy::ChooseTargetMove(float elapsedTime)
 {
 	return false;
 }

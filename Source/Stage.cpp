@@ -297,13 +297,17 @@ void Stage::ResetSquaresAccessible()
 {
 	for (auto& enemy : EnemyManager::Instance().GetList())
 	{
-		DirectX::XMINT2 enemyPos = enemy->GetPosition();
-		squares[enemyPos.y][enemyPos.x]->SetIsaccessible(false);
-		squares[enemyPos.y][enemyPos.x]->SetCharacter(enemy);
+		for (auto& sq : enemy->GetSquaresPosition())
+		{
+			squares[sq.y][sq.x]->SetIsaccessible(false);
+			squares[sq.y][sq.x]->SetCharacter(enemy);
+		}
 	}
-	DirectX::XMINT2 playerPos = PlayerManager::Instance().GetFirstPlayer()->GetPosition();
-	squares[playerPos.y][playerPos.x]->SetIsaccessible(false);
-	squares[playerPos.y][playerPos.x]->SetCharacter(PlayerManager::Instance().GetFirstPlayer());
+	for (auto& sq : PlayerManager::Instance().GetFirstPlayer()->GetSquaresPosition())
+	{
+		squares[sq.y][sq.x]->SetIsaccessible(false);
+		squares[sq.y][sq.x]->SetCharacter(PlayerManager::Instance().GetFirstPlayer());
+	}
 }
 
 void Stage::ResetAllSquare()

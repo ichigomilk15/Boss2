@@ -44,7 +44,7 @@ public:
 
 protected:
 	//移動の更新処理
-	virtual bool UpdateMove(float elapsedTime);
+	virtual bool ChooseTargetMove(float elapsedTime);
 
 	//ステート更新処理
 	void UpdateState(float elapsedTime) override {}

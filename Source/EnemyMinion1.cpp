@@ -28,7 +28,6 @@ EnemyMinion1::EnemyMinion1(Character* p) :
 
 void EnemyMinion1::UpdateState(float elapsedTime)
 {
-	GamePad& gamePad = Input::Instance().GetGamePad();
 	switch (state)
 	{
 	case State::Idle_Init:
@@ -69,13 +68,16 @@ void EnemyMinion1::UpdateState(float elapsedTime)
 		actTimer -= elapsedTime;
 		if (actTimer < 0.0f)
 		{
-			UpdateMove(elapsedTime);
-		}
-
-		if (IsMoving())
-		{
-			SetState(State::Moving_Init);
-			break;
+			if (ChooseTargetMove(elapsedTime))
+			{
+				SetState(State::Act_Init);
+				break;
+			}
+			else
+			{
+				SetState(State::Moving_Init);
+				break;
+			}
 		}
 		break;
 
@@ -176,7 +178,7 @@ void EnemyMinion1::InitializeAttack(float elapsedTime)
 
 	if (dirPos.x > 0)
 		SetDirection(CommonClass::DirectionFace::Right);
-	else if(dirPos.x < 0)
+	else if (dirPos.x < 0)
 		SetDirection(CommonClass::DirectionFace::Left);
 	else if (dirPos.y > 0)
 		SetDirection(CommonClass::DirectionFace::Back);
@@ -198,7 +200,7 @@ void EnemyMinion1::InitializeAttack(float elapsedTime)
 	}
 }
 
-bool EnemyMinion1::UpdateMove(float elapsedTime)
+bool EnemyMinion1::ChooseTargetMove(float elapsedTime)
 {
 	int difX = player->GetPosition().x - position.x;
 	int difY = player->GetPosition().y - position.y;
@@ -206,20 +208,92 @@ bool EnemyMinion1::UpdateMove(float elapsedTime)
 	if (difX == 0 && difY == 0) return false;
 	if (Stage::Instance()->IsAdjacent({ position.x, position.y }, player->GetPosition())) return false;
 
-	if (abs(difX) > abs(difY))
+	bool isValidHorizontal = false;
+	bool isValidVertical = false;
+
+	//水平チェック
 	{
-		targetMovePos.x = position.x + (difX / abs(difX));
-		targetMovePos.y = position.y;
+		if (difX != 0)
+		{
+			float targetX = position.x + (difX / abs(difX));
+			float targetY = position.y;
+			if (Stage::Instance()->GetSquare(targetX, targetY)->GetType() != Square::Type::Inaccessible)
+			{
+				isValidHorizontal = true;
+			}
+		}
 	}
-	else if (abs(difY) > abs(difX))
+	//垂直チェック
 	{
-		targetMovePos.x = position.x;
-		targetMovePos.y = position.y + (difY / abs(difY));
+		if (difY != 0)
+		{
+			float targetX = position.x;
+			float targetY = position.y + (difY / abs(difY));
+			if (Stage::Instance()->GetSquare(targetX, targetY)->GetType() != Square::Type::Inaccessible)
+			{
+				isValidVertical = true;
+			}
+		}
 	}
-	else
+
+	if (isValidHorizontal && !isValidVertical)
 	{
-		targetMovePos.x = position.x + (difX / abs(difX));
-		targetMovePos.y = position.y;
+		float targetX = position.x + (difX / abs(difX));
+		float targetY = position.y;
+		if (Stage::Instance()->GetSquare(targetX, targetY)->GetType() != Square::Type::Inaccessible)
+		{
+			targetMovePos.x = targetX;
+			targetMovePos.y = targetY;
+			return true;
+		}
 	}
-	return true;
+	if (isValidVertical && !isValidHorizontal /*&& abs(difY) > abs(difX)*/)
+	{
+		float targetX = position.x;
+		float targetY = position.y + (difY / abs(difY));
+		if (Stage::Instance()->GetSquare(targetX, targetY)->GetType() != Square::Type::Inaccessible)
+		{
+			targetMovePos.x = targetX;
+			targetMovePos.y = targetY;
+			return true;
+		}
+	}
+
+	if (isValidHorizontal && isValidVertical)
+	{
+		if (abs(difX) > abs(difY))
+		{
+			float targetX = position.x + (difX / abs(difX));
+			float targetY = position.y;
+			if (Stage::Instance()->GetSquare(targetX, targetY)->GetType() != Square::Type::Inaccessible)
+			{
+				targetMovePos.x = targetX;
+				targetMovePos.y = targetY;
+				return true;
+			}
+		}
+		float targetX = position.x;
+		float targetY = position.y + (difY / abs(difY));
+		if (Stage::Instance()->GetSquare(targetX, targetY)->GetType() != Square::Type::Inaccessible)
+		{
+			targetMovePos.x = targetX;
+			targetMovePos.y = targetY;
+			return true;
+		}
+	}
+	/*float targetX = position.x + (difX / abs(difY));
+	float targetY = position.y;
+
+	if (Stage::Instance()->GetSquare(targetX, targetY)->GetType() == Square::Type::Inaccessible)
+	{
+		targetX = position.x;
+		targetY = position.y + (difY / abs(difY));
+	}
+	if (Stage::Instance()->GetSquare(targetX, targetY)->GetType() != Square::Type::Inaccessible)
+	{
+		targetMovePos.x = targetX;
+		targetMovePos.y = targetY;
+	}*/
+
+	return false;
 }
