@@ -30,8 +30,9 @@ namespace Common
 class CommonClass
 {
 public:
-	static std::default_random_engine random_engine;
+	static std::mt19937 random;
 private:
+	static std::default_random_engine random_engine;
 	static std::random_device random_seed;
 public:
 	static DirectX::XMFLOAT3 GetWorldStartPosition(ID3D11DeviceContext* dc, const int& mouseX, const int& mouseY,

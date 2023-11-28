@@ -3,6 +3,7 @@
 
 std::random_device CommonClass::random_seed;
 std::default_random_engine CommonClass::random_engine = std::default_random_engine(CommonClass::random_seed());
+std::mt19937 CommonClass::random = std::mt19937(CommonClass::random_engine);
 
 const int CommonClass::GetDirectionTarget(const DirectX::XMINT2 initPos, const DirectX::XMINT2& targetPos)
 {

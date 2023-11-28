@@ -99,6 +99,7 @@ public:
 
 	//Getter&Setter*****************************************************
 #if 1
+	const int& Getshield()const { return shield; }
 #endif // 1
 	//Getter&Setter*****************************************************
 

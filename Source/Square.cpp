@@ -1,6 +1,9 @@
 
-#include "Square.h"
+#include "Graphics/Graphics.h"
 #include "Graphics/Shader.h"
+
+
+#include "Square.h"
 #include "Card.h"
 #include "Stage.h"
 
@@ -11,7 +14,8 @@ Square::Square(const DirectX::XMINT2& pos) :
 	card(nullptr),
 	type(Type::NONE),
 	SquareBorder(Stage::Instance()->squareBorder),
-	SquareArea(Stage::Instance()->squareArea)
+	SquareArea(Stage::Instance()->squareArea),
+	areaColor(.0f,.0f,.0f,.0f)
 {
 	this->worldPos = Stage::Instance()->GetWorldPos(pos);
 
@@ -55,6 +59,10 @@ void Square::Render(ID3D11DeviceContext* dc, Shader* shader)
 			shader->Draw(dc, model.get());
 		}
 	}
+
+	DebugRenderer* dr = Graphics::Instance().GetDebugRenderer();
+	if(card!=nullptr)
+		dr->DrawSphere(DirectX::XMFLOAT3(worldPos.x, worldPos.y + 0.5f, worldPos.z), .3f, DirectX::XMFLOAT4(.3f, 1.0f, .0f, 1.0f));
 }
 
 const bool Square::Raycast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end, HitResult& hit)

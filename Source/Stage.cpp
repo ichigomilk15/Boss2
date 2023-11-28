@@ -11,6 +11,7 @@
 #include "Graphics\Graphics.h"
 #include "EnemyManager.h"
 #include "PlayerManager.h"
+#include "Card.h"
 #include <Input\Input.h>
 
 Stage::Stage() :
@@ -21,6 +22,7 @@ Stage::Stage() :
 {
 	this->scale = { 3.0f,0.01f,3.0f };
 	this->position = { 0.0f, -1.0f, 0.0f };
+	random = std::uniform_int_distribution<unsigned int>(0u,Common::SQUARE_NUM_X-1);
 }
 
 void Stage::ClearStage() noexcept
@@ -45,6 +47,9 @@ void Stage::CreateStage()
 			squares[y][x] = std::make_shared<Square>(DirectX::XMINT2(x, y));
 		}
 	}
+
+	//todo : debug 
+	squares[0][0]->SetCard(std::make_unique<Card>(DirectX::XMFLOAT2{ .0f,.0f }, DirectX::XMFLOAT2{100.0f,100.0f}, Card::Type::SPECIAL));
 }
 
 const DirectX::XMFLOAT3 Stage::GetWorldPos(const DirectX::XMINT2& pos) const
@@ -93,6 +98,11 @@ void Stage::DrawIMGUI()
 		ImGui::InputFloat3("position", &position.x);
 		ImGui::InputFloat3("scale", &scale.x);
 		ImGui::InputFloat4("rotate", &rotate.x);
+
+		if (ImGui::Button("refleshCard"))
+		{
+			ReFleshCard();
+		}
 	}
 	ImGui::End();
 #endif // _DEBUG
@@ -290,6 +300,32 @@ void Stage::ResetSquaresAccessible()
 	}
 	DirectX::XMINT2 playerPos = PlayerManager::Instance().GetFirstPlayer()->GetPosition();
 	squares[playerPos.y][playerPos.x]->SetIsaccessible(false);
+}
+
+void Stage::ReFleshCard()
+{
+	unsigned int specialNum = 0u;
+	std::vector<std::shared_ptr<Card>> cards;
+	for (auto& y : squares)
+	{
+		for (auto& x : y)
+		{
+			auto card = x->GetSharedCard();
+			if (card == nullptr||card->GetType()!=Card::Type::SPECIAL)continue;
+			cards.push_back(card);
+			x->ResetCard();
+		}
+	}
+
+	for (size_t i = 0; i < cards.size();)
+	{
+		auto x = random(CommonClass::random);
+		auto y = random(CommonClass::random);
+		auto&& square = GetSquare(x,y);
+		if (square->GetCard() != nullptr)continue;
+		square->SetCard(cards[i]);
+		++i;
+	}
 }
 
 void Stage::ResetAllSquare()

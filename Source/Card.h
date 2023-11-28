@@ -18,7 +18,7 @@ public://class
         DEFENCE,
         MOVE,
         SPECIAL,
-        BAD,
+        DEBUFF,
         MAX,
     };
 public://functions
@@ -63,5 +63,5 @@ protected://members
     DirectX::XMFLOAT2 center;
     DirectX::XMFLOAT2 size;
     bool moveLock = false;
-    std::unique_ptr<Sprite> sprite;
+     std::unique_ptr<Sprite> sprite;
 };
