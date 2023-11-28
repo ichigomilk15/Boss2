@@ -61,6 +61,16 @@ void EnemyManager::Remove(Enemy* enemy)
 
 void EnemyManager::DrawDebugGUI()
 {
+	ImGui::SetNextWindowPos(ImVec2(10, 360), ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowSize(ImVec2(300, 300), ImGuiCond_FirstUseEver);
+	if (ImGui::Begin("Enemy", nullptr, ImGuiWindowFlags_None))
+	{
+		for (auto& e : enemies)
+		{
+			e->DrawDebugGUI();
+		}
+	}
+	ImGui::End();
 }
 
 void EnemyManager::ResetTurnEnemies()

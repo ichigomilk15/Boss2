@@ -5,6 +5,7 @@
 #include <d3d11.h>
 
 #include "Collision.h"
+#include "Character.h"
 #include <optional>
 #include <map>
 
@@ -55,6 +56,9 @@ public://function
 	void SetType(Type type);
 	const Type& GetType()const noexcept { return type; }
 	Card* GetCard()const noexcept { return card.get(); }
+	
+	void SetCharacter(Character* chara) { character = chara; }
+	const Character* GetCharacter() const { return character; }
 	void SetCard(const std::shared_ptr<Card>& card)noexcept { this->card = card; }
 	void ResetCard()noexcept { card.reset(); }
 	std::shared_ptr<Card> GetSharedCard()noexcept { return card; }
@@ -77,4 +81,6 @@ private://members
 
 	bool typeChanged = false; //タイプの変換があった場合trueにする
 	bool isAccessible = true;
+
+	Character* character = nullptr; //マスに立っているキャラクター
 };

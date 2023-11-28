@@ -2,20 +2,21 @@
 #include "Graphics/Graphics.h"
 #include "Graphics/Model.h"
 #include "Effect.h"
+//#include "EnemyManager.h"
+//#include "PlayerManager.h"
 
 class Character;
+
+enum class TargetAttackEnum
+{
+	Target_Player,
+	Target_Enemy,
+};
 
 class AttackParent
 {
 public: //function
-	AttackParent(Character* parent, const int damage, const std::vector<DirectX::XMINT2> targetAttackPos = {}) :parent(parent), damage(damage)
-	{
-		for (auto& pos : targetAttackPos)
-		{
-			this->targetAttackPos.emplace_back(pos);
-		}
-		Initialize();
-	};
+	AttackParent(Character* parent, const int damage, TargetAttackEnum target, const std::vector<DirectX::XMINT2> targetAttackPos = {}, const float damageTimer = 0.0f);
 	virtual ~AttackParent();
 
 	// 更新処理
@@ -44,6 +45,17 @@ protected: //members
 	std::vector<DirectX::XMINT2>        targetAttackPos = {  };
 	DirectX::XMFLOAT3	    scale = { 1,1,1 };
 	int                     damage = 1;
+	float					damageTimer = 0.0f; //ダメージを与えるタイマー
+	float					lifeTimer = 0.0f; //廃棄するまでの期間
 	bool                    isDestroy = false;
 	Character* parent;
+
+	struct TargetAttack
+	{
+		Character* targetChara;
+		bool isAttacked = false;
+	};
+	std::vector<TargetAttack> targetAttack = {};
+	/*std::vector<Character*> targetAttack = {};
+	std::vector < std::map<Character*, bool> IsTargetAttacked;*/
 };

@@ -17,8 +17,8 @@ CardManager::CardManager():
 	const int typeAttack = (int)Card::Type::ATTACK;
 	const int typeDefence = (int)Card::Type::DEFENCE;
 	const int typeMove = (int)Card::Type::MOVE;
-	const int typeDebuff = (int)Card::Type::DEBUFF;
 	const int typeSpecial = (int)Card::Type::SPECIAL;
+	const int typeDebuff = (int)Card::Type::DEBUFF;
 
 	//UŒ‚ƒRƒ“ƒ{‚Ì“o˜^
 	{
@@ -31,7 +31,7 @@ CardManager::CardManager():
 		data.VAreaAttackCost = false;
 		data.UseShield = false;
 		auto Data = std::make_shared<CardComboAttack>(data);
-		CardComboDatas[typeAttack][typeNone] = Data;
+		CardComboDatas[typeNone][typeAttack] = Data;
 		CardComboDatas[typeDebuff][typeAttack] = Data;		
 
 		//	UŒ‚–UŒ‚
@@ -155,7 +155,7 @@ CardManager::CardManager():
 		data.GetBlock = 0;
 		data.heal = 10;
 		data.movecostGetShield = false;
-		CardComboDatas[typeAttack][typeDefence] = std::make_shared<CardComboDefence>(data);
+		CardComboDatas[typeSpecial][typeDefence] = std::make_shared<CardComboDefence>(data);
 	}
 
 	//ƒfƒoƒtƒRƒ“ƒ{‚Ì“o˜^
@@ -188,11 +188,17 @@ CardManager::CardManager():
 		CardComboNoUseing data;
 		//ƒRƒ“ƒ{–³‚µ
 		auto Data = std::make_shared<CardComboNoUseing>(data);
+		CardComboDatas[typeNone][typeNone] = Data;
 		CardComboDatas[typeNone][typeSpecial] = Data;
 		CardComboDatas[typeAttack][typeSpecial] = Data;
 		CardComboDatas[typeMove][typeSpecial] = Data;
 		CardComboDatas[typeDefence][typeSpecial] = Data;
 		CardComboDatas[typeDebuff][typeSpecial] = Data;
+		CardComboDatas[typeAttack][typeNone] = Data;
+		CardComboDatas[typeMove][typeNone] = Data;
+		CardComboDatas[typeDefence][typeNone] = Data;
+		CardComboDatas[typeDebuff][typeNone] = Data;
+		CardComboDatas[typeSpecial][typeNone] = Data;
 	}
 }
 
@@ -470,11 +476,12 @@ const CardComboDataBase* CardManager::PopAndGetUseCard() noexcept
 	{
 		auto card = SetCards[i];
 		if (card == nullptr)continue;
-		const Card::Type nextType = card->GetType();
+		const Card::Type leftType = (i == 0 ? Card::Type::NONE : PrevUseCardType);
+		const Card::Type RightType = card->GetType();
 		EraseItem(card);
-		auto& data = CardComboDatas[static_cast<int>(PrevUseCardType)][static_cast<int>(nextType)];
-		data->type = nextType;
-		PrevUseCardType = nextType;
+		auto& data = CardComboDatas[static_cast<int>(leftType)][static_cast<int>(RightType)];
+		data->type = RightType;
+		PrevUseCardType = RightType;
 		return data.get();
 	}
 	return CardComboDatas[static_cast<int>(Card::Type::NONE)][static_cast<int>(Card::Type::NONE)].get();

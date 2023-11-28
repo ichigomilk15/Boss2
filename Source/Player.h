@@ -33,6 +33,9 @@ private:
 
 	//セットカードによるアクションを決める更新処理
 	State ChooseAct(float elapsedTime);
+
+	//ダメージを受けた時
+	void OnDamaged() override;
 private:
 	Model* model = nullptr;
 	Effect* hitEffect = nullptr;

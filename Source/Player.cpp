@@ -13,19 +13,18 @@
 
 Player::Player()
 {
-	model = new Model("Data/Model/Jammo/Jammo.mdl");
+	model = new Model("Data/Model/Player/Player.mdl");
 
 	//モデルが大きいのでスケーリング
-	scale.x = scale.y = scale.z = 0.03f;
+	scale.x = scale.y = scale.z = 0.1f;
 
 	hitEffect = new Effect("Data/Effect/Hit.efk");
 
-	state = State::Move_Init;
-	//state = State::Attack;
-
 	attackPower = 10;
+	maxHealth = 75;
 	health = 75;
 	attackAdjacentRange = 3;
+	SetDirection(CommonClass::DirectionFace::BackRight);
 }
 
 Player::~Player()
@@ -64,8 +63,6 @@ void Player::DrawDebugGUI()
 
 	if (ImGui::Begin("Player", nullptr, ImGuiWindowFlags_None))
 	{
-		//トランスフォーム
-		//if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
 		{
 			//位置
 			ImGui::InputInt2("Position Square", &position.x);
@@ -83,7 +80,8 @@ void Player::DrawDebugGUI()
 			angle.z = DirectX::XMConvertToRadians(a.z);
 
 			//Status
-			ImGui::Text("Shield %d", shield);
+			ImGui::InputInt("Shield", &shield, 0);
+			ImGui::InputInt("HP", &health, 0);
 		}
 	}
 	ImGui::End();
@@ -99,7 +97,7 @@ void Player::UpdateState(float elapsedTime)
 	switch (state)
 	{
 	case State::Idle_Init:
-
+		this->model->PlayAnimation(Animation::Idle, true);
 		state = State::Idle;
 		[[fallthrough]];
 	case State::Idle:
@@ -107,6 +105,8 @@ void Player::UpdateState(float elapsedTime)
 		break;
 
 	case State::Act_Init:
+		if (!model->IsPlayAnimation(Animation::Idle))
+			this->model->PlayAnimation(Animation::Idle, true);
 		actTimer = 0.5f;
 		SetState(State::Act);
 		[[fallthrough]];
@@ -137,6 +137,7 @@ void Player::UpdateState(float elapsedTime)
 		}
 		break;
 	case State::Moving_Init:
+		this->model->PlayAnimation(Animation::Run, true);
 		state = State::Moving;
 		this->SetDirection(this->targetMovePos);
 		[[fallthrough]];
@@ -163,11 +164,11 @@ void Player::UpdateState(float elapsedTime)
 		break;
 
 	case State::Attacking_Init:
-		this->model->PlayAnimation(0, false);
+		this->model->PlayAnimation(Animation::Attack, false);
 		state = State::Attacking;
 		[[fallthrough]];
 	case State::Attacking:
-		if (!attack || (attack && attack->GetIsDestroy()))
+		if (!attack || (attack && attack->GetIsDestroy()) || !model->IsPlayAnimation())
 		{
 			attack = nullptr;
 			SetState(State::Act_Init);
@@ -175,7 +176,8 @@ void Player::UpdateState(float elapsedTime)
 		break;
 
 	case State::Defence_Init:
-		actTimer = 1.0f;
+		this->model->PlayAnimation(Animation::Damage, false);
+		actTimer = 0.5f;
 		Stage::Instance()->ResetAllSquare();
 		shield += 4;
 		state = State::Defence;
@@ -189,8 +191,21 @@ void Player::UpdateState(float elapsedTime)
 		}
 		break;
 
+	case State::Damage_Init:
+		model->PlayAnimation(Animation::Damage, false, 0.1f);
+		actTimer = 0.5f;
+		state = State::Defence;
+		[[fallthrough]];
+	case State::Damage:
+		actTimer -= elapsedTime;
+		if (actTimer < 0.0f &&  !model->IsPlayAnimation())
+		{
+			SetState(State::Act_Init);
+			break;
+		}
+
 	case State::Act_Finish_Init:
-		actTimer = 1.0f;
+		actTimer = 0.5f;
 		state = State::Act_Finish;
 		//CardManager::Instance().PopAndGetUseCard();
 		[[fallthrough]];
@@ -207,7 +222,7 @@ void Player::UpdateState(float elapsedTime)
 
 void Player::UpdateMove(float elapsedTime)
 {
-	Stage::Instance()->SetSquareTypeMove(position, moveRange, {Square::Type::Inaccessible});
+	Stage::Instance()->SetSquareTypeMove(position, moveRange, { Square::Type::Inaccessible });
 
 	Mouse& mouse = Input::Instance().GetMouse();
 	auto dc = Graphics::Instance().GetDeviceContext();
@@ -273,7 +288,7 @@ void Player::UpdateAttack(float elapsedTime)
 		{
 			posVec.emplace_back(sq->GetPos());
 		}
-		attack = new NormalAttack(this, 1, posVec);
+		attack = new NormalAttack(this, attackPower, TargetAttackEnum::Target_Enemy, posVec, 0.5f);
 		AttackManager::Instance().Register(attack);
 	}
 }
@@ -300,4 +315,9 @@ State Player::ChooseAct(float elapsedTime)
 		return State::Act_Init;
 		break;
 	}
+}
+
+void Player::OnDamaged()
+{
+	state = State::Damage_Init;
 }

@@ -99,11 +99,25 @@ void Stage::DrawIMGUI()
 		ImGui::InputFloat3("scale", &scale.x);
 		ImGui::InputFloat4("rotate", &rotate.x);
 
+		for (auto& sq : squares)
+		{
+			for (auto& x : sq)
+			{
+				auto chara = x->GetCharacter();
+				if( chara != nullptr)
+				{
+					auto sqPos = x->GetPos();
+					ImGui::InputInt2("sq pos", &sqPos.x);
+				}
+			}
+		}
 		if (ImGui::Button("refleshCard"))
 		{
 			ReFleshCard();
 		}
+
 	}
+
 	ImGui::End();
 #endif // _DEBUG
 }
@@ -297,9 +311,11 @@ void Stage::ResetSquaresAccessible()
 	{
 		DirectX::XMINT2 enemyPos = enemy->GetPosition();
 		squares[enemyPos.y][enemyPos.x]->SetIsaccessible(false);
+		squares[enemyPos.y][enemyPos.x]->SetCharacter(enemy);
 	}
 	DirectX::XMINT2 playerPos = PlayerManager::Instance().GetFirstPlayer()->GetPosition();
 	squares[playerPos.y][playerPos.x]->SetIsaccessible(false);
+	squares[playerPos.y][playerPos.x]->SetCharacter(PlayerManager::Instance().GetFirstPlayer());
 }
 
 void Stage::ReFleshCard()

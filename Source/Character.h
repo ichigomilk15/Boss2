@@ -3,6 +3,14 @@
 #include "AttackParent.h"
 #include <DirectXMath.h>
 
+enum Animation
+{
+	Idle,
+	Run,
+	Attack,
+	Damage,
+};
+
 enum class State
 {
 	Idle_Init, //順番待ち
@@ -19,6 +27,8 @@ enum class State
 	Attacking,
 	Defence_Init, //防御アップ
 	Defence,
+	Damage_Init, //ダメージを受けた処理
+	Damage,
 	Act_Finish_Init, //全てのアクションが終わった処理
 	Act_Finish,
 	Max,
@@ -133,7 +143,7 @@ protected:
 
 	float height = 2.0f;
 	int health = 1000;
-	int maxHealth = 1000;
+	int maxHealth = 75;
 	int attackPower = 0; //アタック力
 	int shield = 0; //一時的な防御
 

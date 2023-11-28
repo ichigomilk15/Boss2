@@ -99,6 +99,7 @@ void Square::ResetSquare()
 	if (type == Type::NONE /*|| type == Type::Inaccessible*/) return;
 
 	SetType(Type::NONE);
+	character = nullptr;
 }
 
 const bool Square::CheckSameType(const std::vector<Type>& types) const
