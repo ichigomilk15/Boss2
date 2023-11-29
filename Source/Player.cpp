@@ -8,8 +8,10 @@
 #include "ProjectileHoming.h"
 #include "Stage.h"
 #include "NormalAttack.h"
+#include "KnockbackAttack.h"
 #include "AttackManager.h"
 #include "PhaseManager.h"
+#include "EnemyManager.h"
 
 Player::Player()
 {
@@ -143,20 +145,24 @@ void Player::UpdateState(float elapsedTime)
 		this->SetDirection(this->targetMovePos);
 		[[fallthrough]];
 	case State::Moving:
+	{
 		if (!IsMoving())
 		{
-			SetState(State::Act_Init);
 			Stage::Instance()->ResetAllSquare();
+			SetState(MovingEnd());
+			if (cardComboDataBase)
+				cardComboDataBase = nullptr;
 			break;
 		}
-		break;
+	}
+	break;
 
 	case State::Attack_Init:
 		Stage::Instance()->ResetAllSquare();
 		state = State::Attack;
 		[[fallthrough]];
 	case State::Attack:
-		InitializeAttack(elapsedTime);
+		UpdateAttack(elapsedTime);
 		if (attack && !attack->GetIsDestroy())
 		{
 			SetState(State::Attacking_Init);
@@ -251,7 +257,17 @@ void Player::UpdateState(float elapsedTime)
 
 void Player::UpdateMove(float elapsedTime)
 {
-	Stage::Instance()->SetSquareTypeMove(position, moveRange, { Square::Type::Inaccessible });
+	CardComboMove* moveDetail = dynamic_cast<CardComboMove*>(cardComboDataBase);
+	if (!moveDetail)
+		return;
+	if (moveDetail->attackDamege > 0)
+	{
+		Stage::Instance()->SetSquareTypeMove(position, moveDetail->moveCost);
+	}
+	else
+	{
+		Stage::Instance()->SetSquareTypeMove(position, moveDetail->moveCost, { Square::Type::Inaccessible });
+	}
 
 	Mouse& mouse = Input::Instance().GetMouse();
 	auto dc = Graphics::Instance().GetDeviceContext();
@@ -273,11 +289,38 @@ void Player::UpdateMove(float elapsedTime)
 	}
 	if (foundSq && mouse.GetButtonDown() & Mouse::BTN_LEFT)
 	{
+		//UŒ‚‚˜ˆÚ“®
+		if (Stage::Instance()->GetSquare(foundSq->GetPos().x, foundSq->GetPos().y)->GetCharacter())
+		{
+			state = State::Attacking_Init;
+			InitializeAttack(moveDetail->attackDamege, { foundSq->GetPos() }, 0.5f);
+			return;
+		}
 		this->targetMovePos = foundSq->GetPos();
 	}
 }
 
-void Player::InitializeAttack(float elapsedTime)
+State Player::MovingEnd()
+{
+	CardComboMove* moveDetail = dynamic_cast<CardComboMove*>(std::move(cardComboDataBase));
+	if (!moveDetail)
+		return State::Act_Init;
+	if (moveDetail->knockbackCost <= 0)
+		return State::Act_Init;
+
+	//–hŒä‚˜ˆÚ“® ˆ—
+	for (auto& e : EnemyManager::Instance().GetList())
+	{
+		if (Stage::Instance()->IsAdjacent(this, e))
+		{
+			InitializeKnockbackAttack(moveDetail->knockbackTakeDamege, moveDetail->knockbackCost, GetDirection(), { e->GetPosition() }, 0.5f);
+			break;
+		}
+	}
+	return State::Attacking_Init;
+}
+
+void Player::UpdateAttack(float elapsedTime)
 {
 	Stage::Instance()->ResetAllSquare();
 	CardComboAttack* attackDetail = dynamic_cast<CardComboAttack*>(std::move(cardComboDataBase));
@@ -341,19 +384,36 @@ void Player::InitializeAttack(float elapsedTime)
 		{
 			posVec.emplace_back(sq->GetPos());
 		}
-		attack = new NormalAttack(this, attackDamage, TargetAttackEnum::Target_Enemy, posVec, 0.5f);
-		AttackManager::Instance().Register(attack);
+		InitializeAttack(attackDamage, posVec, 0.5f);
 	}
+}
+
+void Player::InitializeAttack(const int damage, const std::vector<DirectX::XMINT2>& posAttack, const float timer)
+{
+	attack = new NormalAttack(this, damage, TargetAttackEnum::Target_Enemy, posAttack, 0.5f);
+	AttackManager::Instance().Register(attack);
+}
+
+void Player::InitializeKnockbackAttack(const int damage, const int knockbackCost, const int knockbackDir,
+	const std::vector<DirectX::XMINT2>& posAttack, const float timer)
+{
+	attack = new KnockbackAttack(this, damage, knockbackCost, knockbackDir, TargetAttackEnum::Target_Enemy, posAttack, 0.5f);
+	AttackManager::Instance().Register(attack);
 }
 
 State Player::ChooseAct(float elapsedTime)
 {
-	//todo : ‘±‚«‚¨Šè‚¢‚µ‚Ü‚·
+	cardComboDataBase = nullptr;
 	auto data = CardManager::Instance().PopAndGetUseCard();
 	switch (data->type)
 	{
 	case Card::Type::MOVE:
-		return State::Move_Init;
+		this->cardComboDataBase = dynamic_cast<CardComboMove*>(std::move(data));
+		if (cardComboDataBase)
+		{
+			return State::Move_Init;
+			break;
+		}
 		break;
 	case Card::Type::ATTACK:
 		this->cardComboDataBase = dynamic_cast<CardComboAttack*>(std::move(data));
@@ -362,6 +422,7 @@ State Player::ChooseAct(float elapsedTime)
 			return State::Attack_Init;
 			break;
 		}
+		break;
 	case Card::Type::DEFENCE:
 		return State::Defence_Init;
 		break;

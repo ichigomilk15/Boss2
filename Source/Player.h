@@ -28,9 +28,15 @@ private:
 
 	//移動アクション更新処理
 	void UpdateMove(float elapsedTime);
+	//移動中更新処理
+	State MovingEnd();
 
 	//攻撃アクション更新処理
-	void InitializeAttack(float elapsedTime);
+	void UpdateAttack(float elapsedTime);
+
+	//攻撃の初期化
+	void InitializeAttack(const int damage, const std::vector<DirectX::XMINT2>& posAttack, const float timer);
+	void InitializeKnockbackAttack(const int damage, const int knockbackCost, const int knockbackDir, const std::vector<DirectX::XMINT2>& posAttack, const float timer);
 
 	//セットカードによるアクションを決める更新処理
 	State ChooseAct(float elapsedTime);

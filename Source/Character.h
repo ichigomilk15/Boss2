@@ -33,6 +33,8 @@ enum class State
 	Debuff,
 	Damage_Init, //ダメージを受けた処理
 	Damage,
+	KnockedBack_Init, //ノックバックされた処理
+	KnockedBack,
 	Act_Finish_Init, //全てのアクションが終わった処理
 	Act_Finish,
 	Max,
@@ -55,6 +57,9 @@ public:
 
 	//ステータスのリセット
 	virtual void ResetStatus();
+
+	//移動目標位置が妥当か
+	bool IsTargetMovePosValid(const DirectX::XMINT2& targetPos);
 
 	//位置取得
 	const DirectX::XMFLOAT3& GetPositionWorld() const { return positionWorld; }
@@ -140,10 +145,6 @@ protected:
 	virtual void OnDead() {};
 	//ステート更新処理
 	virtual void UpdateState(float elapsedTime) {};
-
-	//移動目標位置が妥当か
-	bool IsTargetMovePosValid(const DirectX::XMINT2& targetPos);
-
 protected:
 	DirectX::XMFLOAT3 positionWorld = { 0, 0, 0 };
 	DirectX::XMFLOAT3 pivotAdjustPosWorld = { 0, 0, 0 };

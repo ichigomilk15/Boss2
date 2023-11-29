@@ -243,6 +243,9 @@
     <ClInclude Include="Source\EnemyBoss1.h">
       <Filter>Source\Characters</Filter>
     </ClInclude>
+    <ClInclude Include="Source\KnockbackAttack.h">
+      <Filter>Source\Attacks</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="External\imgui\imgui.cpp">
@@ -403,6 +406,9 @@
     </ClCompile>
     <ClCompile Include="Source\EnemyBoss1.cpp">
       <Filter>Source\Characters</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\KnockbackAttack.cpp">
+      <Filter>Source\Attacks</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

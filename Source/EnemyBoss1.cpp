@@ -125,6 +125,20 @@ void EnemyBoss1::UpdateState(float elapsedTime)
 		}
 		break;
 
+	case State::KnockedBack_Init:
+		this->SetDirection({position.x - player->GetPosition().x, position.y - player->GetPosition().y});
+		actTimer = 0.5f;
+		state = State::KnockedBack;
+		//[[fallthrough]]
+	case State::KnockedBack:
+		actTimer -= elapsedTime;
+		if (!IsMoving() && actTimer < 0.0f)
+		{
+			SetState(State::Idle_Init);
+			break;
+		}
+		break;
+
 	case State::Act_Finish_Init:
 		actTimer = 1.0f;
 		isActEnd = true;

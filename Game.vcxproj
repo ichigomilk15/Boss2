@@ -152,6 +152,7 @@
     <ClInclude Include="Source\Input\GamePad.h" />
     <ClInclude Include="Source\Input\Input.h" />
     <ClInclude Include="Source\Input\Mouse.h" />
+    <ClInclude Include="Source\KnockbackAttack.h" />
     <ClInclude Include="Source\Logger.h" />
     <ClInclude Include="Source\CustomMathf.h" />
     <ClInclude Include="Source\Misc.h" />
@@ -208,6 +209,7 @@
     <ClCompile Include="Source\Input\GamePad.cpp" />
     <ClCompile Include="Source\Input\Input.cpp" />
     <ClCompile Include="Source\Input\Mouse.cpp" />
+    <ClCompile Include="Source\KnockbackAttack.cpp" />
     <ClCompile Include="Source\Logger.cpp" />
     <ClCompile Include="Source\Main.cpp" />
     <ClCompile Include="Source\CustomMathf.cpp" />
