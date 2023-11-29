@@ -5,6 +5,7 @@
 #include "CardList.h"
 #include "PlayerManager.h"
 #include "EnemyMinion1.h"
+#include "EnemyBoss1.h"
 #include "Stage.h"
 
 #ifdef _DEBUG
@@ -159,7 +160,7 @@ void PhaseManager::Update(float elapsedTime)
 	case PhaseManager::Phase::Phase_EnemyAct:
 	{
 		//enemyが全員行動を完了していたら
-		if (IsSlowNextPhase(EnemyManager::Instance().GetIsAllActEnd()))
+		if (IsQuickNextPhase(EnemyManager::Instance().GetIsAllActEnd()))
 		{
 			NextPhase();
 		}
@@ -271,11 +272,20 @@ void PhaseManager::SetGameStart()
 	player->SetState(State::Idle_Init);
 
 	//enemyの配置
-	EnemyMinion1* enemy = new EnemyMinion1(player);
+	/*EnemyMinion1* enemy = new EnemyMinion1(player);
 	EnemyManager::Instance().Register(enemy);
 	enemy->SetPositionWorld({ 1, 1 });
 	enemy->SetTargetMovePosition({ -1, -1 });
-	enemy->SetState(State::Idle_Init);
+	enemy->SetState(State::Idle_Init);*/
+
+	EnemyBoss1* boss1 = new EnemyBoss1(player);
+	EnemyManager::Instance().Register(boss1);
+	boss1->SetPositionWorld({ 4, 3 });
+	boss1->SetTargetMovePosition({ -1, -1 });
+	boss1->SetSize({ 2, 2 });
+	DirectX::XMFLOAT3 pivot = { Common::SquareWidth / 2, -5.0f, -Common::SquareHeight / 2 };
+	boss1->SetPivotAdjustPosWorld(pivot);
+	boss1->SetState(State::Idle_Init);
 
 	//盤面のリセット
 	Stage::Instance()->ResetAllSquare();

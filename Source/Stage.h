@@ -47,7 +47,7 @@ public://functions
 
 	//キャラクター位置によりマスタイプをType::Moveにする
 	void SetSquareTypeMove(const DirectX::XMINT2& pos, const int& cost, const std::vector<Square::Type>& typesExclusion = {Square::Type::MAX});
-	std::vector<std::shared_ptr<Square>> GetSquareTypeMove();
+	std::vector<std::shared_ptr<Square>> GetSquareType(Square::Type type);
 
 	//スペシャルカードの再配置
 	void ReFleshCard();

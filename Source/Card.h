@@ -23,6 +23,7 @@ public://class
     };
 public://functions
     Card(DirectX::XMFLOAT2 pos,DirectX::XMFLOAT2 size,const Type type);
+    Card(Card&) = default;
     ~Card();
 
     virtual void Update(float elapsedTime);

@@ -1,21 +1,19 @@
-#include "EnemyMinion1.h"
+#include "EnemyBoss1.h"
 #include "Input\Input.h"
 #include "Stage.h"
-#include "NormalAttack.h"
-#include "AttackManager.h"
 
-EnemyMinion1::EnemyMinion1(Character* p) :
+EnemyBoss1::EnemyBoss1(Character* p) :
 	Enemy(p)
 {
 	//model = std::make_unique<Model>("Data/Model/Jammo/Jammo.mdl");
 	model = std::make_unique<Model>("Data/Model/Enemy/Normal1/NormalEnemy1.mdl");
 
 	//ƒXƒP[ƒ‹‚Ì’²®
-	scale.x = scale.y = scale.z = 0.15f;
+	scale.x = scale.y = scale.z = 0.6f;
 
 	height = 1.0f;
 	enemyType = ENEMY_TYPE::BOSS1;
-	actMax = 3;
+	actMax = 0;
 	actNo = 0;
 	state = State::Act_Init;
 	moveMax = 2;
@@ -26,12 +24,12 @@ EnemyMinion1::EnemyMinion1(Character* p) :
 	SetDirection(CommonClass::DirectionFace::BackRight);
 }
 
-void EnemyMinion1::UpdateState(float elapsedTime)
+void EnemyBoss1::UpdateState(float elapsedTime)
 {
 	switch (state)
 	{
 	case State::Idle_Init:
-		if (this->model->IsPlayAnimation(Animation::Idle))
+		if (!this->model->IsPlayAnimation(Animation::Idle))
 			this->model->PlayAnimation(Animation::Idle, true);
 		state = State::Idle;
 		[[fallthrough]];

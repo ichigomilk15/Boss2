@@ -64,6 +64,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -91,7 +92,8 @@
       <AdditionalIncludeDirectories>.\Source;.\External\DirectXTex;.\External\imgui;.\External\cereal-1.3.0\include;.\External\stb;.\External\Effekseer170b\include\Effekseer;.\External\Effekseer170b\include\EffekseerRendererDX11;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -121,6 +123,7 @@
     <ClInclude Include="Source\Audio\Audio.h" />
     <ClInclude Include="Source\Audio\AudioResource.h" />
     <ClInclude Include="Source\Audio\AudioSource.h" />
+    <ClInclude Include="Source\EnemyBoss1.h" />
     <ClInclude Include="Source\GameSystemManager.h" />
     <ClInclude Include="Source\HitCollisions.h" />
     <ClInclude Include="Source\Camera.h" />
@@ -191,6 +194,7 @@
     <ClCompile Include="Source\Effect.cpp" />
     <ClCompile Include="Source\EffectManager.cpp" />
     <ClCompile Include="Source\Enemy.cpp" />
+    <ClCompile Include="Source\EnemyBoss1.cpp" />
     <ClCompile Include="Source\EnemyMinion1.cpp" />
     <ClCompile Include="Source\EnemyManager.cpp" />
     <ClCompile Include="Source\Framework.cpp" />

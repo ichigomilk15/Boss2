@@ -44,13 +44,15 @@ public:
 
 protected:
 	//移動の更新処理
-	virtual bool UpdateMove(float elapsedTime);
+	virtual bool ChooseTargetMove(float elapsedTime);
 
 	//ステート更新処理
 	void UpdateState(float elapsedTime) override {}
 	//攻撃アクション更新処理
-	virtual void InitializeAttack(float elapsedTime) {}
+	virtual void InitializeAttack(float elapsedTime);
 
+	//セットカードによるアクションを決める更新処理
+	virtual State ChooseAct(float elapsedTime);
 
 protected:
 	std::unique_ptr<Model> model;

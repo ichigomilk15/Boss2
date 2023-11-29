@@ -27,6 +27,10 @@ enum class State
 	Attacking,
 	Defence_Init, //防御アップ
 	Defence,
+	Special_Init, //Specialカードの使用
+	Special,
+	Debuff_Init, //Debuffカードの使用
+	Debuff,
 	Damage_Init, //ダメージを受けた処理
 	Damage,
 	Act_Finish_Init, //全てのアクションが終わった処理
@@ -61,6 +65,10 @@ public:
 
 	//ターゲット位置設定
 	void SetTargetMovePosition(const DirectX::XMINT2& targetPos) { targetMovePos = targetPos; }
+	void SetTargetMoveTranslation(const DirectX::XMINT2& moveDir);
+
+	//立っているマス位置を取得
+	const std::vector<DirectX::XMINT2> GetSquaresPosition() const;
 
 	//回転取得
 	const DirectX::XMFLOAT3& GetAngle() const { return angle; }
@@ -109,6 +117,14 @@ public:
 
 	//Getter&Setter*****************************************************
 #if 1
+	//サイズの設定
+	void SetSize(DirectX::XMINT2 size) { this->size = size; }
+	//サイズの取得
+	const DirectX::XMINT2 GetSize() const { return size; }
+
+	//pivot位置の設定
+	void SetPivotAdjustPosWorld(DirectX::XMFLOAT3 pivot) { pivotAdjustPosWorld = pivot; }
+
 	const int& Getshield()const { return shield; }
 #endif // 1
 	//Getter&Setter*****************************************************
@@ -125,8 +141,12 @@ protected:
 	//ステート更新処理
 	virtual void UpdateState(float elapsedTime) {};
 
+	//移動目標位置が妥当か
+	bool IsTargetMovePosValid(const DirectX::XMINT2& targetPos);
+
 protected:
 	DirectX::XMFLOAT3 positionWorld = { 0, 0, 0 };
+	DirectX::XMFLOAT3 pivotAdjustPosWorld = { 0, 0, 0 };
 	DirectX::XMINT2 position = { 0, 0 }; //マスの位置　X・Y
 	DirectX::XMFLOAT3 angle = { 0, 0, 0 };
 	DirectX::XMFLOAT3 scale = { 1, 1, 1 };
@@ -146,6 +166,7 @@ protected:
 	int maxHealth = 75;
 	int attackPower = 0; //アタック力
 	int shield = 0; //一時的な防御
+	DirectX::XMINT2 size = { 1, 1 };
 
 	State state;
 	float actTimer = 0; //ステート遷移タイマー
@@ -153,7 +174,7 @@ protected:
 	DirectX::XMINT2 targetMovePos = { -1, -1 }; //移動するターゲットの位置
 	float moveTimer = 0.0f;
 	int moveRange = 2; //移動力（マス数）
-	int attackAdjacentRange = 0;
+	//int attackAdjacentRange = 0;
 
 	AttackParent* attack = nullptr;
 

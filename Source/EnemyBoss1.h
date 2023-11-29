@@ -4,11 +4,10 @@
 #include "Enemy.h"
 
 // ’¼üˆÚ“®‚Ì“G(‰¼)
-class EnemyMinion1 : public Enemy
+class EnemyBoss1 : public Enemy
 {
 public:
-	EnemyMinion1(Character* p);
-
+	EnemyBoss1(Character* p);
 
 private:
 	void UpdateState(float elapsedTime) override;

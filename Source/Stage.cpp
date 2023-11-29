@@ -309,13 +309,17 @@ void Stage::ResetSquaresAccessible()
 {
 	for (auto& enemy : EnemyManager::Instance().GetList())
 	{
-		DirectX::XMINT2 enemyPos = enemy->GetPosition();
-		squares[enemyPos.y][enemyPos.x]->SetIsaccessible(false);
-		squares[enemyPos.y][enemyPos.x]->SetCharacter(enemy);
+		for (auto& sq : enemy->GetSquaresPosition())
+		{
+			squares[sq.y][sq.x]->SetIsaccessible(false);
+			squares[sq.y][sq.x]->SetCharacter(enemy);
+		}
 	}
-	DirectX::XMINT2 playerPos = PlayerManager::Instance().GetFirstPlayer()->GetPosition();
-	squares[playerPos.y][playerPos.x]->SetIsaccessible(false);
-	squares[playerPos.y][playerPos.x]->SetCharacter(PlayerManager::Instance().GetFirstPlayer());
+	for (auto& sq : PlayerManager::Instance().GetFirstPlayer()->GetSquaresPosition())
+	{
+		squares[sq.y][sq.x]->SetIsaccessible(false);
+		squares[sq.y][sq.x]->SetCharacter(PlayerManager::Instance().GetFirstPlayer());
+	}
 }
 
 void Stage::ReFleshCard()
@@ -388,14 +392,14 @@ void Stage::SetSquareTypeMove(const DirectX::XMINT2& pos, const int& cost, const
 	}
 }
 
-std::vector<std::shared_ptr<Square>> Stage::GetSquareTypeMove()
+std::vector<std::shared_ptr<Square>> Stage::GetSquareType(Square::Type type)
 {
 	std::vector<std::shared_ptr<Square>> moveSquares;
 	for (auto& y : squares)
 	{
 		for (auto& x : y)
 		{
-			if (x->GetType() == Square::Type::MoveArea)
+			if (x->GetType() == type)
 				moveSquares.emplace_back(x);
 		}
 	}
