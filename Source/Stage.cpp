@@ -392,14 +392,14 @@ void Stage::SetSquareTypeMove(const DirectX::XMINT2& pos, const int& cost, const
 	}
 }
 
-std::vector<std::shared_ptr<Square>> Stage::GetSquareTypeMove()
+std::vector<std::shared_ptr<Square>> Stage::GetSquareType(Square::Type type)
 {
 	std::vector<std::shared_ptr<Square>> moveSquares;
 	for (auto& y : squares)
 	{
 		for (auto& x : y)
 		{
-			if (x->GetType() == Square::Type::MoveArea)
+			if (x->GetType() == type)
 				moveSquares.emplace_back(x);
 		}
 	}

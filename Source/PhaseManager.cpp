@@ -280,7 +280,7 @@ void PhaseManager::SetGameStart()
 
 	EnemyBoss1* boss1 = new EnemyBoss1(player);
 	EnemyManager::Instance().Register(boss1);
-	boss1->SetPositionWorld({ 5, 5 });
+	boss1->SetPositionWorld({ 4, 3 });
 	boss1->SetTargetMovePosition({ -1, -1 });
 	boss1->SetSize({ 2, 2 });
 	DirectX::XMFLOAT3 pivot = { Common::SquareWidth / 2, -5.0f, -Common::SquareHeight / 2 };

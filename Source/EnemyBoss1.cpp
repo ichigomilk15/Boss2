@@ -13,12 +13,12 @@ EnemyBoss1::EnemyBoss1(Character* p) :
 
 	height = 1.0f;
 	enemyType = ENEMY_TYPE::BOSS1;
-	actMax = 3;
+	actMax = 0;
 	actNo = 0;
 	state = State::Act_Init;
 	moveMax = 2;
 	attackPower = 7;
-	attackAdjacentRange = 2;
+	//attackAdjacentRange = 2;
 	isActEnd = false;
 	health = 100;
 	SetDirection(CommonClass::DirectionFace::BackRight);

@@ -469,7 +469,7 @@ const Card::Type CardManager::GetUseCard() noexcept
 	return Card::Type::NONE;
 }
 
-const CardComboDataBase* CardManager::PopAndGetUseCard() noexcept
+CardComboDataBase* CardManager::PopAndGetUseCard() noexcept
 {
 
 	for (size_t i = 0; i < std::size(SetCards); i++)

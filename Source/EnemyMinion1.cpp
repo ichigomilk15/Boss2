@@ -20,7 +20,7 @@ EnemyMinion1::EnemyMinion1(Character* p) :
 	state = State::Act_Init;
 	moveMax = 2;
 	attackPower = 7;
-	attackAdjacentRange = 2;
+	//attackAdjacentRange = 2;
 	isActEnd = false;
 	health = 100;
 	SetDirection(CommonClass::DirectionFace::BackRight);

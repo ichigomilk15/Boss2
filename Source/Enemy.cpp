@@ -146,7 +146,7 @@ void Enemy::InitializeAttack(float elapsedTime)
 	else if (dirPos.y < 0)
 		SetDirection(CommonClass::DirectionFace::Front);
 
-	attackSq = Stage::Instance()->GetSquaresByDirection(this->position.x, this->position.y, attackAdjacentRange, this->GetDirection());
+	attackSq = Stage::Instance()->GetSquaresByDirection(this->position.x, this->position.y, 2, this->GetDirection());
 	std::vector<DirectX::XMINT2> posVec;
 	for (auto& sq : attackSq)
 	{
@@ -171,7 +171,7 @@ State Enemy::ChooseAct(float elapsedTime)
 	}
 
 	//UŒ‚”ÍˆÍ‚ÉƒvƒŒƒCƒ„[‚ðŒŸõ
-	auto attackSquares = Stage::Instance()->GetSquaresEdgeAdjacent(position.x, position.y, attackAdjacentRange);
+	auto attackSquares = Stage::Instance()->GetSquaresEdgeAdjacent(position.x, position.y, 2);
 	for (auto& sq : attackSquares)
 	{
 		const auto sqPos = sq->GetPos();

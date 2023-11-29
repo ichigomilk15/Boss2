@@ -7,6 +7,7 @@
 #include "Camera.h"
 #include "CameraController.h"
 #include "Effect.h"
+#include "CardList.h"
 
 class Player : public Character
 {
@@ -29,7 +30,7 @@ private:
 	void UpdateMove(float elapsedTime);
 
 	//攻撃アクション更新処理
-	void UpdateAttack(float elapsedTime);
+	void InitializeAttack(float elapsedTime);
 
 	//セットカードによるアクションを決める更新処理
 	State ChooseAct(float elapsedTime);
@@ -39,4 +40,5 @@ private:
 private:
 	Model* model = nullptr;
 	Effect* hitEffect = nullptr;
+	CardComboDataBase* cardComboDataBase;
 };

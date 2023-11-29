@@ -33,17 +33,24 @@ AttackParent::AttackParent(Character* parent, const int damage, TargetAttackEnum
 			for (auto& e : EnemyManager::Instance().GetList())
 			{
 				DirectX::XMINT2 ePos = e->GetPosition();
+				DirectX::XMINT2 eSize = e->GetSize();
 				auto listE = EnemyManager::Instance().GetList();
 				std::vector<Character*> listTarget;
 				for (auto& target : targetAttack)
 				{
 					listTarget.emplace_back(target.targetChara);
 				}
-				if (ePos.x == pos.x && ePos.y == pos.y)
+				for (int y = ePos.y; y < ePos.y + eSize.y; y++)
 				{
-					if (std::find(listTarget.begin(), listTarget.end(), e) == listTarget.end())
+					for (int x = ePos.x; x < ePos.x + eSize.x; x++)
 					{
-						targetAttack.emplace_back(TargetAttack{ e, false });
+						if (x == pos.x && y == pos.y)
+						{
+							if (std::find(listTarget.begin(), listTarget.end(), e) == listTarget.end())
+							{
+								targetAttack.emplace_back(TargetAttack{ e, false });
+							}
+						}
 					}
 				}
 			}

@@ -24,7 +24,7 @@ Player::Player()
 	maxHealth = 75;
 	health = 75;
 	maxHealth = 75;
-	attackAdjacentRange = 3;
+	//attackAdjacentRange = 3;
 	SetDirection(CommonClass::DirectionFace::BackRight);
 }
 
@@ -156,7 +156,7 @@ void Player::UpdateState(float elapsedTime)
 		state = State::Attack;
 		[[fallthrough]];
 	case State::Attack:
-		UpdateAttack(elapsedTime);
+		InitializeAttack(elapsedTime);
 		if (attack && !attack->GetIsDestroy())
 		{
 			SetState(State::Attacking_Init);
@@ -192,6 +192,34 @@ void Player::UpdateState(float elapsedTime)
 		}
 		break;
 
+	case State::Special_Init:
+		actTimer = 0.5f;
+		Stage::Instance()->ResetAllSquare();
+		state = State::Special;
+		[[fallthrough]];
+	case State::Special:
+		actTimer -= elapsedTime;
+		if (actTimer < 0.0f)
+		{
+			SetState(State::Act_Init);
+			break;
+		}
+		break;
+
+	case State::Debuff_Init:
+		actTimer = 0.5f;
+		Stage::Instance()->ResetAllSquare();
+		state = State::Debuff;
+		[[fallthrough]];
+	case State::Debuff:
+		actTimer -= elapsedTime;
+		if (actTimer < 0.0f)
+		{
+			SetState(State::Act_Init);
+			break;
+		}
+		break;
+
 	case State::Damage_Init:
 		model->PlayAnimation(Animation::Damage, false, 0.1f);
 		actTimer = 0.5f;
@@ -199,7 +227,7 @@ void Player::UpdateState(float elapsedTime)
 		[[fallthrough]];
 	case State::Damage:
 		actTimer -= elapsedTime;
-		if (actTimer < 0.0f &&  !model->IsPlayAnimation())
+		if (actTimer < 0.0f && !model->IsPlayAnimation())
 		{
 			SetState(State::Act_Init);
 			break;
@@ -234,7 +262,7 @@ void Player::UpdateMove(float elapsedTime)
 
 	HitResult hit;
 	std::shared_ptr<Square> foundSq = nullptr;
-	for (auto& sq : Stage::Instance()->GetSquareTypeMove())
+	for (auto& sq : Stage::Instance()->GetSquareType(Square::Type::MoveArea))
 	{
 		if (sq->Raycast(startMousePos, endMousePos, hit))
 		{
@@ -249,9 +277,15 @@ void Player::UpdateMove(float elapsedTime)
 	}
 }
 
-void Player::UpdateAttack(float elapsedTime)
+void Player::InitializeAttack(float elapsedTime)
 {
-	std::vector<Square*> squares = Stage::Instance()->GetSquaresEdgeAdjacent(this->position.x, this->position.y, attackAdjacentRange);
+	Stage::Instance()->ResetAllSquare();
+	CardComboAttack* attackDetail = dynamic_cast<CardComboAttack*>(std::move(cardComboDataBase));
+	//CardComboAttack* attackDetail = nullptr;
+	if (!attackDetail)
+		return;
+
+	std::vector<Square*> squares = Stage::Instance()->GetSquaresEdgeAdjacent(this->position.x, this->position.y, attackDetail->Attackcost);
 
 	for (auto& square : squares)
 	{
@@ -273,9 +307,18 @@ void Player::UpdateAttack(float elapsedTime)
 		if (sq->Raycast(startMousePos, endMousePos, hit))
 		{
 			SetDirection(sq->GetPos());
-			attackSq = Stage::Instance()->GetSquaresByDirection(this->position.x, this->position.y, 3, this->GetDirection());
+			int cost = (attackDetail->VAreaAttackCost) ? 2 : 1;
+			attackSq = Stage::Instance()->GetSquaresByDirection(this->position.x, this->position.y, cost, this->GetDirection());
 			for (auto& attSq : attackSq)
 			{
+				if (attackDetail->AreaAttackCost)
+				{
+					auto sqArea = Stage::Instance()->GetSquares(attSq->GetPos().x, attSq->GetPos().y, 1);
+					for (auto& sq : sqArea)
+					{
+						sq->SetType(Square::Type::AttackAreaChosen);
+					}
+				}
 				attSq->SetType(Square::Type::AttackAreaChosen);
 			}
 		}
@@ -283,13 +326,22 @@ void Player::UpdateAttack(float elapsedTime)
 
 	if (!attackSq.empty() && mouse.GetButtonDown() & Mouse::BTN_LEFT)
 	{
-		Stage::Instance()->ResetAllSquare();
+		//Stage::Instance()->ResetAllSquare();
+
+		int attackDamage = attackDetail->AttackDamage;
+		if (attackDetail->UseShield)
+		{
+			attackDamage += shield;
+			shield = 0;
+		}
+
 		std::vector<DirectX::XMINT2> posVec;
-		for (auto& sq : attackSq)
+		auto testSq = Stage::Instance()->GetSquareType(Square::Type::AttackAreaChosen);
+		for (auto& sq : testSq)
 		{
 			posVec.emplace_back(sq->GetPos());
 		}
-		attack = new NormalAttack(this, attackPower, TargetAttackEnum::Target_Enemy, posVec, 0.5f);
+		attack = new NormalAttack(this, attackDamage, TargetAttackEnum::Target_Enemy, posVec, 0.5f);
 		AttackManager::Instance().Register(attack);
 	}
 }
@@ -297,22 +349,30 @@ void Player::UpdateAttack(float elapsedTime)
 State Player::ChooseAct(float elapsedTime)
 {
 	//todo : ‘±‚«‚¨Šè‚¢‚µ‚Ü‚·
-	const CardComboDataBase* data = CardManager::Instance().PopAndGetUseCard();
+	auto data = CardManager::Instance().PopAndGetUseCard();
 	switch (data->type)
 	{
 	case Card::Type::MOVE:
 		return State::Move_Init;
 		break;
 	case Card::Type::ATTACK:
-		return State::Attack_Init;
-		break;
+		this->cardComboDataBase = dynamic_cast<CardComboAttack*>(std::move(data));
+		if (cardComboDataBase)
+		{
+			return State::Attack_Init;
+			break;
+		}
 	case Card::Type::DEFENCE:
 		return State::Defence_Init;
 		break;
-	default:
-		return State::Act_Finish_Init;
+	case Card::Type::SPECIAL:
+		return State::Special_Init;
+		break;
+	case Card::Type::DEBUFF:
+		return State::Debuff_Init;
 		break;
 	}
+	return State::Act_Finish_Init;
 }
 
 void Player::OnDamaged()

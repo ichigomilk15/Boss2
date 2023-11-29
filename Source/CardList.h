@@ -8,6 +8,7 @@
 struct CardComboDataBase
 {
 	Card::Type type;
+	virtual ~CardComboDataBase() = default; //dynamic_castのにバーチャルが必要
 };
 
 struct CardComboAttack final : public CardComboDataBase
@@ -81,7 +82,7 @@ public://functions
 	//カード置き場から次に使用するカードを取得する
 	const Card::Type GetUseCard()noexcept;
 	//カード置き場から次に使用するカードを削除&取得する
-	const CardComboDataBase* PopAndGetUseCard()noexcept;
+	CardComboDataBase* PopAndGetUseCard()noexcept;
 	//カード置き場にカードが残っているか動かを取得する
 	const bool IsSetCardsEmpty()const noexcept;
 
