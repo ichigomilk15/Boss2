@@ -4,10 +4,16 @@
 
 class HitBox2D
 {
-public:
+public://constractors
 	HitBox2D() =default;
 	HitBox2D(const DirectX::XMFLOAT2& leftTop,const DirectX::XMFLOAT2& BoxSize);
+	HitBox2D(const HitBox2D&) = default;
 	~HitBox2D();
+
+	static HitBox2D CreateBoxFromTopLeft(const DirectX::XMFLOAT2& topleft, const DirectX::XMFLOAT2& BoxSize);
+	static HitBox2D CreateBoxFromCenter(const DirectX::XMFLOAT2& center, const DirectX::XMFLOAT2& BoxSize);
+
+public:
 
 	const bool Hit(const HitBox2D& dst)const noexcept;
 	const bool Hit(const DirectX::XMFLOAT2& pos)const noexcept;

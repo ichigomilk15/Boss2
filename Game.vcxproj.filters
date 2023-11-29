@@ -64,6 +64,9 @@
     <Filter Include="Source\GameSystem">
       <UniqueIdentifier>{9f881ea5-d2a7-4978-8302-a36fc2afe54f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\System\UIs">
+      <UniqueIdentifier>{28afe971-6a6b-45b3-ab5d-85e3ace09de7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="External\imgui\imconfig.h">
@@ -240,6 +243,12 @@
     <ClInclude Include="Source\HitCollisions.h">
       <Filter>Source\System\Math</Filter>
     </ClInclude>
+    <ClInclude Include="Source\GameSystemManager.h">
+      <Filter>Source\GameSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\UI.h">
+      <Filter>Source\System\UIs</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="External\imgui\imgui.cpp">
@@ -397,6 +406,12 @@
     </ClCompile>
     <ClCompile Include="Source\HitCollisitons.cpp">
       <Filter>Source\System\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\GameSystemManager.cpp">
+      <Filter>Source\GameSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\UI.cpp">
+      <Filter>Source\System\UIs</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -11,8 +11,14 @@
 CardManager::CardManager():
 	HAND_CARDS_START_POS(DirectX::XMFLOAT2{ Graphics::Instance().GetScreenWidth() * 0.3f,Graphics::Instance().GetScreenHeight() - CARD_SIZE.y }),
 	SET_CARDS_START_POS({Graphics::Instance().GetScreenWidth()*0.1f,Graphics::Instance().GetScreenHeight()*0.2f}),isMoveable(true),
-	sprite()
+	HandsCardSprite("./Data/Sprite/HandsBackGround.png")
 {
+
+	SetCardSprites[0] = std::make_unique<Sprite>("./Data/Sprite/SetCardBack.png");
+	SetCardSprites[1] = std::make_unique<Sprite>("./Data/Sprite/SetCardFront.png");
+
+	//カードコンボ設定
+	{
 	const int typeNone = (int)Card::Type::NONE;
 	const int typeAttack = (int)Card::Type::ATTACK;
 	const int typeDefence = (int)Card::Type::DEFENCE;
@@ -186,6 +192,7 @@ CardManager::CardManager():
 	//コンボ無しの登録
 	{
 		CardComboNoUseing data;
+		data.type = Card::Type::NONE;
 		//コンボ無し
 		auto Data = std::make_shared<CardComboNoUseing>(data);
 		CardComboDatas[typeNone][typeNone] = Data;
@@ -199,6 +206,8 @@ CardManager::CardManager():
 		CardComboDatas[typeDefence][typeNone] = Data;
 		CardComboDatas[typeDebuff][typeNone] = Data;
 		CardComboDatas[typeSpecial][typeNone] = Data;
+		CardComboDatas[typeSpecial][typeSpecial] = Data;
+	}
 	}
 }
 
@@ -305,18 +314,35 @@ void CardManager::Update(float elapsedTime)
 void CardManager::Render(ID3D11DeviceContext* dc)
 {
 	DirectX::XMFLOAT2 pos = SET_CARDS_START_POS;
-	for (size_t i = 0; i < SET_CARD_MAX; i++)
-	{
-		sprite.Render(dc,
-			pos.x, pos.y,
-			CARD_SIZE.x, CARD_SIZE.y,
-			.0f, .0f,
-			sprite.GetTextureWidthf(), sprite.GetTextureHeightf(),
-			.0f,
-			.0f, .0f, .0f, 1.0f);
-		
-		pos.y += CARD_SIZE.y + CARD_DISTANCE;
-	}
+	const DirectX::XMFLOAT2 ScreenSize = Graphics::Instance().GetScreenSize();
+	
+	DirectX::XMFLOAT2 renderpos;
+	DirectX::XMFLOAT2 renderSize = { ScreenSize.x,ScreenSize.y * 0.2f };
+
+	//手札の背景
+	HandsCardSprite.Render(dc,
+		0.0f, ScreenSize.y - renderSize.y,
+		renderSize.x,renderSize.y,
+		.0f, .0f,
+		HandsCardSprite.GetTextureWidthf(), HandsCardSprite.GetTextureHeightf(),
+		.0f,
+		1.0f, 1.0f, 1.0f, 1.0f
+	);
+
+	renderpos = { ScreenSize.x * 0.1f, ScreenSize.y * 0.2f };
+	renderpos = { testdatas[1]};
+	renderSize = { ScreenSize.x * 0.2f, ScreenSize.y * 0.8f };
+	renderSize = { testdatas[0] };
+	//セットカードの描画
+	SetCardSprites[0]->Render(dc,
+		renderpos.x,renderpos.y,
+		renderSize.x,renderSize.y,
+		.0f, .0f,
+		SetCardSprites[0]->GetTextureWidthf(), SetCardSprites[0]->GetTextureHeightf(),
+		.0f,
+		1.0f, 1.0f, 1.0f, 1.0f
+	);
+
 	for (auto& card : cards)
 	{
 		card->Render(dc);
@@ -327,6 +353,16 @@ void CardManager::Render(ID3D11DeviceContext* dc)
 		if (card.get() == nullptr)continue;
 		card->Render(dc);
 	}
+
+	//セットカードの描画
+	SetCardSprites[1]->Render(dc,
+		renderpos.x, renderpos.y,
+		renderSize.x, renderSize.y,
+		.0f, .0f,
+		SetCardSprites[1]->GetTextureWidthf(), SetCardSprites[1]->GetTextureHeightf(),
+		.0f,
+		1.0f, 1.0f, 1.0f, 1.0f
+	);
 
 
 }
@@ -367,6 +403,9 @@ void CardManager::DrawDebugGUI()
 		{
 			AddCardReserved(std::make_shared<Card>(DirectX::XMFLOAT2{ .0f,.0f }, CARD_SIZE, Card::Type::DEBUFF));
 		}
+
+		if (ImGui::SliderFloat2("renderpos", &testdatas[1].x,.0f,500.0f)) {};
+		if (ImGui::SliderFloat2("rendersize", &testdatas[0].x,.0f,1000.0f)) {};
 	}
 	ImGui::End();
 }

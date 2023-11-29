@@ -11,6 +11,7 @@
 #include "EnemyMinion1.h"
 #include "PhaseManager.h"
 #include "PlayerManager.h"
+#include "GameSystemManager.h"
 
 std::map<int, DirectX::XMFLOAT3> CommonClass::directionMaps;
 
@@ -69,6 +70,8 @@ void SceneGame::Finalize()
 
 	//エネミー終了化
 	EnemyManager::Instance().Clear();
+
+	GameSystemManager::Instance().SetPoused(false);
 }
 
 // 更新処理
@@ -78,6 +81,12 @@ void SceneGame::Update(float elapsedTime)
 	//カメラコントローラー更新処理
 	cameraController->Update(elapsedTime);
 #endif // _DEBUG
+	if (GameSystemManager::Instance().GetIsPoused())
+	{
+		GameSystemManager::Instance().Update(elapsedTime);
+		return;
+	}
+
 	Stage::Instance()->Update(elapsedTime);
 
 	Stage::Instance()->Update(elapsedTime);
@@ -90,6 +99,7 @@ void SceneGame::Update(float elapsedTime)
 
 	//エフェクト更新処理
 	EffectManager::Instance().Update(elapsedTime);
+	GameSystemManager::Instance().Update(elapsedTime);
 }
 
 // 描画処理
@@ -176,9 +186,11 @@ void SceneGame::Render()
 			DirectX::XMConvertToRadians(.0f),
 			.0f, 1.0f, .0f, .6f);
 
+		CardManager::Instance().Render(dc);
 		PhaseManager::Instance().Render(dc);
 
-		CardManager::Instance().Render(dc);
+
+		GameSystemManager::Instance().Render(dc);
 	}
 	// 2DデバッグGUI描画
 	{
@@ -191,8 +203,8 @@ void SceneGame::Render()
 
 		//DrawDebugGUI(player, cameraController);
 
-		PhaseManager::Instance().DrawDebugGUI();
 		CardManager::Instance().DrawDebugGUI();
+		PhaseManager::Instance().DrawDebugGUI();
 	}
 
 	auto&& manager = EffectManager::Instance().GetEffekseerManager().Get();

@@ -125,6 +125,8 @@ private://members
 	bool isMoveable;
 
 	Card::Type PrevUseCardType = Card::Type::NONE;
-	Sprite sprite;
 	std::shared_ptr<CardComboDataBase> CardComboDatas[static_cast<int>(Card::Type::MAX)][static_cast<int>(Card::Type::MAX)];
+	Sprite HandsCardSprite;
+	std::unique_ptr<Sprite> SetCardSprites[2];
+	DirectX::XMFLOAT2 testdatas[2];
 };
