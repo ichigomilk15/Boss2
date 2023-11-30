@@ -58,8 +58,14 @@ public:
 	//ミューテックス取得
 	std::mutex& GetMutex() { return mutex; }
 
+	const HWND& GetHWnd()const noexcept { return hwnd; }
+
+	void Quit()const noexcept;
+
 private:
 	static Graphics*								instance;
+
+	const HWND hwnd;
 
 	Microsoft::WRL::ComPtr<ID3D11Device>			device;
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext>		immediateContext;

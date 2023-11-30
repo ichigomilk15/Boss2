@@ -61,8 +61,8 @@ bool Enemy::ChooseTargetMove(float elapsedTime)
 	{
 		if (difX != 0)
 		{
-			float targetX = position.x + (difX / abs(difX));
-			float targetY = position.y;
+			int targetX = position.x + (difX / abs(difX));
+			int targetY = position.y;
 			if (Stage::Instance()->GetSquare(targetX, targetY)->GetType() != Square::Type::Inaccessible)
 			{
 				isValidHorizontal = true;
@@ -73,8 +73,8 @@ bool Enemy::ChooseTargetMove(float elapsedTime)
 	{
 		if (difY != 0)
 		{
-			float targetX = position.x;
-			float targetY = position.y + (difY / abs(difY));
+			int targetX = position.x;
+			int targetY = position.y + (difY / abs(difY));
 			if (Stage::Instance()->GetSquare(targetX, targetY)->GetType() != Square::Type::Inaccessible)
 			{
 				isValidVertical = true;
@@ -84,8 +84,8 @@ bool Enemy::ChooseTargetMove(float elapsedTime)
 
 	if (isValidHorizontal && !isValidVertical)
 	{
-		float targetX = position.x + (difX / abs(difX));
-		float targetY = position.y;
+		int targetX = position.x + (difX / abs(difX));
+		int targetY = position.y;
 		if (Stage::Instance()->GetSquare(targetX, targetY)->GetType() != Square::Type::Inaccessible)
 		{
 			targetMovePos.x = targetX;
@@ -95,8 +95,8 @@ bool Enemy::ChooseTargetMove(float elapsedTime)
 	}
 	if (isValidVertical && !isValidHorizontal /*&& abs(difY) > abs(difX)*/)
 	{
-		float targetX = position.x;
-		float targetY = position.y + (difY / abs(difY));
+		int targetX = position.x;
+		int targetY = position.y + (difY / abs(difY));
 		if (Stage::Instance()->GetSquare(targetX, targetY)->GetType() != Square::Type::Inaccessible)
 		{
 			targetMovePos.x = targetX;
@@ -109,8 +109,8 @@ bool Enemy::ChooseTargetMove(float elapsedTime)
 	{
 		if (abs(difX) > abs(difY))
 		{
-			float targetX = position.x + (difX / abs(difX));
-			float targetY = position.y;
+			int targetX = position.x + (difX / abs(difX));
+			int targetY = position.y;
 			if (Stage::Instance()->GetSquare(targetX, targetY)->GetType() != Square::Type::Inaccessible)
 			{
 				targetMovePos.x = targetX;
@@ -118,8 +118,8 @@ bool Enemy::ChooseTargetMove(float elapsedTime)
 				return true;
 			}
 		}
-		float targetX = position.x;
-		float targetY = position.y + (difY / abs(difY));
+		int targetX = position.x;
+		int targetY = position.y + (difY / abs(difY));
 		if (Stage::Instance()->GetSquare(targetX, targetY)->GetType() != Square::Type::Inaccessible)
 		{
 			targetMovePos.x = targetX;

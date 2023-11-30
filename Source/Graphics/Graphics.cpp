@@ -5,7 +5,7 @@
 Graphics* Graphics::instance = nullptr;
 
 // コンストラクタ
-Graphics::Graphics(HWND hWnd)
+Graphics::Graphics(HWND hWnd):hwnd(hWnd)
 {
 	// インスタンス設定
 	_ASSERT_EXPR(instance == nullptr, "already instantiated");
@@ -144,4 +144,9 @@ Graphics::Graphics(HWND hWnd)
 // デストラクタ
 Graphics::~Graphics()
 {
+}
+
+void Graphics::Quit() const noexcept
+{
+	PostMessage(hwnd, WM_CLOSE, 0, 0);
 }

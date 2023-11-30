@@ -5,19 +5,26 @@
 #include <map>
 #include "Card.h"
 
+//CardCombos
+#if 1
 struct CardComboDataBase
 {
-	Card::Type type;
-	virtual ~CardComboDataBase() = default; //dynamic_castのにバーチャルが必要
+	Card::Type type = Card::Type::NONE;
+	std::shared_ptr<Sprite> infomation;
+	virtual ~CardComboDataBase() = default; //dynamic_castにバーチャルが必要
 };
 
 struct CardComboAttack final : public CardComboDataBase
 {
-	unsigned int Attackcost;
-	int AttackDamage;
-	unsigned int AreaAttackCost;
-	unsigned int VAreaAttackCost;
-	bool UseShield;
+public:
+	//CardComboAttack(const CardComboAttack&) = default;
+	//CardComboAttack() = default;
+	//CardComboAttack& operator=(CardComboAttack&) = default;
+	unsigned int Attackcost = 0u;
+	int AttackDamage = 0;
+	unsigned int AreaAttackCost = 0u;
+	unsigned int VAreaAttackCost = 0u;
+	bool UseShield = false;
 };
 
 struct CardComboDefence final : public CardComboDataBase
@@ -47,6 +54,7 @@ struct CardComboNoUseing final : public CardComboDataBase
 {
 	bool isNodata = true;
 };
+#endif // 1
 
 class CardManager final
 {
@@ -91,15 +99,16 @@ public://functions
 	//カードを上限まで補充する
 	void Replenish();
 
-	//Getter&Setter******************************************************************************************************
+	//Getter&Setter*********************************************************************************************
 #if 1
 	//カードを持つことができるか
 	const bool& GetIsMoveable()const noexcept { return isMoveable; }
 	//カードを持つことができるか
 	void SetIsMoveable(const bool flag)noexcept { isMoveable = flag; }
 	const std::shared_ptr<Card> GetSetCards(int index) const noexcept { index %= SET_CARD_MAX; return SetCards[index]; }
+	void ResetPrevType()noexcept { PrevUseCardType = Card::Type::NONE; }
 #endif // 1
-	//Getter&Setter******************************************************************************************************
+	//Getter&Setter*********************************************************************************************
 
 private://functions
 	void Erase();
@@ -128,6 +137,7 @@ private://members
 	Card::Type PrevUseCardType = Card::Type::NONE;
 	std::shared_ptr<CardComboDataBase> CardComboDatas[static_cast<int>(Card::Type::MAX)][static_cast<int>(Card::Type::MAX)];
 	Sprite HandsCardSprite;
+	Sprite cardInfoBack;
 	std::unique_ptr<Sprite> SetCardSprites[2];
 	DirectX::XMFLOAT2 testdatas[2];
 };

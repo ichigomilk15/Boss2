@@ -27,7 +27,24 @@ public:
 		float sw, float sh,
 		float angle,
 		float r, float g, float b, float a) const;
+	//描画
+	void Render(ID3D11DeviceContext* dc,
+		const DirectX::XMFLOAT2& pos,
+		const DirectX::XMFLOAT2& size,
+		const DirectX::XMFLOAT2& texturepos,
+		const DirectX::XMFLOAT2& texturesize,
+		const float angle,
+		const DirectX::XMFLOAT4& color
+	)const ;
 
+	//画像全体描画
+	void Render(ID3D11DeviceContext* dc,
+		const DirectX::XMFLOAT2& pos,
+		const DirectX::XMFLOAT2& size,
+		const float angle,
+		const DirectX::XMFLOAT4& color
+	)const ;
+		
 	// テクスチャ幅取得
 	int GetTextureWidth() const { return textureWidth; }
 	float GetTextureWidthf()const noexcept { return static_cast<float>(textureWidth); }

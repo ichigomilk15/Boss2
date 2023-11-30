@@ -65,9 +65,13 @@ void PhaseManager::Update(float elapsedTime)
 		CardManager& cardManager = CardManager::Instance();
 		cardManager.SetIsMoveable(false);
 		cardManager.Replenish();
+		cardManager.ResetPrevType();
 
 		PlayerManager::Instance().GetFirstPlayer()->ResetStatus();
 		EnemyManager::Instance().ResetTurnEnemies();
+
+		//配置しているカードの移動
+		Stage::Instance()->ReFleshCard();
 
 		NextPhase();//次のフェーズへ
 	}
@@ -97,6 +101,7 @@ void PhaseManager::Update(float elapsedTime)
 		if (IsQuickNextPhase(mouse.GetButtonDown()&Mouse::BTN_LEFT&&
 			okButtonCollision.Hit(mouse.GetPosition()) && CardManager::Instance().IsFillSetCards()))
 		{
+			CardManager::Instance().SetIsMoveable(false);
 			PlayerManager::Instance().GetFirstPlayer()->SetState(State::Act_Init);
 			NextPhase();//次のフェーズへ
 			break;

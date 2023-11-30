@@ -26,12 +26,14 @@ void SceneTitle::Update(float elapsedTime)
 	GamePad& gamePad = Input::Instance().GetGamePad();
 	Mouse& mouse = Input::Instance().GetMouse();
 
+	//ゲーム終了
+	if (gamePad.GetButtonDown() & GamePad::BTN_ESCAPE)
+	{
+		Graphics::Instance().Quit();
+	}
+
 	//なにかボタンを押したらローディングシーンを挟んでゲームシーン切り替え
-	if (gamePad.GetButtonDown()||
-		fabsf(gamePad.GetAxisLX())>=0.2f||
-		fabsf(gamePad.GetAxisLY())>=0.2f||
-		fabsf(gamePad.GetAxisRX())>=0.2f||
-		fabsf(gamePad.GetAxisRY())>= 0.2f)
+	if (mouse.GetButtonDown()&Mouse::BTN_LEFT)
 	{
 		//SceneManager::Instance().ChangeScene(new SceneGame());
 		SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame()));

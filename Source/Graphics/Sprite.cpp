@@ -357,3 +357,13 @@ void Sprite::Render(ID3D11DeviceContext *immediate_context,
 	}
 }
 
+void Sprite::Render(ID3D11DeviceContext* dc, const DirectX::XMFLOAT2& pos, const DirectX::XMFLOAT2& size, const DirectX::XMFLOAT2& texturepos, const DirectX::XMFLOAT2& texturesize, const float angle, const DirectX::XMFLOAT4& color)const
+{
+	return Render(dc, pos.x, pos.y, size.x, size.y, texturepos.x, texturesize.y, texturesize.x, texturesize.y, angle, color.x, color.y, color.z, color.w);
+}
+
+void Sprite::Render(ID3D11DeviceContext* dc, const DirectX::XMFLOAT2& pos, const DirectX::XMFLOAT2& size, const float angle, const DirectX::XMFLOAT4& color)const
+{
+	return Render(dc, pos, size, DirectX::XMFLOAT2{ .0f,.0f }, DirectX::XMFLOAT2{ GetTextureWidthf(),GetTextureHeightf() }, angle, color);
+}
+

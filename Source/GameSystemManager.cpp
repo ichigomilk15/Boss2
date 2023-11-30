@@ -31,12 +31,13 @@ GameSystemManager::GameSystemManager()
 void GameSystemManager::Update(float elapsedTime)
 {
     Mouse& mouse = Input::Instance().GetMouse();
+    GamePad& gamepad = Input::Instance().GetGamePad();
     if (isPoused)
     {
         PousedOnlyUpdate(elapsedTime);
     }
 
-    if (mouse.GetButtonDown()&Mouse::BTN_LEFT&& pouseButton.GetHitBox().Hit(mouse.GetPosition()))
+    if (gamepad.GetButtonDown()&GamePad::BTN_ESCAPE||mouse.GetButtonDown()&Mouse::BTN_LEFT&& pouseButton.GetHitBox().Hit(mouse.GetPosition()))
     {
         isPoused ^= true;
     }
@@ -62,7 +63,7 @@ void GameSystemManager::PousedOnlyUpdate(float elapsedTime)
 
     if (mouse.GetButtonDown()&Mouse::BTN_LEFT&& ExitGameButton.GetHitBox().Hit(mouse.GetPosition()))
     {
-        //todo : ÉQÅ[ÉÄèIóπèàóù
+        Graphics::Instance().Quit();
     }
 }
 
