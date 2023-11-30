@@ -41,7 +41,7 @@ public://functions
 	std::vector<Square*> GetSquaresByDirection(const int& initX, const int& initY, const int& cost, const int& direction);
 	int GetTargetPosCost(const DirectX::XMINT2& posInit, const DirectX::XMINT2& posTarget);
 	const bool IsAdjacent(const DirectX::XMINT2& posInit, const DirectX::XMINT2& posTarget) const;
-	const bool IsAdjacent(const Character* chara1, const Character* chara2) const;
+	const int IsAdjacent(const Character* chara1, const Character* chara2) const;
 
 	const bool Raycast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end, HitResult& hit);
 	const bool IsInArea(int x, int y)const noexcept;

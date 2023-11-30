@@ -66,7 +66,10 @@ void PhaseManager::Update(float elapsedTime)
 		cardManager.SetIsMoveable(false);
 		cardManager.Replenish();
 
-		PlayerManager::Instance().GetFirstPlayer()->ResetStatus();
+		Player* player = PlayerManager::Instance().GetFirstPlayer();
+		player->ResetStatus();
+		player->SetTurnPosInit(player->GetPosition());
+
 		EnemyManager::Instance().ResetTurnEnemies();
 
 		NextPhase();//次のフェーズへ
@@ -113,7 +116,7 @@ void PhaseManager::Update(float elapsedTime)
 	[[fallthrough]];
 	case PhaseManager::Phase::Phase_PlayerAct:
 	{
-		const bool isPlayseActFinished = PlayerManager::Instance().GetFirstPlayer()->GetState() == State::Act_Finish;
+		const bool isPlayseActFinished = PlayerManager::Instance().GetFirstPlayer()->GetIsActEnd();
 
 		UpdatePlayerAct(elapsedTime); 
 

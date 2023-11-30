@@ -171,10 +171,10 @@ void SceneGame::Render()
 		//ƒV[ƒ‹ƒh‚Ì•`‰æ
 		playerHP->Render(dc,
 			pos.x, pos.y,
-			HpBarSize.x*0.5f/**(player->Getshield()/static_cast<float>(player->GetMaxHealth()))*/, HpBarSize.y,
+			HpBarSize.x * (player->Getshield()/static_cast<float>(player->GetMaxHealth())), HpBarSize.y,
 			.0f, .0f, static_cast<float>(playerHP->GetTextureWidth()), static_cast<float>(playerHP->GetTextureHeight()),
 			DirectX::XMConvertToRadians(.0f),
-			.0f, 1.0f, .0f, .6f);
+			.0f, 0.1f, 1.0f, .6f);
 
 		PhaseManager::Instance().Render(dc);
 

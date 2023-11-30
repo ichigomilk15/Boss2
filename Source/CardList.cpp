@@ -5,12 +5,14 @@
 #include "Graphics/Graphics.h"
 #include "Input/Input.h"
 #include "Collision.h"
+#include "PlayerManager.h"
+#include "EnemyManager.h"
 #undef NOMINMAX
 
 
-CardManager::CardManager():
+CardManager::CardManager() :
 	HAND_CARDS_START_POS(DirectX::XMFLOAT2{ Graphics::Instance().GetScreenWidth() * 0.3f,Graphics::Instance().GetScreenHeight() - CARD_SIZE.y }),
-	SET_CARDS_START_POS({Graphics::Instance().GetScreenWidth()*0.1f,Graphics::Instance().GetScreenHeight()*0.2f}),isMoveable(true),
+	SET_CARDS_START_POS({ Graphics::Instance().GetScreenWidth() * 0.1f,Graphics::Instance().GetScreenHeight() * 0.2f }), isMoveable(true),
 	sprite()
 {
 	const int typeNone = (int)Card::Type::NONE;
@@ -32,7 +34,7 @@ CardManager::CardManager():
 		data.UseShield = false;
 		auto Data = std::make_shared<CardComboAttack>(data);
 		CardComboDatas[typeNone][typeAttack] = Data;
-		CardComboDatas[typeDebuff][typeAttack] = Data;		
+		CardComboDatas[typeDebuff][typeAttack] = Data;
 
 		//	攻撃＊攻撃
 		data.Attackcost = 1u;
@@ -49,7 +51,7 @@ CardManager::CardManager():
 		data.VAreaAttackCost = 1u;
 		data.UseShield = false;
 		CardComboDatas[typeMove][typeAttack] = std::make_shared<CardComboAttack>(data);
-		
+
 		//防御＊攻撃
 		data.Attackcost = 1u;
 		data.AttackDamage = 9;
@@ -81,7 +83,7 @@ CardManager::CardManager():
 		auto Data = std::make_shared<CardComboMove>(data);
 		CardComboDatas[typeNone][typeMove] = Data;
 		CardComboDatas[typeDebuff][typeMove] = Data;
-		
+
 		//攻撃*移動
 		data.moveCost = 1u;
 		data.attackDamege = 3;
@@ -131,7 +133,7 @@ CardManager::CardManager():
 
 		//攻撃*防御
 		data.getShield = 0;
-		data.GetBlock = -4;
+		data.GetBlock = 4;
 		data.heal = 0;
 		data.movecostGetShield = false;
 		CardComboDatas[typeAttack][typeDefence] = std::make_shared<CardComboDefence>(data);
@@ -166,6 +168,7 @@ CardManager::CardManager():
 		//デバフ単体
 		data.heal = 0;
 		data.takeDamage = 5;
+		data.takeDamagetargets.emplace_back(PlayerManager::Instance().GetFirstPlayer());
 		auto Data = std::make_shared<CardComboDebuff>(data);
 		CardComboDatas[typeNone][typeDebuff] = Data;
 		CardComboDatas[typeAttack][typeDebuff] = Data;
@@ -180,6 +183,11 @@ CardManager::CardManager():
 		//バフ*デバフ
 		data.heal = 10;
 		data.takeDamage = 10;
+		data.takeDamagetargets.emplace_back(PlayerManager::Instance().GetFirstPlayer());
+		for (auto& e : EnemyManager::Instance().GetList())
+		{
+			data.takeDamagetargets.emplace_back(e);
+		}
 		CardComboDatas[typeSpecial][typeDebuff] = std::make_shared<CardComboDebuff>(data);
 	}
 
@@ -216,7 +224,7 @@ void CardManager::Update(float elapsedTime)
 	for (auto& card : cards)
 	{
 		if (card->GetType() == Card::Type::SPECIAL)++haveSpecial;
-		if (isMoveable&& mouse.GetButtonDown() & Mouse::BTN_LEFT && card->HitCheck(mouse.GetPosition()))
+		if (isMoveable && mouse.GetButtonDown() & Mouse::BTN_LEFT && card->HitCheck(mouse.GetPosition()))
 		{
 			ChangeHaveCard(&card);
 		}
@@ -236,7 +244,7 @@ void CardManager::Update(float elapsedTime)
 		if (card.get() == nullptr)continue;
 		if (card->GetType() == Card::Type::SPECIAL)++haveSpecial;
 
-		if (isMoveable&& mouse.GetButtonDown() & Mouse::BTN_LEFT && card->HitCheck(mouse.GetPosition()))
+		if (isMoveable && mouse.GetButtonDown() & Mouse::BTN_LEFT && card->HitCheck(mouse.GetPosition()))
 			ChangeHaveCard(&card);
 
 		card->SetPosition(pos);
@@ -244,13 +252,13 @@ void CardManager::Update(float elapsedTime)
 	}
 
 	//マウスが持っているカードを更新	
-	if (isMoveable&&!haveCard.expired())
+	if (isMoveable && !haveCard.expired())
 	{
 		//マウスがカードを離したら
 		if (mouse.GetButtonUp() & Mouse::BTN_LEFT)
 		{
 			std::shared_ptr<Card> card = haveCard.lock();
-			
+
 			//手札との判定
 			DirectX::XMFLOAT2 boxSize = DirectX::XMFLOAT2{
 				(CARD_SIZE.x + CARD_DISTANCE) * std::max(cards.size(),static_cast<size_t>(CARD_MAX)),CARD_SIZE.y };
@@ -264,10 +272,10 @@ void CardManager::Update(float elapsedTime)
 				}
 			}
 			//セットとの判定
-			else 
+			else
 			{
 				boxSize = CARD_SIZE;
-				for (size_t i = 0,end = (card->GetType()==Card::Type::SPECIAL?SET_CARD_MAX-1:SET_CARD_MAX); i < end; i++)
+				for (size_t i = 0, end = (card->GetType() == Card::Type::SPECIAL ? SET_CARD_MAX - 1 : SET_CARD_MAX); i < end; i++)
 				{
 					if (SetCards[i] == card)continue;
 					DirectX::XMFLOAT2 pos = SET_CARDS_START_POS;
@@ -314,7 +322,7 @@ void CardManager::Render(ID3D11DeviceContext* dc)
 			sprite.GetTextureWidthf(), sprite.GetTextureHeightf(),
 			.0f,
 			.0f, .0f, .0f, 1.0f);
-		
+
 		pos.y += CARD_SIZE.y + CARD_DISTANCE;
 	}
 	for (auto& card : cards)
@@ -333,7 +341,7 @@ void CardManager::Render(ID3D11DeviceContext* dc)
 
 void CardManager::DrawDebugGUI()
 {
-	if (ImGui::Begin("CardManager",nullptr,ImGuiWindowFlags_::ImGuiWindowFlags_None))
+	if (ImGui::Begin("CardManager", nullptr, ImGuiWindowFlags_::ImGuiWindowFlags_None))
 	{
 		int size = static_cast<int>(cards.size());
 		if (ImGui::InputInt("HandCards", &size, 0)) {};
@@ -341,14 +349,14 @@ void CardManager::DrawDebugGUI()
 		if (ImGui::InputInt("HaveSpecial", &size, 0)) {};
 		size = static_cast<int>(reservedCards.size());
 		if (ImGui::InputInt("ReservedCard", &size, 0)) {};
-		if (ImGui::CollapsingHeader("HaveCard",ImGuiTreeNodeFlags_::ImGuiTreeNodeFlags_DefaultOpen))
+		if (ImGui::CollapsingHeader("HaveCard", ImGuiTreeNodeFlags_::ImGuiTreeNodeFlags_DefaultOpen))
 		{
 			if (!haveCard.expired())
 			{
 				haveCard.lock()->DrawIMGUI();
 			}
 		}
-		if (ImGui::CollapsingHeader("OnMouseCard",ImGuiTreeNodeFlags_::ImGuiTreeNodeFlags_DefaultOpen))
+		if (ImGui::CollapsingHeader("OnMouseCard", ImGuiTreeNodeFlags_::ImGuiTreeNodeFlags_DefaultOpen))
 		{
 			if (auto card = this->HitCheck(Input::Instance().GetMouse().GetPosition()))
 			{
@@ -397,10 +405,10 @@ std::shared_ptr<Card> CardManager::DrawCard(const std::pair<Card::Type, unsigned
 	for (size_t i = 0; i < pairSize; i++)
 	{
 		result -= pair[i].second;
-		if (result <= 0)return std::make_shared<Card>(CARD_SPAWM_POS, CARD_SIZE,pair[i].first);
+		if (result <= 0)return std::make_shared<Card>(CARD_SPAWM_POS, CARD_SIZE, pair[i].first);
 	}
 
-	return std::make_shared<Card>(CARD_SPAWM_POS, CARD_SIZE,pair[pairSize-1].first);
+	return std::make_shared<Card>(CARD_SPAWM_POS, CARD_SIZE, pair[pairSize - 1].first);
 }
 
 void CardManager::AddCard(std::shared_ptr<Card>& card)
@@ -484,7 +492,9 @@ CardComboDataBase* CardManager::PopAndGetUseCard() noexcept
 		PrevUseCardType = RightType;
 		return data.get();
 	}
-	return CardComboDatas[static_cast<int>(Card::Type::NONE)][static_cast<int>(Card::Type::NONE)].get();
+	auto data = CardComboDatas[static_cast<int>(Card::Type::NONE)][static_cast<int>(Card::Type::NONE)].get();
+	data->type = Card::Type::NONE;
+	return data;
 }
 
 const bool CardManager::IsSetCardsEmpty() const noexcept
@@ -514,7 +524,7 @@ void CardManager::ALLClear()
 
 void CardManager::Replenish()
 {
-	while(cards.size() < (CARD_MAX + haveSpecial) % std::numeric_limits<unsigned int>::max())
+	while (cards.size() < (CARD_MAX + haveSpecial) % std::numeric_limits<unsigned int>::max())
 	{
 		if (!reservedCards.empty())//引くカードが確定しているならば
 		{

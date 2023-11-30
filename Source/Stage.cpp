@@ -259,7 +259,7 @@ const bool Stage::IsAdjacent(const DirectX::XMINT2& posInit, const DirectX::XMIN
 	return true;
 }
 
-const bool Stage::IsAdjacent(const Character* chara1, const Character* chara2) const
+const int Stage::IsAdjacent(const Character* chara1, const Character* chara2) const
 {
 	for (int y = chara1->GetPosition().y; y < chara1->GetPosition().y + chara1->GetSize().y; y++)
 	{
@@ -271,13 +271,14 @@ const bool Stage::IsAdjacent(const Character* chara1, const Character* chara2) c
 				{
 					if (Stage::Instance()->IsAdjacent(DirectX::XMINT2{ x, y }, DirectX::XMINT2{x2, y2}))
 					{
-						return true;
+						int dir = CommonClass::GetDirectionTarget({ x, y }, { x2, y2 });
+						return dir;
 					}
 				}
 			}
 		}
 	}
-	return false;
+	return -1;
 }
 
 int Stage::GetTargetPosCost(const DirectX::XMINT2& posInit, const DirectX::XMINT2& posTarget)

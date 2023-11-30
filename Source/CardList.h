@@ -4,6 +4,7 @@
 #include <stack>
 #include <map>
 #include "Card.h"
+#include "Character.h"
 
 struct CardComboDataBase
 {
@@ -40,6 +41,7 @@ struct CardComboMove final : public CardComboDataBase
 struct CardComboDebuff final : public CardComboDataBase
 {
 	int takeDamage;
+	std::vector<Character*> takeDamagetargets;
 	int heal;
 };
 

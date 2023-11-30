@@ -22,6 +22,8 @@ public:
 
 	//デバッグプリミティブ描画
 	void DrawDebugPrimitive();
+
+	void SetTurnPosInit(const DirectX::XMINT2& pos) { this->turnPosInit = pos; }
 private:
 	//ステート更新処理
 	void UpdateState(float elapsedTime) override;
@@ -37,6 +39,10 @@ private:
 	//攻撃の初期化
 	void InitializeAttack(const int damage, const std::vector<DirectX::XMINT2>& posAttack, const float timer);
 	void InitializeKnockbackAttack(const int damage, const int knockbackCost, const int knockbackDir, const std::vector<DirectX::XMINT2>& posAttack, const float timer);
+	//シールドカードのアクション
+	void SetShieldAction();
+	//デバフカードのアクション
+	void SetDebuffAction();
 
 	//セットカードによるアクションを決める更新処理
 	State ChooseAct(float elapsedTime);
@@ -47,4 +53,5 @@ private:
 	Model* model = nullptr;
 	Effect* hitEffect = nullptr;
 	CardComboDataBase* cardComboDataBase;
+	DirectX::XMINT2 turnPosInit;			//ターン開始の位置
 };

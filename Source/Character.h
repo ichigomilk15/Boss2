@@ -61,6 +61,9 @@ public:
 	//移動目標位置が妥当か
 	bool IsTargetMovePosValid(const DirectX::XMINT2& targetPos);
 
+	//回復
+	void Heal(const int hp) { this->health += hp; }
+
 	//位置取得
 	const DirectX::XMFLOAT3& GetPositionWorld() const { return positionWorld; }
 	const DirectX::XMINT2& GetPosition() const { return position; }
@@ -74,6 +77,8 @@ public:
 
 	//立っているマス位置を取得
 	const std::vector<DirectX::XMINT2> GetSquaresPosition() const;
+	const std::vector<DirectX::XMINT2> GetSquaresPositionX(const int row) const;
+	const std::vector<DirectX::XMINT2> GetSquaresPositionY(const int column) const;
 
 	//回転取得
 	const DirectX::XMFLOAT3& GetAngle() const { return angle; }
@@ -131,6 +136,8 @@ public:
 	void SetPivotAdjustPosWorld(DirectX::XMFLOAT3 pivot) { pivotAdjustPosWorld = pivot; }
 
 	const int& Getshield()const { return shield; }
+
+	const bool GetIsActEnd() const { return isActEnd; }
 #endif // 1
 	//Getter&Setter*****************************************************
 
@@ -167,10 +174,12 @@ protected:
 	int maxHealth = 75;
 	int attackPower = 0; //アタック力
 	int shield = 0; //一時的な防御
+	int block = 0; //攻撃を受けた数値を減少するステータス・ブロック
 	DirectX::XMINT2 size = { 1, 1 };
 
 	State state;
 	float actTimer = 0; //ステート遷移タイマー
+	bool isActEnd = false;		//ターンにアクションが終わったの判定
 
 	DirectX::XMINT2 targetMovePos = { -1, -1 }; //移動するターゲットの位置
 	float moveTimer = 0.0f;

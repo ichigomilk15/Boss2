@@ -54,6 +54,25 @@ const std::vector<DirectX::XMINT2> Character::GetSquaresPosition() const
 	}
 	return squaresPos;
 }
+const std::vector<DirectX::XMINT2> Character::GetSquaresPositionX(const int row) const
+{
+	std::vector<DirectX::XMINT2> squaresPos;
+	for (int x = position.x; x < position.x + size.x; ++x)
+	{
+		squaresPos.emplace_back(DirectX::XMINT2{ x, row });
+	}
+	return squaresPos;
+}
+
+const std::vector<DirectX::XMINT2> Character::GetSquaresPositionY(const int column) const
+{
+	std::vector<DirectX::XMINT2> squaresPos;
+	for (int y = position.y; y < position.y + size.y; ++y)
+	{
+		squaresPos.emplace_back(DirectX::XMINT2{ column, y });
+	}
+	return squaresPos;
+}
 
 void Character::SetDirection(int dir)
 {
@@ -63,6 +82,17 @@ void Character::SetDirection(int dir)
 
 void Character::SetDirection(const DirectX::XMINT2 targetPos)
 {
+	for (int y = position.y; y < position.y + size.y; y++)
+	{
+		for (int x = position.x; x < position.x + size.x; x++)
+		{
+			if ((x == targetPos.x || y == targetPos.y) && !(x == targetPos.x && y == targetPos.y))
+			{
+				SetDirection(CommonClass::GetDirectionTarget({ x, y }, targetPos));
+				return;
+			}
+		}
+	}
 	SetDirection(CommonClass::GetDirectionTarget(position, targetPos));
 }
 
@@ -111,6 +141,8 @@ bool Character::IsTargetMovePosValid(const DirectX::XMINT2& targetPos)
 void Character::ResetStatus()
 {
 	shield = 0;
+	block = 0;
+	isActEnd = false;
 }
 
 bool Character::ApplyDamage(int damage)
@@ -119,6 +151,19 @@ bool Character::ApplyDamage(int damage)
 	if (damage <= 0) return false;
 	//Ž€–S‚µ‚Ä‚¢‚éê‡‚ÍŒ’Nó‘Ô‚ð•ÏX‚µ‚È‚¢
 	if (health <= 0) return false;
+
+	damage -= block;
+	if (damage <= 0)
+		return false;
+
+	if (shield > 0)
+	{
+		int tempDamage = (shield >= damage) ? damage : shield;
+		shield -= tempDamage;
+		damage -= tempDamage;
+		if (damage <= 0)
+			return false;
+	}
 
 	//ƒ_ƒ[ƒWˆ—
 	health -= damage;

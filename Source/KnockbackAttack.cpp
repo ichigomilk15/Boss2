@@ -25,16 +25,16 @@ void KnockbackAttack::Update(float elapsedTime)
 					switch (knockbackDir)
 					{
 					case CommonClass::Front:
-						--movePos.y;
+						movePos.y += cost;
 						break;
 					case CommonClass::Back:
-						++movePos.y;
+						movePos.y += cost;
 						break;
 					case CommonClass::Left:
-						--movePos.x;
+						movePos.x += cost;
 						break;
 					case CommonClass::Right:
-						++movePos.x;
+						movePos.x += cost;
 						break;
 					}
 					if (e.targetChara->IsTargetMovePosValid(movePos))

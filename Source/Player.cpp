@@ -84,6 +84,7 @@ void Player::DrawDebugGUI()
 
 			//Status
 			ImGui::InputInt("Shield", &shield, 0);
+			ImGui::InputInt("Block", &block, 0);
 			ImGui::InputInt("HP", &health, 0);
 		}
 	}
@@ -186,7 +187,7 @@ void Player::UpdateState(float elapsedTime)
 		this->model->PlayAnimation(Animation::Damage, false);
 		actTimer = 0.5f;
 		Stage::Instance()->ResetAllSquare();
-		shield += 4;
+		SetShieldAction();
 		state = State::Defence;
 		[[fallthrough]];
 	case State::Defence:
@@ -202,6 +203,7 @@ void Player::UpdateState(float elapsedTime)
 		actTimer = 0.5f;
 		Stage::Instance()->ResetAllSquare();
 		state = State::Special;
+		cardComboDataBase = nullptr;
 		[[fallthrough]];
 	case State::Special:
 		actTimer -= elapsedTime;
@@ -216,6 +218,7 @@ void Player::UpdateState(float elapsedTime)
 		actTimer = 0.5f;
 		Stage::Instance()->ResetAllSquare();
 		state = State::Debuff;
+		SetDebuffAction();
 		[[fallthrough]];
 	case State::Debuff:
 		actTimer -= elapsedTime;
@@ -238,10 +241,11 @@ void Player::UpdateState(float elapsedTime)
 			SetState(State::Act_Init);
 			break;
 		}
-
+		break;
 	case State::Act_Finish_Init:
 		actTimer = 0.5f;
 		state = State::Act_Finish;
+		isActEnd = true;
 		//CardManager::Instance().PopAndGetUseCard();
 		[[fallthrough]];
 	case State::Act_Finish:
@@ -309,15 +313,19 @@ State Player::MovingEnd()
 		return State::Act_Init;
 
 	//–hŒä‚˜ˆÚ“® ˆ—
+	bool IsFoundEnemy = false;
 	for (auto& e : EnemyManager::Instance().GetList())
 	{
-		if (Stage::Instance()->IsAdjacent(this, e))
+		const int dir = Stage::Instance()->IsAdjacent(this, e);
+		if (dir >= 0)
 		{
-			InitializeKnockbackAttack(moveDetail->knockbackTakeDamege, moveDetail->knockbackCost, GetDirection(), { e->GetPosition() }, 0.5f);
-			break;
+			InitializeKnockbackAttack(moveDetail->knockbackTakeDamege, moveDetail->knockbackCost, dir, { e->GetPosition() }, 0.5f);
+			SetDirection(dir);
+			shield -= moveDetail->knockbackTakeDamege;
+			return State::Attacking_Init;
 		}
 	}
-	return State::Attacking_Init;
+	return State::Act_Init;
 }
 
 void Player::UpdateAttack(float elapsedTime)
@@ -401,6 +409,48 @@ void Player::InitializeKnockbackAttack(const int damage, const int knockbackCost
 	AttackManager::Instance().Register(attack);
 }
 
+void Player::SetShieldAction()
+{
+	CardComboDefence* defenceDetail = dynamic_cast<CardComboDefence*>(std::move(cardComboDataBase));
+	if (!defenceDetail)
+		return;
+
+	if (defenceDetail->heal > 0)
+		Heal(defenceDetail->heal);
+	if (defenceDetail->GetBlock > 0)
+		block = defenceDetail->GetBlock;
+
+	int shieldGet = 0;
+	if (defenceDetail->getShield > 0)
+		shieldGet = defenceDetail->getShield;
+	if (defenceDetail->movecostGetShield)
+	{
+		int moveRange = Stage::Instance()->GetTargetPosCost(position, turnPosInit);
+		shieldGet += moveRange;
+	}
+	shield += shieldGet;
+}
+
+void Player::SetDebuffAction()
+{
+	CardComboDebuff* debuffDetail = dynamic_cast<CardComboDebuff*>(std::move(cardComboDataBase));
+	if (!debuffDetail)
+		return;
+
+	if (debuffDetail->takeDamage > 0)
+	{
+		for (auto& t : debuffDetail->takeDamagetargets)
+		{
+			t->ApplyDamage(debuffDetail->takeDamage);
+		}
+	}
+
+	if (debuffDetail->heal > 0)
+	{
+		Heal(debuffDetail->heal);
+	}
+}
+
 State Player::ChooseAct(float elapsedTime)
 {
 	cardComboDataBase = nullptr;
@@ -424,13 +474,28 @@ State Player::ChooseAct(float elapsedTime)
 		}
 		break;
 	case Card::Type::DEFENCE:
-		return State::Defence_Init;
+		this->cardComboDataBase = dynamic_cast<CardComboDefence*>(std::move(data));
+		if (cardComboDataBase)
+		{
+			return State::Defence_Init;
+			break;
+		}
 		break;
 	case Card::Type::SPECIAL:
-		return State::Special_Init;
+		this->cardComboDataBase = dynamic_cast<CardComboNoUseing*>(std::move(data));
+		if (cardComboDataBase)
+		{
+			return State::Special_Init;
+			break;
+		}
 		break;
 	case Card::Type::DEBUFF:
-		return State::Debuff_Init;
+		this->cardComboDataBase = dynamic_cast<CardComboDebuff*>(std::move(data));
+		if (cardComboDataBase)
+		{
+			return State::Debuff_Init;
+			break;
+		}
 		break;
 	}
 	return State::Act_Finish_Init;

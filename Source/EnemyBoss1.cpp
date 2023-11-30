@@ -13,7 +13,7 @@ EnemyBoss1::EnemyBoss1(Character* p) :
 
 	height = 1.0f;
 	enemyType = ENEMY_TYPE::BOSS1;
-	actMax = 0;
+	actMax = 3;
 	actNo = 0;
 	state = State::Act_Init;
 	moveMax = 2;
@@ -129,7 +129,7 @@ void EnemyBoss1::UpdateState(float elapsedTime)
 		this->SetDirection({position.x - player->GetPosition().x, position.y - player->GetPosition().y});
 		actTimer = 0.5f;
 		state = State::KnockedBack;
-		//[[fallthrough]]
+		[[fallthrough]];
 	case State::KnockedBack:
 		actTimer -= elapsedTime;
 		if (!IsMoving() && actTimer < 0.0f)
