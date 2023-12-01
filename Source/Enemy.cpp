@@ -63,7 +63,7 @@ bool Enemy::ChooseTargetMove(float elapsedTime)
 		{
 			int targetX = position.x + (difX / abs(difX));
 			int targetY = position.y;
-			if (Stage::Instance()->GetSquare(targetX, targetY)->GetType() != Square::Type::Inaccessible)
+			if (IsTargetMovePosValid({ targetX, targetY }))
 			{
 				isValidHorizontal = true;
 			}
@@ -75,7 +75,7 @@ bool Enemy::ChooseTargetMove(float elapsedTime)
 		{
 			int targetX = position.x;
 			int targetY = position.y + (difY / abs(difY));
-			if (Stage::Instance()->GetSquare(targetX, targetY)->GetType() != Square::Type::Inaccessible)
+			if (IsTargetMovePosValid({ targetX, targetY }))
 			{
 				isValidVertical = true;
 			}
@@ -86,7 +86,7 @@ bool Enemy::ChooseTargetMove(float elapsedTime)
 	{
 		int targetX = position.x + (difX / abs(difX));
 		int targetY = position.y;
-		if (Stage::Instance()->GetSquare(targetX, targetY)->GetType() != Square::Type::Inaccessible)
+		if (IsTargetMovePosValid({ targetX, targetY }))
 		{
 			targetMovePos.x = targetX;
 			targetMovePos.y = targetY;
@@ -97,7 +97,7 @@ bool Enemy::ChooseTargetMove(float elapsedTime)
 	{
 		int targetX = position.x;
 		int targetY = position.y + (difY / abs(difY));
-		if (Stage::Instance()->GetSquare(targetX, targetY)->GetType() != Square::Type::Inaccessible)
+		if (IsTargetMovePosValid({ targetX, targetY }))
 		{
 			targetMovePos.x = targetX;
 			targetMovePos.y = targetY;
@@ -111,7 +111,7 @@ bool Enemy::ChooseTargetMove(float elapsedTime)
 		{
 			int targetX = position.x + (difX / abs(difX));
 			int targetY = position.y;
-			if (Stage::Instance()->GetSquare(targetX, targetY)->GetType() != Square::Type::Inaccessible)
+			if (IsTargetMovePosValid({ targetX, targetY }))
 			{
 				targetMovePos.x = targetX;
 				targetMovePos.y = targetY;
@@ -120,7 +120,7 @@ bool Enemy::ChooseTargetMove(float elapsedTime)
 		}
 		int targetX = position.x;
 		int targetY = position.y + (difY / abs(difY));
-		if (Stage::Instance()->GetSquare(targetX, targetY)->GetType() != Square::Type::Inaccessible)
+		if (IsTargetMovePosValid({ targetX, targetY }))
 		{
 			targetMovePos.x = targetX;
 			targetMovePos.y = targetY;
@@ -137,16 +137,57 @@ void Enemy::InitializeAttack(float elapsedTime)
 	std::vector<Square*> attackSq;
 	DirectX::XMINT2 dirPos = { player->GetPosition().x - position.x, player->GetPosition().y - position.y };
 
-	if (dirPos.x > 0)
+	//SetDirection(CommonClass::GetDirectionTarget(position, player->GetPosition()));
+	SetDirection(player->GetPosition());
+	/*if (dirPos.x > 0)
 		SetDirection(CommonClass::DirectionFace::Right);
 	else if (dirPos.x < 0)
 		SetDirection(CommonClass::DirectionFace::Left);
 	else if (dirPos.y > 0)
 		SetDirection(CommonClass::DirectionFace::Back);
 	else if (dirPos.y < 0)
-		SetDirection(CommonClass::DirectionFace::Front);
+		SetDirection(CommonClass::DirectionFace::Front);*/
 
-	attackSq = Stage::Instance()->GetSquaresByDirection(this->position.x, this->position.y, 2, this->GetDirection());
+	//todo:: double check front & back (range)
+	switch (GetDirection())
+	{
+	case CommonClass::DirectionFace::Back:
+		for (auto& pos : GetSquaresPositionX(position.y + size.y - 1))
+		{
+			for (auto& sq : Stage::Instance()->GetSquaresByDirection(pos.x, pos.y, 2, this->GetDirection()))
+			{
+				attackSq.emplace_back(sq);
+			}
+		}
+		break;
+	case CommonClass::DirectionFace::Front:
+		for (auto& pos : GetSquaresPositionX(position.y))
+		{
+			for (auto& sq : Stage::Instance()->GetSquaresByDirection(pos.x, pos.y, 2, this->GetDirection()))
+			{
+				attackSq.emplace_back(sq);
+			}
+		}
+		break;
+	case CommonClass::DirectionFace::Left:
+		for (auto& pos : GetSquaresPositionY(position.x))
+		{
+			for (auto& sq : Stage::Instance()->GetSquaresByDirection(pos.x, pos.y, 2, this->GetDirection()))
+			{
+				attackSq.emplace_back(sq);
+			}
+		}
+		break;
+	case CommonClass::DirectionFace::Right:
+		for (auto& pos : GetSquaresPositionY(position.x + size.x - 1))
+		{
+			for (auto& sq : Stage::Instance()->GetSquaresByDirection(pos.x, pos.y, 2, this->GetDirection()))
+			{
+				attackSq.emplace_back(sq);
+			}
+		}
+		break;
+	}
 	std::vector<DirectX::XMINT2> posVec;
 	for (auto& sq : attackSq)
 	{
@@ -164,14 +205,28 @@ void Enemy::InitializeAttack(float elapsedTime)
 State Enemy::ChooseAct(float elapsedTime)
 {
 	const DirectX::XMINT2 playerPos = player->GetPosition();
-	if (Stage::Instance()->IsAdjacent({ position.x, position.y }, playerPos))
+	if (Stage::Instance()->IsAdjacent(this, player) >= 0)
 	{
 		InitializeAttack(elapsedTime);
 		return State::Attack_Init;
 	}
 
+	int cost = INT_MAX;
+	for (int y = position.y; y < position.y + size.y; y++)
+	{
+		for (int x = position.x; x < position.x + size.x; x++)
+		{
+			int tempCost = Stage::Instance()->GetTargetPosCost({ x, y }, player->GetPosition());
+			cost = (cost > tempCost) ? tempCost : cost;
+		}
+	}
+	if (cost <= 2)
+	{
+		InitializeAttack(elapsedTime);
+		return State::Attack_Init;
+	}
 	//UŒ‚”ÍˆÍ‚ÉƒvƒŒƒCƒ„[‚ðŒŸõ
-	auto attackSquares = Stage::Instance()->GetSquaresEdgeAdjacent(position.x, position.y, 2);
+	/*auto attackSquares = Stage::Instance()->GetSquaresEdgeAdjacent(position.x, position.y, 2);
 	for (auto& sq : attackSquares)
 	{
 		const auto sqPos = sq->GetPos();
@@ -181,7 +236,7 @@ State Enemy::ChooseAct(float elapsedTime)
 			return State::Attack_Init;
 			break;
 		}
-	}
+	}*/
 
 	return State::Move_Init;
 }
