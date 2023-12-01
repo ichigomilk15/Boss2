@@ -439,9 +439,13 @@ void Player::SetDebuffAction()
 
 	if (debuffDetail->takeDamage > 0)
 	{
-		for (auto& t : debuffDetail->takeDamagetargets)
+		this->ApplyDamage(debuffDetail->takeDamage);
+	}
+	if (debuffDetail->attackDamage > 0)
+	{
+		for (auto& enemy : EnemyManager::Instance().GetList())
 		{
-			t->ApplyDamage(debuffDetail->takeDamage);
+			enemy->ApplyDamage(debuffDetail->attackDamage);
 		}
 	}
 

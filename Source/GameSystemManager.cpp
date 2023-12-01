@@ -15,7 +15,7 @@ GameSystemManager::GameSystemManager()
     DirectX::XMFLOAT2 size = { ScreenSize.x * 0.1f,ScreenSize.y * 0.1f };
     pouseButton.SetHitBox(HitBox2D(pos, size));
     pouseButton.AddComponent(new RenderComponent(nullptr));
-
+    
     pos.y += size.y;
     CardAllInfoButton.SetHitBox(HitBox2D(pos, size));
     CardAllInfoButton.AddComponent(new RenderComponent(nullptr));

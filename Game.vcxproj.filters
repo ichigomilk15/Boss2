@@ -255,6 +255,9 @@
     <ClInclude Include="Source\KnockbackAttack.h">
       <Filter>Source\Attacks</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Graphics\NumberSprite.h">
+      <Filter>Source\System\Graphics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="External\imgui\imgui.cpp">
@@ -424,6 +427,9 @@
     </ClCompile>
     <ClCompile Include="Source\KnockbackAttack.cpp">
       <Filter>Source\Attacks</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Graphics\NumberSprite.cpp">
+      <Filter>Source\System\Graphics</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

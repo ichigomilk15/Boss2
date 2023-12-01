@@ -12,6 +12,7 @@
 #include "PhaseManager.h"
 #include "PlayerManager.h"
 #include "GameSystemManager.h"
+#include "Graphics/NumberSprite.h"
 
 std::map<int, DirectX::XMFLOAT3> CommonClass::directionMaps;
 
@@ -191,6 +192,8 @@ void SceneGame::Render()
 
 
 		GameSystemManager::Instance().Render(dc);
+
+		NumberSprite::Instance().NumberOut("12345678990+-", dc, DirectX::XMFLOAT2{ .0f,.0f }, DirectX::XMFLOAT2{ 25.0f,25.0f }, DirectX::XMFLOAT4{ 1.0f,1.0f,1.0f,1.0f });
 	}
 	// 2DデバッグGUI描画
 	{

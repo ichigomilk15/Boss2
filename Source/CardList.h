@@ -48,8 +48,9 @@ struct CardComboMove final : public CardComboDataBase
 struct CardComboDebuff final : public CardComboDataBase
 {
 	int takeDamage;
-	std::vector<Character*> takeDamagetargets;
+	//std::vector<Character*> takeDamagetargets;
 	int heal;
+	int attackDamage;
 };
 
 struct CardComboNoUseing final : public CardComboDataBase

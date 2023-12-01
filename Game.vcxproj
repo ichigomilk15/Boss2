@@ -125,6 +125,7 @@
     <ClInclude Include="Source\Audio\AudioSource.h" />
     <ClInclude Include="Source\EnemyBoss1.h" />
     <ClInclude Include="Source\GameSystemManager.h" />
+    <ClInclude Include="Source\Graphics\NumberSprite.h" />
     <ClInclude Include="Source\HitCollisions.h" />
     <ClInclude Include="Source\Camera.h" />
     <ClInclude Include="Source\CameraController.h" />
@@ -207,6 +208,7 @@
     <ClCompile Include="Source\Graphics\LineRenderer.cpp" />
     <ClCompile Include="Source\Graphics\Model.cpp" />
     <ClCompile Include="Source\Graphics\ModelResource.cpp" />
+    <ClCompile Include="Source\Graphics\NumberSprite.cpp" />
     <ClCompile Include="Source\Graphics\Sprite.cpp" />
     <ClCompile Include="Source\HitCollisitons.cpp" />
     <ClCompile Include="Source\Input\GamePad.cpp" />

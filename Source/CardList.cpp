@@ -205,7 +205,8 @@ CardManager::CardManager() :
 		//デバフ単体
 		data.heal = 0;
 		data.takeDamage = 5;
-		data.takeDamagetargets.emplace_back(PlayerManager::Instance().GetFirstPlayer());
+		data.attackDamage = 0;
+		//data.takeDamagetargets.emplace_back(PlayerManager::Instance().GetFirstPlayer());
 		auto Data = std::make_shared<CardComboDebuff>(data);
 		Data->infomation = std::make_shared<Sprite>("./Data/Sprite/CardCombos/debuff.png");
 		CardComboDatas[typeNone][typeDebuff] = Data;
@@ -216,6 +217,7 @@ CardManager::CardManager() :
 		//デバフ*デバフ
 		data.heal = 5;
 		data.takeDamage = 0;
+		data.attackDamage = 0;
 		Data = std::make_shared<CardComboDebuff>(data);
 		Data->infomation = std::make_shared<Sprite>("./Data/Sprite/CardCombos/debuff_debuff.png");
 		CardComboDatas[typeDebuff][typeDebuff] = Data;
@@ -223,11 +225,12 @@ CardManager::CardManager() :
 		//バフ*デバフ
 		data.heal = 10;
 		data.takeDamage = 10;
-		data.takeDamagetargets.emplace_back(PlayerManager::Instance().GetFirstPlayer());
-		for (auto& e : EnemyManager::Instance().GetList())
-		{
-			data.takeDamagetargets.emplace_back(e);
-		}
+		data.attackDamage = 10;
+		//data.takeDamagetargets.emplace_back(PlayerManager::Instance().GetFirstPlayer());
+		//for (auto& e : EnemyManager::Instance().GetList())
+		//{
+		//	data.takeDamagetargets.emplace_back(e);
+		//}
 		Data = std::make_shared<CardComboDebuff>(data);
 		Data->infomation = std::make_shared<Sprite>("./Data/Sprite/CardCombos/buff_debuff.png");
 		CardComboDatas[typeSpecial][typeDebuff] = Data;
