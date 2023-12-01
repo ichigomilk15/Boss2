@@ -193,7 +193,7 @@ void SceneGame::Render()
 
 		GameSystemManager::Instance().Render(dc);
 
-		NumberSprite::Instance().NumberOut("12345678990+-", dc, DirectX::XMFLOAT2{ .0f,.0f }, DirectX::XMFLOAT2{ 25.0f,25.0f }, DirectX::XMFLOAT4{ 1.0f,1.0f,1.0f,1.0f });
+		NumberSprite::Instance().NumberOut("1112345678999", dc, DirectX::XMFLOAT2{ .0f,.0f }, DirectX::XMFLOAT2{ 500.0f,125 }, DirectX::XMFLOAT4{ 1.0f,1.0f,1.0f,1.0f });
 	}
 	// 2DデバッグGUI描画
 	{

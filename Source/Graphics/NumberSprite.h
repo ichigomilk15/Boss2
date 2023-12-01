@@ -3,6 +3,7 @@
 #include "Sprite.h"
 #include <DirectXMath.h>
 
+//•¶š•`‰æƒNƒ‰ƒX
 class NumberSprite
 {
 public:
