@@ -34,5 +34,6 @@ private:
 	UI pouseButton;
 	UI GoTitleButton;
 	UI ExitGameButton;
+	UI CardAllInfoButton;
 	std::unique_ptr<Sprite> pouseBackGround;
 };

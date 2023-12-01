@@ -24,6 +24,9 @@ protected:
 template<class T>
 concept is_base_of_component = requires {std::is_base_of_v<Component, T>; };
 
+template<class T>
+concept is_have_Render = requires(T t,ID3D11DeviceContext* dc) {is_base_of_component<T>; t.Render(dc); };
+
 //‰¼UI
 class UI
 {
@@ -55,9 +58,24 @@ public://functions
 	void AddChild(std::unique_ptr<UI> child);
 	UI* SearchChildFromName(const std::string& name)noexcept;
 
+	void ChildsRender(ID3D11DeviceContext* dc);
+
+	template<is_have_Render T>
+	void Render(ID3D11DeviceContext* dc)
+	{
+		if (auto renderer = GetComponent<T>())
+			renderer->Render(dc);
+	}
+
+	//Getter&Setter**********************************************************************************
+#if 1
 	const HitBox2D& GetHitBox()const noexcept { return collision; }
 	void SetHitBox(const HitBox2D& box)noexcept { collision = box; }
 	const std::string& GetName()const noexcept { return name; }
+#endif // 1
+	//Getter&Setter**********************************************************************************
+
+private://functions
 
 private://members
 	std::vector<Component*>	components;
@@ -87,3 +105,4 @@ private:
 	std::unique_ptr<Sprite> sprite;
 	DirectX::XMFLOAT4 color;
 };
+

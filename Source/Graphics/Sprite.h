@@ -20,7 +20,7 @@ public:
 	};
 
 	// ï`âÊé¿çs
-	void Render(ID3D11DeviceContext *dc,
+	DirectX::XMFLOAT2 Render(ID3D11DeviceContext *dc,
 		float dx, float dy,
 		float dw, float dh,
 		float sx, float sy,
@@ -28,7 +28,7 @@ public:
 		float angle,
 		float r, float g, float b, float a) const;
 	//ï`âÊ
-	void Render(ID3D11DeviceContext* dc,
+	DirectX::XMFLOAT2 Render(ID3D11DeviceContext* dc,
 		const DirectX::XMFLOAT2& pos,
 		const DirectX::XMFLOAT2& size,
 		const DirectX::XMFLOAT2& texturepos,
@@ -38,7 +38,7 @@ public:
 	)const ;
 
 	//âÊëúëSëÃï`âÊ
-	void Render(ID3D11DeviceContext* dc,
+	DirectX::XMFLOAT2 Render(ID3D11DeviceContext* dc,
 		const DirectX::XMFLOAT2& pos,
 		const DirectX::XMFLOAT2& size,
 		const float angle,

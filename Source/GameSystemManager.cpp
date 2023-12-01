@@ -16,6 +16,18 @@ GameSystemManager::GameSystemManager()
     pouseButton.SetHitBox(HitBox2D(pos, size));
     pouseButton.AddComponent(new RenderComponent(nullptr));
 
+    pos.y += size.y;
+    CardAllInfoButton.SetHitBox(HitBox2D(pos, size));
+    CardAllInfoButton.AddComponent(new RenderComponent(nullptr));
+
+    pos = { ScreenSize.x*0.5f,ScreenSize.y*0.5f };
+    size = { ScreenSize.x * 0.9f,ScreenSize.y * 0.9f };
+    CardAllInfoButton.AddChild(std::make_unique<UI>("allInfo"));
+    auto allInfo = CardAllInfoButton.SearchChildFromName("allInfo");
+    allInfo->SetHitBox(HitBox2D::CreateBoxFromCenter(pos, size));
+    allInfo->AddComponent(new RenderComponent("./Data/Sprite/CardCombos/_CardAllInfo.png"));
+
+
     pos = { ScreenSize.x * 0.5f,ScreenSize.y * 0.3f };
     size = { ScreenSize.x * 0.5f,ScreenSize.y * 0.2f };
     GoTitleButton.SetHitBox(HitBox2D::CreateBoxFromCenter(pos, size));
@@ -24,6 +36,8 @@ GameSystemManager::GameSystemManager()
     pos.y = ScreenSize.y * 0.6f;
     ExitGameButton.SetHitBox(HitBox2D::CreateBoxFromCenter(pos, size));
     ExitGameButton.AddComponent(new RenderComponent(nullptr));
+
+    
 
     pouseBackGround = std::make_unique<Sprite>();
 }
@@ -45,12 +59,22 @@ void GameSystemManager::Update(float elapsedTime)
 
 void GameSystemManager::Render(ID3D11DeviceContext* dc)
 {
+    Mouse& mouse = Input::Instance().GetMouse();
+
+
+    if (auto render = CardAllInfoButton.GetComponent<RenderComponent>())render->Render(dc);
     if (isPoused)
     {
         PousedOnlyRender(dc);
     }
 
     if(auto render = pouseButton.GetComponent<RenderComponent>())render->Render(dc);
+
+
+    if (!isPoused&& CardAllInfoButton.GetHitBox().Hit(mouse.GetPosition()))
+    {
+        CardAllInfoButton.SearchChildFromName("allInfo")->Render<RenderComponent>(dc);
+    }
 }
 
 void GameSystemManager::PousedOnlyUpdate(float elapsedTime)

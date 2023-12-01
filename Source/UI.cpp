@@ -34,6 +34,14 @@ UI* UI::SearchChildFromName(const std::string& name)noexcept
     return nullptr;
 }
 
+void UI::ChildsRender(ID3D11DeviceContext* dc)
+{
+    for (auto& child : childs)
+    {
+        child->ChildsRender(dc);
+    }
+}
+
 RenderComponent::RenderComponent(const char* filename):
     Component(),sprite(std::make_unique<Sprite>(filename)),color(1.0f,1.0f,1.0f,1.0f)
 {
