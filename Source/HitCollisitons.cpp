@@ -10,6 +10,17 @@ HitBox2D::~HitBox2D()
 {
 }
 
+HitBox2D HitBox2D::CreateBoxFromTopLeft(const DirectX::XMFLOAT2& topleft, const DirectX::XMFLOAT2& BoxSize)
+{
+    return HitBox2D(topleft,BoxSize);
+}
+
+HitBox2D HitBox2D::CreateBoxFromCenter(const DirectX::XMFLOAT2& center, const DirectX::XMFLOAT2& BoxSize)
+{
+    DirectX::XMFLOAT2 topleft = { center.x - BoxSize.x * 0.5f,center.y - BoxSize.y * 0.5f };
+    return HitBox2D(topleft,BoxSize);
+}
+
 const bool HitBox2D::Hit(const HitBox2D& dst) const noexcept
 {
     return !(

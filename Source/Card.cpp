@@ -14,12 +14,12 @@
 //todo : ƒJ[ƒh‰æ‘œ’Ç‰Á‚µ‚½‚Æ‚«‚É’Ç‰Á‚µ‚Ä‚­‚¾‚³‚¢
 const char*spriteName[static_cast<int>(Card::Type::MAX)] =
 {
-    "./Data/Sprite/Attack.png",//none
+    "./Data/Sprite/Back.png",//none
     "./Data/Sprite/Attack.png",//attack
     "./Data/Sprite/Defense.png",//defense
     "./Data/Sprite/Move.png",//move
-    "./Data/Sprite/Attack.png",//special
-    "./Data/Sprite/Attack.png",//bad
+    "./Data/Sprite/buff.png",//special
+    "./Data/Sprite/debuff.png",//bad
 };
 
 Card::Card(DirectX::XMFLOAT2 pos, DirectX::XMFLOAT2 size, const Type type) :
