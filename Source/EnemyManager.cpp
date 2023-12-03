@@ -93,6 +93,16 @@ const bool EnemyManager::GetIsAllActEnd() const
 	return true;
 }
 
+const bool EnemyManager::GetIsAllDead() const
+{
+	for (auto& enemy : enemies)
+	{
+		if (!enemy->GetIsDestroyed())
+			return false;
+	}
+	return true;
+}
+
 void EnemyManager::UpdateEnemiesTurn(float elapsedTime)
 {
 	if (PhaseManager::Instance().GetFhase() != PhaseManager::Phase::Phase_EnemyAct)

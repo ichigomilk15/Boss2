@@ -80,6 +80,4 @@ private://members
 	DirectX::XMFLOAT4 rotate{};
 
 	std::uniform_int_distribution<unsigned int> random;
-
-	//bool isSquareDirty = false; //ˆê‚Â‚Ìƒ}ƒX‚Å‚à•ÏŠ·‚ª‚ ‚Á‚½ê‡true‚É‚·‚é
 };

@@ -22,7 +22,8 @@ EnemyMinion1::EnemyMinion1(Character* p) :
 	attackPower = 7;
 	//attackAdjacentRange = 2;
 	isActEnd = false;
-	health = 100;
+	//health = 100;
+	health = 1;
 	SetDirection(CommonClass::DirectionFace::BackRight);
 }
 
@@ -31,7 +32,7 @@ void EnemyMinion1::UpdateState(float elapsedTime)
 	switch (state)
 	{
 	case State::Idle_Init:
-		if (this->model->IsPlayAnimation(Animation::Idle))
+		if (!this->model->IsPlayAnimation(Animation::Idle))
 			this->model->PlayAnimation(Animation::Idle, true);
 		state = State::Idle;
 		[[fallthrough]];

@@ -9,6 +9,9 @@ class Square;
 
 namespace Common
 {
+	//ステージ詳細
+	static int STAGE_MAX = 2;
+	
 	//マス詳細
 	static constexpr unsigned int SQUARE_NUM_X = 8u;
 	static constexpr unsigned int SQUARE_NUM_Y = 8u;

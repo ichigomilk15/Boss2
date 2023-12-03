@@ -62,6 +62,7 @@ public:
     void ResetTurnEnemies(); //ターン終了に敵をリセット
 
     const bool GetIsAllActEnd() const;
+    const bool GetIsAllDead() const;
 
 private:
     void UpdateEnemiesTurn(float elapsedTime); //敵のターン更新処理

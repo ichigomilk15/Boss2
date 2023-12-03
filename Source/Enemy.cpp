@@ -37,6 +37,7 @@ void Enemy::Destroy()
 
 void Enemy::OnDead()
 {
+	Destroy();
 }
 
 void Enemy::ResetStatus()
