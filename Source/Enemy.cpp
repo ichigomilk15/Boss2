@@ -187,6 +187,9 @@ void Enemy::InitializeAttack(float elapsedTime)
 			}
 		}
 		break;
+	default:
+		return;
+		break;
 	}
 	std::vector<DirectX::XMINT2> posVec;
 	for (auto& sq : attackSq)
@@ -220,7 +223,7 @@ State Enemy::ChooseAct(float elapsedTime)
 			cost = (cost > tempCost) ? tempCost : cost;
 		}
 	}
-	if (cost <= 2)
+	if (cost <= 1)
 	{
 		InitializeAttack(elapsedTime);
 		return State::Attack_Init;

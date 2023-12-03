@@ -275,11 +275,11 @@ void PhaseManager::SetGameStart()
 	player->SetState(State::Idle_Init);
 
 	//enemy‚Ì”z’u
-	/*EnemyMinion1* enemy = new EnemyMinion1(player);
+	EnemyMinion1* enemy = new EnemyMinion1(player);
 	EnemyManager::Instance().Register(enemy);
 	enemy->SetPositionWorld({ 1, 1 });
 	enemy->SetTargetMovePosition({ -1, -1 });
-	enemy->SetState(State::Idle_Init);*/
+	enemy->SetState(State::Idle_Init);
 
 	EnemyBoss1* boss1 = new EnemyBoss1(player);
 	EnemyManager::Instance().Register(boss1);
