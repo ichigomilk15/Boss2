@@ -47,7 +47,7 @@ void PhaseManager::Update(float elapsedTime)
 		//PlayerManager::Instance().GetFirstPlayer()->SetPositionWorld(Common::PlayerPosInit);
 		NextPhase();//次のフェーズへ
 
-		//todo : ステージのレベルを参照してenemyをセットする
+		//ステージのレベルを参照してenemyをセットする
 		Stage::Instance()->StageLevelStepUp();
 		StageInit(Stage::Instance()->GetStageLevel());
 		Stage::Instance()->ResetAllSquare();
@@ -104,7 +104,7 @@ void PhaseManager::Update(float elapsedTime)
 	case PhaseManager::Phase::Phase_Player:
 	{
 		Mouse& mouse = Input::Instance().GetMouse();
-		//todo : ここの条件にプレイヤーとエネミーの行動終了判定を追加
+		//okボタンを押したら次のフェーズへ
 		if (IsQuickNextPhase(mouse.GetButtonDown()&Mouse::BTN_LEFT&&
 			okButtonCollision.Hit(mouse.GetPosition()) && CardManager::Instance().IsFillSetCards()))
 		{
@@ -129,8 +129,8 @@ void PhaseManager::Update(float elapsedTime)
 
 		UpdatePlayerAct(elapsedTime); 
 
-		//todo : enemyが全員死んでいたらフェーズをphase_nextstage_init　に変更
-		if (/*IsSlowNextPhase(elapsedTime, true)*/IsSlowNextPhase(EnemyManager::Instance().GetIsAllDead()))
+		//enemyが全員死んでいたらフェーズをphase_nextstage_init　に変更
+		if (IsSlowNextPhase(EnemyManager::Instance().GetIsAllDead()))
 		{
 			ChangePhase(Phase::Phase_NextStage_Init);
 		}
@@ -320,6 +320,8 @@ void PhaseManager::StageInit(const int level)
 		enemy->SetAttackRange(1);
 		enemy->SetHealth(30);
 		enemy->SetMaxHealth(30);
+
+		Stage::Instance()->GetSquare(0, 0)->SetCard(std::make_shared<Card>(DirectX::XMFLOAT2{ .0f,.0f }, CardManager::CARD_SIZE, Card::Type::SPECIAL));
 	}
 	break;
 	case 2:

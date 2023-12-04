@@ -9,7 +9,7 @@
 
 Square::Square(const DirectX::XMINT2& pos) :
 	pos(pos),
-	scale(5.0f * 0.2f, 0.01f, 5.0f * 0.2f),
+	scale(5.0f * 0.2f,1.0f, 5.0f * 0.2f),
 	rotate(),
 	card(nullptr),
 	type(Type::NONE),
@@ -39,14 +39,15 @@ void Square::Update(float elapsedTime)
 
 void Square::Render(ID3D11DeviceContext* dc, Shader* shader)
 {
+	//épê®çsóÒåvéZ
+	DirectX::XMMATRIX Transform = GetTransform();
+	DirectX::XMFLOAT4X4 transform;
+	DirectX::XMStoreFloat4x4(&transform, Transform);
 
 	if (!SquareBorder.expired())
 	{
 		//ògÇÃï\é¶
 		std::shared_ptr<Model> model = this->SquareBorder.lock();
-		DirectX::XMMATRIX Transform = GetTransform();
-		DirectX::XMFLOAT4X4 transform;
-		DirectX::XMStoreFloat4x4(&transform, Transform);
 		model->UpdateTransform(transform);
 		shader->Draw(dc, model.get());
 
@@ -61,8 +62,13 @@ void Square::Render(ID3D11DeviceContext* dc, Shader* shader)
 	}
 
 	DebugRenderer* dr = Graphics::Instance().GetDebugRenderer();
-	if(card!=nullptr)
+	if (card != nullptr)
+	{
 		dr->DrawSphere(DirectX::XMFLOAT3(worldPos.x, worldPos.y + 0.5f, worldPos.z), .3f, DirectX::XMFLOAT4(.3f, 1.0f, .0f, 1.0f));
+		Model* model = Stage::Instance()->cardModel[card->GetType()].get();
+		model->UpdateTransform(transform);
+		shader->Draw(dc, model);
+	}
 }
 
 const bool Square::Raycast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end, HitResult& hit)

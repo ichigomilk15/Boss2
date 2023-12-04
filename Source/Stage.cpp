@@ -18,8 +18,11 @@ Stage::Stage() :
 	//squares(),
 	model(std::make_unique<Model>("./Data/Model/Stage/BackGround.mdl")),
 	squareBorder(std::make_shared<Model>("./Data/Model/Stage/SquareBorder.mdl")),
-	squareArea(std::make_shared<Model>("./Data/Model/Stage/SquareArea.mdl"))
+	squareArea(std::make_shared<Model>("./Data/Model/Stage/SquareArea.mdl")),
+	cardModel()
 {
+	cardModel[Card::Type::SPECIAL] = std::make_unique<Model>("./Data/Model/Stage/card_buff.mdl");
+	cardModel[Card::Type::DEBUFF] = std::make_unique<Model>("./Data/Model/Stage/card_debuff.mdl");
 	this->scale = { 3.0f,0.01f,3.0f };
 	this->position = { 0.0f, -1.0f, 0.0f };
 	random = std::uniform_int_distribution<unsigned int>(0u,Common::SQUARE_NUM_X-1);
@@ -47,9 +50,6 @@ void Stage::CreateStage()
 			squares[y][x] = std::make_shared<Square>(DirectX::XMINT2(x, y));
 		}
 	}
-
-	//todo : debug 
-	squares[0][0]->SetCard(std::make_unique<Card>(DirectX::XMFLOAT2{ .0f,.0f }, DirectX::XMFLOAT2{100.0f,100.0f}, Card::Type::SPECIAL));
 }
 
 const DirectX::XMFLOAT3 Stage::GetWorldPos(const DirectX::XMINT2& pos) const

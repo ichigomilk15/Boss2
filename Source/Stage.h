@@ -6,10 +6,12 @@
 #include <DirectXMath.h>
 #include <utility>
 #include <random>
+#include <map>
 
 #include "Collision.h"
 #include "Common.h"
 #include "Square.h"
+#include "Card.h"
 
 class Model;
 class Shader;
@@ -73,6 +75,7 @@ private://members
 	unsigned int stageLevel = 0u;
 	std::shared_ptr<Square> squares[Common::SQUARE_NUM_Y][Common::SQUARE_NUM_X];
 	std::unique_ptr<Model> model;
+	std::map<Card::Type,std::unique_ptr<Model>> cardModel;
 	std::shared_ptr<Model> squareBorder;
 	std::shared_ptr<Model> squareArea;
 
