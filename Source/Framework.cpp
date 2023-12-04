@@ -93,11 +93,13 @@ void Framework::CalculateFrameStats()
 	if ((timer.TimeStamp() - time_tlapsed) >= 1.0f)
 	{
 		float fps = static_cast<float>(frames); // fps = frameCnt / 1
+#ifdef _DEBUG
 		float mspf = 1000.0f / fps;
 		std::ostringstream outs;
 		outs.precision(6);
 		outs << "FPS : " << fps << " / " << "Frame Time : " << mspf << " (ms)";
 		SetWindowTextA(hWnd, outs.str().c_str());
+#endif // _DEBUG
 
 		// Reset for next average.
 		frames = 0;
