@@ -46,12 +46,13 @@ void PhaseManager::Update(float elapsedTime)
 	//***********************************************************************************
 	case PhaseManager::Phase::Phase_NextStage_Init:
 	{
-		PlayerManager::Instance().GetFirstPlayer()->SetPositionWorld(Common::PlayerPosInit);
+		//PlayerManager::Instance().GetFirstPlayer()->SetPositionWorld(Common::PlayerPosInit);
 		NextPhase();//次のフェーズへ
 
 		//todo : ステージのレベルを参照してenemyをセットする
 		Stage::Instance()->StageLevelStepUp();
 		StageInit(Stage::Instance()->GetStageLevel());
+		Stage::Instance()->ResetAllSquare();
 	}
 	[[fallthrough]];
 	case PhaseManager::Phase::Phase_NextStage:
@@ -307,6 +308,7 @@ void PhaseManager::StageInit(const int level)
 	{
 	case 1:
 	{
+		PlayerManager::Instance().GetFirstPlayer()->SetPositionWorld(Common::PlayerPosInit);
 		//enemyの配置
 		EnemyMinion1* enemy = new EnemyMinion1(PlayerManager::Instance().GetFirstPlayer());
 		EnemyManager::Instance().Register(enemy);
@@ -320,10 +322,10 @@ void PhaseManager::StageInit(const int level)
 		auto player = PlayerManager::Instance().GetFirstPlayer();
 		EnemyBoss1* boss1 = new EnemyBoss1(player);
 		EnemyManager::Instance().Register(boss1);
-		DirectX::XMFLOAT2 pos;
+		DirectX::XMINT2 pos;
 		pos.x = (player->GetPosition().x > 4) ? 0 : 5;
 		pos.y = (player->GetPosition().y > 4) ? 0 : 5;
-		boss1->SetPositionWorld({ 4, 3 });
+		boss1->SetPositionWorld(pos);
 		boss1->SetTargetMovePosition({ -1, -1 });
 		boss1->SetSize({ 2, 2 });
 		DirectX::XMFLOAT3 pivot = { Common::SquareWidth / 2, -5.0f, -Common::SquareHeight / 2 };
