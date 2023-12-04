@@ -50,6 +50,9 @@ private:
 
 	//ダメージを受けた時
 	void OnDamaged() override;
+
+	//ステージからのカードを取得処理
+	void GetCard(Card* getCard);
 private:
 	Model* model = nullptr;
 	Effect* hitEffect = nullptr;

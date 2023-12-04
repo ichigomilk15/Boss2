@@ -62,7 +62,7 @@ void Player::Render(ID3D11DeviceContext* dc, Shader* shader)
 	shader->Draw(dc, model);
 }
 
-void Player::Render2D(RenderContext& rc,ID3D11DeviceContext* dc)
+void Player::Render2D(RenderContext& rc, ID3D11DeviceContext* dc)
 {
 	Graphics& graphics = Graphics::Instance();
 	D3D11_VIEWPORT viewPort;
@@ -73,8 +73,8 @@ void Player::Render2D(RenderContext& rc,ID3D11DeviceContext* dc)
 	DirectX::XMMATRIX Projection = DirectX::XMLoadFloat4x4(&rc.projection);
 
 	DirectX::XMVECTOR WorldPos = DirectX::XMVectorSet(positionWorld.x, positionWorld.y + height, positionWorld.z, .0f);
-	DirectX::XMVECTOR ScreenPos = DirectX::XMVector3Project(WorldPos,viewPort.TopLeftX,viewPort.TopLeftY,
-		viewPort.Width,viewPort.Height,viewPort.MinDepth,viewPort.MaxDepth,Projection,View,DirectX::XMMatrixIdentity());
+	DirectX::XMVECTOR ScreenPos = DirectX::XMVector3Project(WorldPos, viewPort.TopLeftX, viewPort.TopLeftY,
+		viewPort.Width, viewPort.Height, viewPort.MinDepth, viewPort.MaxDepth, Projection, View, DirectX::XMMatrixIdentity());
 
 	DirectX::XMFLOAT2 screenPos;
 	DirectX::XMStoreFloat2(&screenPos, ScreenPos);
@@ -334,6 +334,12 @@ void Player::UpdateMove(float elapsedTime)
 
 State Player::MovingEnd()
 {
+	Card* getCard = Stage::Instance()->GetSquare(position.x, position.y)->GetCard();
+	if (getCard)
+	{
+		GetCard(getCard);
+	}
+
 	CardComboMove* moveDetail = dynamic_cast<CardComboMove*>(std::move(cardComboDataBase));
 	if (!moveDetail)
 		return State::Act_Init;
@@ -536,4 +542,17 @@ State Player::ChooseAct(float elapsedTime)
 void Player::OnDamaged()
 {
 	state = State::Damage_Init;
+}
+
+void Player::GetCard(Card* getCard)
+{
+	switch (getCard->GetType())
+	{
+	case Card::Type::SPECIAL:
+		CardManager::Instance().AddCardFront(std::make_shared<Card>(DirectX::XMFLOAT2{ .0f,.0f }, CardManager::CARD_SIZE, getCard->GetType()));
+		break;
+	case Card::Type::DEBUFF:
+		CardManager::Instance().AddCardReserved(std::make_shared<Card>(DirectX::XMFLOAT2{ .0f,.0f }, CardManager::CARD_SIZE, Card::Type::DEBUFF));
+		break;
+	}
 }
