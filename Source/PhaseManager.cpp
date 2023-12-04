@@ -315,11 +315,43 @@ void PhaseManager::StageInit(const int level)
 		enemy->SetPositionWorld({ 1, 1 });
 		enemy->SetTargetMovePosition({ -1, -1 });
 		enemy->SetState(State::Idle_Init);
+		//todo: enemy update status
+		//体力は３０
+		/*auto square = Stage::Instance()->GetSquare(2, 2);
+		square->SetCard(std::make_shared<Card>(DirectX::XMFLOAT2{ .0f,.0f }, CardManager::CARD_SIZE, Card::Type::SPECIAL));*/
 		enemy->SetAttackRange(1);
 		enemy->SetHealth(30);
 	}
-		break;
+	break;
 	case 2:
+	{
+		//enemyの配置
+		EnemyMinion1* enemy = new EnemyMinion1(PlayerManager::Instance().GetFirstPlayer());
+		EnemyManager::Instance().Register(enemy);
+		enemy->SetPositionWorld({ 6, 6 });
+		enemy->SetTargetMovePosition({ -1, -1 });
+		enemy->SetState(State::Idle_Init);
+	}
+	break;
+	case 3:
+	{
+		//enemyの配置
+		EnemyMinion1* enemy = new EnemyMinion1(PlayerManager::Instance().GetFirstPlayer());
+		EnemyManager::Instance().Register(enemy);
+		enemy->SetPositionWorld({ 1, 1 });
+		enemy->SetTargetMovePosition({ -1, -1 });
+		enemy->SetState(State::Idle_Init);
+
+		EnemyMinion1* enemy2 = new EnemyMinion1(PlayerManager::Instance().GetFirstPlayer());
+		EnemyManager::Instance().Register(enemy2);
+		enemy2->SetPositionWorld({ 6, 6 });
+		enemy2->SetTargetMovePosition({ -1, -1 });
+		enemy2->SetState(State::Idle_Init);
+		//todo: enemy update status
+		//体力は40にして攻撃範囲も1マス増やす
+	}
+		break;
+	case 4:
 	{
 		auto player = PlayerManager::Instance().GetFirstPlayer();
 		EnemyBoss1* boss1 = new EnemyBoss1(player);
