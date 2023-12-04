@@ -15,6 +15,11 @@ void Enemy::Update(float elapsedTime)
 	//オブジェクト行列を更新
 	UpdateTransform();
 
+#if _DEBUG
+	//攻撃範囲を表示
+
+#endif
+
 	this->model->UpdateAnimation(elapsedTime);
 	//モデル行列更新
 	model->UpdateTransform(transform);
@@ -155,7 +160,7 @@ void Enemy::InitializeAttack(float elapsedTime)
 	case CommonClass::DirectionFace::Back:
 		for (auto& pos : GetSquaresPositionX(position.y + size.y - 1))
 		{
-			for (auto& sq : Stage::Instance()->GetSquaresByDirection(pos.x, pos.y, 2, this->GetDirection()))
+			for (auto& sq : Stage::Instance()->GetSquaresByDirection(pos.x, pos.y, attackRange, this->GetDirection()))
 			{
 				attackSq.emplace_back(sq);
 			}
@@ -164,7 +169,7 @@ void Enemy::InitializeAttack(float elapsedTime)
 	case CommonClass::DirectionFace::Front:
 		for (auto& pos : GetSquaresPositionX(position.y))
 		{
-			for (auto& sq : Stage::Instance()->GetSquaresByDirection(pos.x, pos.y, 2, this->GetDirection()))
+			for (auto& sq : Stage::Instance()->GetSquaresByDirection(pos.x, pos.y, attackRange, this->GetDirection()))
 			{
 				attackSq.emplace_back(sq);
 			}
@@ -173,7 +178,7 @@ void Enemy::InitializeAttack(float elapsedTime)
 	case CommonClass::DirectionFace::Left:
 		for (auto& pos : GetSquaresPositionY(position.x))
 		{
-			for (auto& sq : Stage::Instance()->GetSquaresByDirection(pos.x, pos.y, 2, this->GetDirection()))
+			for (auto& sq : Stage::Instance()->GetSquaresByDirection(pos.x, pos.y, attackRange, this->GetDirection()))
 			{
 				attackSq.emplace_back(sq);
 			}
@@ -182,7 +187,7 @@ void Enemy::InitializeAttack(float elapsedTime)
 	case CommonClass::DirectionFace::Right:
 		for (auto& pos : GetSquaresPositionY(position.x + size.x - 1))
 		{
-			for (auto& sq : Stage::Instance()->GetSquaresByDirection(pos.x, pos.y, 2, this->GetDirection()))
+			for (auto& sq : Stage::Instance()->GetSquaresByDirection(pos.x, pos.y, attackRange, this->GetDirection()))
 			{
 				attackSq.emplace_back(sq);
 			}
@@ -224,7 +229,7 @@ State Enemy::ChooseAct(float elapsedTime)
 			cost = (cost > tempCost) ? tempCost : cost;
 		}
 	}
-	if (cost <= 1)
+	if (cost <= attackRange)
 	{
 		InitializeAttack(elapsedTime);
 		return State::Attack_Init;

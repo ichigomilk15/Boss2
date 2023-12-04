@@ -62,7 +62,7 @@ public:
 	bool IsTargetMovePosValid(const DirectX::XMINT2& targetPos);
 
 	//回復
-	void Heal(const int hp) { this->health += hp; }
+	void Heal(const int hp);
 
 	//位置取得
 	const DirectX::XMFLOAT3& GetPositionWorld() const { return positionWorld; }
@@ -119,6 +119,8 @@ public:
 	//ステート取得
 	const State GetState() const { return this->state; }
 
+	//健康状態を設定
+	void SetHealth(const int hp) { this->health = hp; }
 	//健康状態取得
 	int GetHealth() const { return health; }
 

@@ -6,10 +6,10 @@ EnemyBoss1::EnemyBoss1(Character* p) :
 	Enemy(p)
 {
 	//model = std::make_unique<Model>("Data/Model/Jammo/Jammo.mdl");
-	model = std::make_unique<Model>("Data/Model/Enemy/Normal1/NormalEnemy1.mdl");
+	model = std::make_unique<Model>("Data/Model/Enemy/Boss/Boss.mdl");
 
 	//ÉXÉPÅ[ÉãÇÃí≤êÆ
-	scale.x = scale.y = scale.z = 0.6f;
+	scale.x = scale.y = scale.z = 0.18f;
 
 	height = 1.0f;
 	enemyType = ENEMY_TYPE::BOSS1;
@@ -18,9 +18,7 @@ EnemyBoss1::EnemyBoss1(Character* p) :
 	state = State::Act_Init;
 	moveMax = 2;
 	attackPower = 7;
-	//attackAdjacentRange = 2;
 	isActEnd = false;
-	health = 100;
 	SetDirection(CommonClass::DirectionFace::BackRight);
 }
 

@@ -15,15 +15,13 @@ EnemyMinion1::EnemyMinion1(Character* p) :
 
 	height = 1.0f;
 	enemyType = ENEMY_TYPE::BOSS1;
-	actMax = 3;
+	actMax = 2;
 	actNo = 0;
 	state = State::Act_Init;
 	moveMax = 2;
 	attackPower = 7;
 	//attackAdjacentRange = 2;
 	isActEnd = false;
-	//health = 100;
-	health = 1;
 	SetDirection(CommonClass::DirectionFace::BackRight);
 }
 
@@ -124,6 +122,7 @@ void EnemyMinion1::UpdateState(float elapsedTime)
 		if (!attack || (attack && attack->GetIsDestroy()) || !model->IsPlayAnimation())
 		{
 			attack = nullptr;
+			actNo = actMax;
 			SetState(State::Act_Init);
 		}
 		break;
