@@ -122,7 +122,7 @@ void EnemyMinion1::UpdateState(float elapsedTime)
 		if (!attack || (attack && attack->GetIsDestroy()) || !model->IsPlayAnimation())
 		{
 			attack = nullptr;
-			actNo = actMax;
+			//actNo = actMax;
 			SetState(State::Act_Init);
 		}
 		break;

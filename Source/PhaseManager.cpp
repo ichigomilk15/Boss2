@@ -315,12 +315,9 @@ void PhaseManager::StageInit(const int level)
 		enemy->SetPositionWorld({ 1, 1 });
 		enemy->SetTargetMovePosition({ -1, -1 });
 		enemy->SetState(State::Idle_Init);
-		//todo: enemy update status
-		//‘Ì—Í‚Í‚R‚O
-		/*auto square = Stage::Instance()->GetSquare(2, 2);
-		square->SetCard(std::make_shared<Card>(DirectX::XMFLOAT2{ .0f,.0f }, CardManager::CARD_SIZE, Card::Type::SPECIAL));*/
 		enemy->SetAttackRange(1);
 		enemy->SetHealth(30);
+		enemy->SetMaxHealth(30);
 	}
 	break;
 	case 2:
@@ -331,6 +328,9 @@ void PhaseManager::StageInit(const int level)
 		enemy->SetPositionWorld({ 6, 6 });
 		enemy->SetTargetMovePosition({ -1, -1 });
 		enemy->SetState(State::Idle_Init);
+		enemy->SetAttackRange(1);
+		enemy->SetHealth(30);
+		enemy->SetMaxHealth(30);
 	}
 	break;
 	case 3:
@@ -341,14 +341,18 @@ void PhaseManager::StageInit(const int level)
 		enemy->SetPositionWorld({ 1, 1 });
 		enemy->SetTargetMovePosition({ -1, -1 });
 		enemy->SetState(State::Idle_Init);
+		enemy->SetAttackRange(1);
+		enemy->SetHealth(30);
+		enemy->SetMaxHealth(30);
 
 		EnemyMinion1* enemy2 = new EnemyMinion1(PlayerManager::Instance().GetFirstPlayer());
 		EnemyManager::Instance().Register(enemy2);
 		enemy2->SetPositionWorld({ 6, 6 });
 		enemy2->SetTargetMovePosition({ -1, -1 });
 		enemy2->SetState(State::Idle_Init);
-		//todo: enemy update status
-		//‘Ì—Í‚Í40‚É‚µ‚ÄUŒ‚”ÍˆÍ‚à1ƒ}ƒX‘‚â‚·
+		enemy2->SetAttackRange(2);
+		enemy2->SetHealth(40);
+		enemy2->SetMaxHealth(40);
 	}
 		break;
 	case 4:
@@ -366,6 +370,7 @@ void PhaseManager::StageInit(const int level)
 		boss1->SetPivotAdjustPosWorld(pivot);
 		boss1->SetState(State::Idle_Init);
 		boss1->SetHealth(100);
+		boss1->SetMaxHealth(100);
 		boss1->SetAttackRange(2);
 	}
 		break;

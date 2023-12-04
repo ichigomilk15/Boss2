@@ -124,6 +124,8 @@ public:
 	//Œ’Nó‘Ôæ“¾
 	int GetHealth() const { return health; }
 
+	//Å‘åŒ’Nó‘Ô‚ğİ’è
+	void SetMaxHealth(const int maxHp) { this->maxHealth = maxHp; }
 	//Å‘åŒ’Nó‘Ô‚ğæ“¾
 	int GetMaxHealth() const { return maxHealth; }
 
