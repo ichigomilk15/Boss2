@@ -1,6 +1,8 @@
+#define NOMINMAX
 #include "Character.h"
 #include "CustomMathf.h"
 #include "Stage.h"
+#undef NOMINMAX
 
 void Character::UpdateTransform()
 {
@@ -136,6 +138,12 @@ bool Character::IsTargetMovePosValid(const DirectX::XMINT2& targetPos)
 		}
 	}
 	return true;
+}
+
+void Character::Heal(const int hp)
+{
+	this->health += hp; 
+	this->health = std::min(health, maxHealth);
 }
 
 void Character::ResetStatus()

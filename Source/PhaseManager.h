@@ -66,6 +66,8 @@ private:
 	const bool IsSlowNextPhase(const bool flag);
 	//ğŒ‚ğ–‚½‚µ‚½uŠÔ‚Étrue‚ğ•Ô‚·
 	const bool IsQuickNextPhase(const bool flag);
+
+	void StageInit(const int level);
 public:
 	static constexpr float NEXT_PHASE_WAIT_TIMER = 1.0f;
 private:

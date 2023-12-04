@@ -44,11 +44,13 @@ void PhaseManager::Update(float elapsedTime)
 	//***********************************************************************************
 	case PhaseManager::Phase::Phase_NextStage_Init:
 	{
-		//todo : ステージのレベルを参照してenemyをセットする
-		//Stage::Instance()->GetStageLevel();
-
-		PlayerManager::Instance().GetFirstPlayer()->SetPositionWorld(Common::PlayerPosInit);
+		//PlayerManager::Instance().GetFirstPlayer()->SetPositionWorld(Common::PlayerPosInit);
 		NextPhase();//次のフェーズへ
+
+		//todo : ステージのレベルを参照してenemyをセットする
+		Stage::Instance()->StageLevelStepUp();
+		StageInit(Stage::Instance()->GetStageLevel());
+		Stage::Instance()->ResetAllSquare();
 	}
 	[[fallthrough]];
 	case PhaseManager::Phase::Phase_NextStage:
@@ -128,7 +130,7 @@ void PhaseManager::Update(float elapsedTime)
 		UpdatePlayerAct(elapsedTime); 
 
 		//todo : enemyが全員死んでいたらフェーズをphase_nextstage_init　に変更
-		if (/*IsSlowNextPhase(elapsedTime, true)*/false)
+		if (/*IsSlowNextPhase(elapsedTime, true)*/IsSlowNextPhase(EnemyManager::Instance().GetIsAllDead()))
 		{
 			ChangePhase(Phase::Phase_NextStage_Init);
 		}
@@ -281,22 +283,6 @@ void PhaseManager::SetGameStart()
 	player->SetTargetMovePosition({ -1, -1 });
 	player->SetState(State::Idle_Init);
 
-	//enemyの配置
-	/*EnemyMinion1* enemy = new EnemyMinion1(player);
-	EnemyManager::Instance().Register(enemy);
-	enemy->SetPositionWorld({ 1, 1 });
-	enemy->SetTargetMovePosition({ -1, -1 });
-	enemy->SetState(State::Idle_Init);*/
-
-	EnemyBoss1* boss1 = new EnemyBoss1(player);
-	EnemyManager::Instance().Register(boss1);
-	boss1->SetPositionWorld({ 4, 3 });
-	boss1->SetTargetMovePosition({ -1, -1 });
-	boss1->SetSize({ 2, 2 });
-	DirectX::XMFLOAT3 pivot = { Common::SquareWidth / 2, -5.0f, -Common::SquareHeight / 2 };
-	boss1->SetPivotAdjustPosWorld(pivot);
-	boss1->SetState(State::Idle_Init);
-
 	//盤面のリセット
 	Stage::Instance()->ResetAllSquare();
 }
@@ -316,4 +302,80 @@ const bool PhaseManager::IsQuickNextPhase(const bool flag)
 {
 	isNextPhase |= flag;
 	return flag;
+}
+
+void PhaseManager::StageInit(const int level)
+{
+	switch (level)
+	{
+	case 1:
+	{
+		PlayerManager::Instance().GetFirstPlayer()->SetPositionWorld(Common::PlayerPosInit);
+		//enemyの配置
+		EnemyMinion1* enemy = new EnemyMinion1(PlayerManager::Instance().GetFirstPlayer());
+		EnemyManager::Instance().Register(enemy);
+		enemy->SetPositionWorld({ 1, 1 });
+		enemy->SetTargetMovePosition({ -1, -1 });
+		enemy->SetState(State::Idle_Init);
+		enemy->SetAttackRange(1);
+		enemy->SetHealth(30);
+		enemy->SetMaxHealth(30);
+	}
+	break;
+	case 2:
+	{
+		//enemyの配置
+		EnemyMinion1* enemy = new EnemyMinion1(PlayerManager::Instance().GetFirstPlayer());
+		EnemyManager::Instance().Register(enemy);
+		enemy->SetPositionWorld({ 6, 6 });
+		enemy->SetTargetMovePosition({ -1, -1 });
+		enemy->SetState(State::Idle_Init);
+		enemy->SetAttackRange(1);
+		enemy->SetHealth(30);
+		enemy->SetMaxHealth(30);
+	}
+	break;
+	case 3:
+	{
+		//enemyの配置
+		EnemyMinion1* enemy = new EnemyMinion1(PlayerManager::Instance().GetFirstPlayer());
+		EnemyManager::Instance().Register(enemy);
+		enemy->SetPositionWorld({ 1, 1 });
+		enemy->SetTargetMovePosition({ -1, -1 });
+		enemy->SetState(State::Idle_Init);
+		enemy->SetAttackRange(1);
+		enemy->SetHealth(30);
+		enemy->SetMaxHealth(30);
+
+		EnemyMinion1* enemy2 = new EnemyMinion1(PlayerManager::Instance().GetFirstPlayer());
+		EnemyManager::Instance().Register(enemy2);
+		enemy2->SetPositionWorld({ 6, 6 });
+		enemy2->SetTargetMovePosition({ -1, -1 });
+		enemy2->SetState(State::Idle_Init);
+		enemy2->SetAttackRange(2);
+		enemy2->SetHealth(40);
+		enemy2->SetMaxHealth(40);
+	}
+		break;
+	case 4:
+	{
+		auto player = PlayerManager::Instance().GetFirstPlayer();
+		EnemyBoss1* boss1 = new EnemyBoss1(player);
+		EnemyManager::Instance().Register(boss1);
+		DirectX::XMINT2 pos;
+		pos.x = (player->GetPosition().x > 4) ? 0 : 5;
+		pos.y = (player->GetPosition().y > 4) ? 0 : 5;
+		boss1->SetPositionWorld(pos);
+		boss1->SetTargetMovePosition({ -1, -1 });
+		boss1->SetSize({ 2, 2 });
+		DirectX::XMFLOAT3 pivot = { Common::SquareWidth / 2, 1.0f, -Common::SquareHeight / 2 };
+		boss1->SetPivotAdjustPosWorld(pivot);
+		boss1->SetState(State::Idle_Init);
+		boss1->SetHealth(100);
+		boss1->SetMaxHealth(100);
+		boss1->SetAttackRange(2);
+	}
+		break;
+
+	}
 }

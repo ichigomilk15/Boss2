@@ -62,7 +62,7 @@ public:
 	bool IsTargetMovePosValid(const DirectX::XMINT2& targetPos);
 
 	//‰ñ•œ
-	void Heal(const int hp) { this->health += hp; }
+	void Heal(const int hp);
 
 	//ˆÊ’uæ“¾
 	const DirectX::XMFLOAT3& GetPositionWorld() const { return positionWorld; }
@@ -119,9 +119,13 @@ public:
 	//ƒXƒe[ƒgæ“¾
 	const State GetState() const { return this->state; }
 
+	//Œ’Nó‘Ô‚ğİ’è
+	void SetHealth(const int hp) { this->health = hp; }
 	//Œ’Nó‘Ôæ“¾
 	int GetHealth() const { return health; }
 
+	//Å‘åŒ’Nó‘Ô‚ğİ’è
+	void SetMaxHealth(const int maxHp) { this->maxHealth = maxHp; }
 	//Å‘åŒ’Nó‘Ô‚ğæ“¾
 	int GetMaxHealth() const { return maxHealth; }
 

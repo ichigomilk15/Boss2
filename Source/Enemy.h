@@ -41,6 +41,11 @@ public:
 
 	virtual void ResetStatus() override;
 
+	//攻撃範囲を設定
+	void SetAttackRange(const int range) { this->attackRange = range; }
+	//攻撃範囲を取得
+	const int GetAttackRange() const { return this->attackRange; }
+
 protected:
 	//移動の更新処理
 	virtual bool ChooseTargetMove(float elapsedTime);
@@ -59,6 +64,8 @@ protected:
 	int moveMax = 2;
 	int actMax = 3;				//1ターンに行動数
 	int actNo = 0;				//行動回数・ターン始まりにリセット
+
+	int attackRange = 2;
 
 	struct DestroyedStatus
 	{
