@@ -126,6 +126,29 @@ void Player::DrawDebugPrimitive()
 
 void Player::UpdateState(float elapsedTime)
 {
+	//#if _DEBUG
+	//	GamePad& gamePad = Input::Instance().GetGamePad();
+	//	if (gamePad.GetButtonDown() & gamePad.BTN_UP)
+	//	{
+	//		targetMovePos.y = position.y - 1;
+	//		SetState(State::Moving_Init);
+	//	}
+	//	if (gamePad.GetButtonDown() & gamePad.BTN_DOWN)
+	//	{
+	//		targetMovePos.y = position.y + 1;
+	//		SetState(State::Moving_Init);
+	//	}
+	//	if (gamePad.GetButtonDown() & gamePad.BTN_LEFT)
+	//	{
+	//		targetMovePos.y = position.x - 1;
+	//		SetState(State::Moving_Init);
+	//	}
+	//	if (gamePad.GetButtonDown() & gamePad.BTN_RIGHT)
+	//	{
+	//		targetMovePos.y = position.x + 1;
+	//		SetState(State::Moving_Init);
+	//	}
+	//#endif
 	switch (state)
 	{
 	case State::Idle_Init:
@@ -270,6 +293,22 @@ void Player::UpdateState(float elapsedTime)
 			break;
 		}
 		break;
+
+	case State::KnockedBack_Init:
+		if (targetMovePos.x > 0 || targetMovePos.y > 0)
+			this->SetDirection({ position.x - targetMovePos.x, position.y - targetMovePos.y });
+		actTimer = 0.5f;
+		state = State::KnockedBack;
+		[[fallthrough]];
+	case State::KnockedBack:
+		actTimer -= elapsedTime;
+		if (!IsMoving() && actTimer < 0.0f)
+		{
+			SetState(State::Idle_Init);
+			break;
+		}
+		break;
+
 	case State::Act_Finish_Init:
 		actTimer = 0.5f;
 		state = State::Act_Finish;

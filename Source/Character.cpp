@@ -140,10 +140,35 @@ bool Character::IsTargetMovePosValid(const DirectX::XMINT2& targetPos)
 	return true;
 }
 
+bool Character::IsTargetMoveAttackPosValid(const DirectX::XMINT2& targetPos)
+{
+	for (int y = targetPos.y; y < targetPos.y + size.y; ++y)
+	{
+		for (int x = targetPos.x; x < targetPos.x + size.x; ++x)
+		{
+			if (!Stage::Instance()->IsInArea(x, y))
+				return false;
+		}
+	}
+	return true;
+}
+
 void Character::Heal(const int hp)
 {
-	this->health += hp; 
+	this->health += hp;
 	this->health = std::min(health, maxHealth);
+}
+
+int Character::GetWhichHorizontalSide(const DirectX::XMINT2& pos)
+{
+	int pivotX = position.x + ((size.x + 1) / 2 - 1);
+	return pos.x - pivotX;
+}
+
+int Character::GetWhichVerticalSide(const DirectX::XMINT2& pos)
+{
+	int pivotY = position.y + ((size.y + 1) / 2 - 1);
+	return pos.y - pivotY;
 }
 
 void Character::ResetStatus()

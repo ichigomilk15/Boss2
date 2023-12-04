@@ -60,9 +60,15 @@ public:
 
 	//移動目標位置が妥当か
 	bool IsTargetMovePosValid(const DirectX::XMINT2& targetPos);
+	bool IsTargetMoveAttackPosValid(const DirectX::XMINT2& targetPos);
 
 	//回復
 	void Heal(const int hp);
+
+	//キャラクターのサイズによって指定位置が左右かの判定
+	int GetWhichHorizontalSide(const DirectX::XMINT2& pos);
+	//キャラクターのサイズによって指定位置が上下かの判定
+	int GetWhichVerticalSide(const DirectX::XMINT2& pos);
 
 	//位置取得
 	const DirectX::XMFLOAT3& GetPositionWorld() const { return positionWorld; }
