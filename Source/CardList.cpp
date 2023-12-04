@@ -399,6 +399,18 @@ void CardManager::Render(ID3D11DeviceContext* dc)
 		Sprite* sprite = nullptr;
 		std::pair<Card::Type, Card::Type> types = { Card::Type::NONE,Card::Type::NONE };
 		renderSize = { renderSize.x,renderSize.y * 0.5f };
+		//左のタイプ決定
+		for (size_t i = 1; i < std::size(SetCards); i++)
+		{
+			DirectX::XMFLOAT2 pos = SET_CARDS_START_POS;
+			pos.y += (CARD_SIZE.y + CARD_DISTANCE) * i;
+			if (Collision2D::BoxVsPos(pos, CardManager::CARD_SIZE, mouse.GetPosition()))
+			{
+				if (auto card = SetCards[i-1])types.first = card->GetType();
+			}
+		}
+
+		//右のタイプ決定
 		if (!haveCard.expired())
 		{
 			types.second = haveCard.lock()->GetType();

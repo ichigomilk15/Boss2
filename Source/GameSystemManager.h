@@ -33,7 +33,8 @@ private:
 	bool isPoused = false;
 	UI pouseButton;
 	UI GoTitleButton;
-	UI ExitGameButton;
+	UI ExitPouseButton;
+	UI tutorialButton;
 	UI CardAllInfoButton;
-	std::unique_ptr<Sprite> pouseBackGround;
+	UI pouseBackGround;
 };
