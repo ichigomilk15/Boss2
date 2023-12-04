@@ -78,10 +78,10 @@ void SceneGame::Finalize()
 // 更新処理
 void SceneGame::Update(float elapsedTime)
 {
-#ifdef _DEBUG
 	//カメラコントローラー更新処理
 	cameraController->Update(elapsedTime);
-#endif // _DEBUG
+
+
 	if (GameSystemManager::Instance().GetIsPoused())
 	{
 		GameSystemManager::Instance().Update(elapsedTime);
@@ -190,6 +190,7 @@ void SceneGame::Render()
 		//NumberSprite::Instance().NumberOut("1112345678999", dc, DirectX::XMFLOAT2{ .0f,.0f }, DirectX::XMFLOAT2{ 500.0f,125 }, DirectX::XMFLOAT4{ 1.0f,1.0f,1.0f,1.0f });
 	}
 	// 2DデバッグGUI描画
+#ifdef _DEBUG
 	{
 		//プレイヤーデバッグ描画
 		PlayerManager::Instance().DrawDebugGUI();
@@ -203,6 +204,7 @@ void SceneGame::Render()
 		CardManager::Instance().DrawDebugGUI();
 		PhaseManager::Instance().DrawDebugGUI();
 	}
+#endif // _DEBUG
 
 	auto&& manager = EffectManager::Instance().GetEffekseerManager().Get();
 	manager->GetSetting();
