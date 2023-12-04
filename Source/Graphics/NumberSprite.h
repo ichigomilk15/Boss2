@@ -1,7 +1,9 @@
 #pragma once
 
-#include "Sprite.h"
 #include <DirectXMath.h>
+#include <vector>
+
+#include "Sprite.h"
 
 //•¶Žš•`‰æƒNƒ‰ƒX
 class NumberSprite
@@ -13,7 +15,7 @@ private:
 	~NumberSprite()=default;
 
 public:
-	void NumberOut(const char* nums,ID3D11DeviceContext* dc,const DirectX::XMFLOAT2& pos,const DirectX::XMFLOAT2& size,const DirectX::XMFLOAT4& color)const ;
+	void NumberOut(const char* nums,ID3D11DeviceContext* dc,const DirectX::XMFLOAT2& pos,const DirectX::XMFLOAT2& size,const DirectX::XMFLOAT4& color)const;
 
 private:
 	Sprite numbers;

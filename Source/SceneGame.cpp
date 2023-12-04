@@ -30,7 +30,9 @@ void SceneGame::Initialize()
 
 	PlayerManager::Instance().Register(new Player);
 	Player* player = PlayerManager::Instance().GetFirstPlayer();
-	playerHP = std::make_unique<Sprite>();
+	playerHP[0] = std::make_unique<Sprite>("./Data/Sprite/life_waku.png");
+	playerHP[1] = std::make_unique<Sprite>("./Data/Sprite/life_1.png");
+	playerHP[2] = std::make_unique<Sprite>("./Data/Sprite/life_2.png");
 	CardManager::Instance().ALLClear();
 
 	//カメラ初期設定
@@ -51,8 +53,6 @@ void SceneGame::Initialize()
 
 	Stage::Instance()->ResetAllSquare();
 	Stage::Instance()->ResetSquaresAccessible();
-
-	effects.emplace_back(std::make_unique<Effect>("./Data/Effect/Stun0.efk"));
 
 	PhaseManager::Instance().Initialize();
 }
@@ -107,6 +107,7 @@ void SceneGame::Update(float elapsedTime)
 void SceneGame::Render()
 {
 	Graphics& graphics = Graphics::Instance();
+	const DirectX::XMFLOAT2 ScreenSize = graphics.GetScreenSize();
 	ID3D11DeviceContext* dc = graphics.GetDeviceContext();
 	ID3D11RenderTargetView* rtv = graphics.GetRenderTargetView();
 	ID3D11DepthStencilView* dsv = graphics.GetDepthStencilView();
@@ -157,35 +158,28 @@ void SceneGame::Render()
 
 	//2D表示
 	{
+		{
 
-		const DirectX::XMFLOAT2 pos = { 50.0f,50.0f };
-		const DirectX::XMFLOAT2 HpBarSize = { 250.0f,50.0f };
-		const DirectX::XMFLOAT2 HpBarBorderSize = { 2.0f,2.0f };
-		//外枠
-		playerHP->Render(dc,
-			pos.x - HpBarBorderSize.x, pos.y - HpBarBorderSize.y,
-			HpBarSize.x + HpBarBorderSize.x * 2.0f, HpBarSize.y + HpBarBorderSize.y * 2.0f,
-			.0f, .0f, static_cast<float>(playerHP->GetTextureWidth()), static_cast<float>(playerHP->GetTextureHeight()),
-			DirectX::XMConvertToRadians(.0f), .0f, .0f, .0f, 1.0f);
+			Player* pl = PlayerManager::Instance().GetFirstPlayer();
+			const DirectX::XMFLOAT2 scale = { playerHP[1]->GetTextureWidthf() / playerHP[0]->GetTextureWidthf(),playerHP[1]->GetTextureHeightf() / playerHP[0]->GetTextureHeightf() };
+			const DirectX::XMFLOAT2 HpBarSize = {ScreenSize.x*0.2f,ScreenSize.y*0.1f};
+			const DirectX::XMFLOAT2 pos[] = { {},{+95.0f*(HpBarSize.x/playerHP[0]->GetTextureWidthf()),+60.0f*(HpBarSize.y/ playerHP[0]->GetTextureHeightf())} };
+			DirectX::XMFLOAT2 size[] =
+			{
+				HpBarSize,
+				{HpBarSize.x * (pl->GetHealth() / (float)pl->GetMaxHealth()) * scale.x,HpBarSize.y * scale.y},
+				{HpBarSize.x * (pl->Getshield() / (float)pl->GetMaxHealth()) * scale.x,HpBarSize.y * scale.y }
+			};
+		
+			for (size_t i = 0,end = std::size(playerHP); i < end; i++)
+			{
+				playerHP[i]->Render(dc, pos[(std::min)(i,std::size(pos)-1)], size[i], .0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));
+			}
 
-		auto player = PlayerManager::Instance().GetFirstPlayer();
+			
+		}
 
-		//中身
-		playerHP->Render(dc,
-			pos.x, pos.y,
-			HpBarSize.x*player->GetHealth()/static_cast<float>(player->GetMaxHealth()), HpBarSize.y,
-			.0f, .0f, static_cast<float>(playerHP->GetTextureWidth()), static_cast<float>(playerHP->GetTextureHeight()),
-			DirectX::XMConvertToRadians(.0f),
-			1.0f, .0f, .0f, 1.0f);
-
-
-		//シールドの描画
-		playerHP->Render(dc,
-			pos.x, pos.y,
-			HpBarSize.x * (player->Getshield()/static_cast<float>(player->GetMaxHealth())), HpBarSize.y,
-			.0f, .0f, static_cast<float>(playerHP->GetTextureWidth()), static_cast<float>(playerHP->GetTextureHeight()),
-			DirectX::XMConvertToRadians(.0f),
-			.0f, 0.1f, 1.0f, .6f);
+		PlayerManager::Instance().GetFirstPlayer()->Render2D(rc, dc);
 
 		CardManager::Instance().Render(dc);
 		PhaseManager::Instance().Render(dc);
@@ -193,7 +187,7 @@ void SceneGame::Render()
 
 		GameSystemManager::Instance().Render(dc);
 
-		NumberSprite::Instance().NumberOut("1112345678999", dc, DirectX::XMFLOAT2{ .0f,.0f }, DirectX::XMFLOAT2{ 500.0f,125 }, DirectX::XMFLOAT4{ 1.0f,1.0f,1.0f,1.0f });
+		//NumberSprite::Instance().NumberOut("1112345678999", dc, DirectX::XMFLOAT2{ .0f,.0f }, DirectX::XMFLOAT2{ 500.0f,125 }, DirectX::XMFLOAT4{ 1.0f,1.0f,1.0f,1.0f });
 	}
 	// 2DデバッグGUI描画
 	{
@@ -221,27 +215,6 @@ void SceneGame::DrawDebugGUI()
 	ImGui::SetNextWindowSize(ImVec2(300, 300), ImGuiCond_FirstUseEver);
 	if (ImGui::Begin("GameScene", nullptr, ImGuiWindowFlags_::ImGuiWindowFlags_None))
 	{
-		static int playEffectIndex = 0;
-		if (ImGui::InputInt("playEffectIndex", &playEffectIndex))
-		{
-			playEffectIndex = std::clamp(playEffectIndex, 0, static_cast<int>(effects.size() - 1));
-		}
-
-		if (ImGui::Button("playEffect"))
-		{
-			auto& effect = effects.at(playEffectIndex);
-			effect->Play(DirectX::XMFLOAT3{.0f,.0f,.0f},2.0f);
-		}
-		if (ImGui::Button("StopEffect"))
-		{
-			auto& effect = effects.at(playEffectIndex);
-			effect->Stop(effect->GetHandle());
-		}
-		if (ImGui::Button("sendTregger"))
-		{
-			auto& effect = effects.at(playEffectIndex);
-			EffectManager::Instance().GetEffekseerManager()->SendTrigger(effect->GetHandle(), 0);
-		}
 	}
 	ImGui::End();
 }

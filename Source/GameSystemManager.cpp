@@ -10,20 +10,20 @@ GameSystemManager::GameSystemManager()
 {
     Graphics& graphics = Graphics::Instance();
     const DirectX::XMFLOAT2 ScreenSize = graphics.GetScreenSize();
+    const float HparW = ScreenSize.y / ScreenSize.x;
 
-    DirectX::XMFLOAT2 pos = { ScreenSize.x * 0.9f,ScreenSize.y * 0.0f };
-    DirectX::XMFLOAT2 size = { ScreenSize.x * 0.1f,ScreenSize.y * 0.1f };
+    DirectX::XMFLOAT2 size = { ScreenSize.x * 0.1f*HparW,ScreenSize.y * 0.1f };
+    DirectX::XMFLOAT2 pos = { ScreenSize.x-size.x,ScreenSize.y * 0.0f };
     pouseButton.SetHitBox(HitBox2D(pos, size));
-    pouseButton.AddComponent(new RenderComponent(nullptr));
+    pouseButton.AddComponent(new RenderComponent("./Data/Sprite/pouse_icon.png"));
     
     pos.y += size.y;
     CardAllInfoButton.SetHitBox(HitBox2D(pos, size));
-    CardAllInfoButton.AddComponent(new RenderComponent(nullptr));
+    CardAllInfoButton.AddComponent(new RenderComponent("./Data/Sprite/card_icon.png"));
 
     pos = { ScreenSize.x*0.5f,ScreenSize.y*0.5f };
     size = { ScreenSize.x * 0.9f,ScreenSize.y * 0.9f };
-    CardAllInfoButton.AddChild(std::make_unique<UI>("allInfo"));
-    auto allInfo = CardAllInfoButton.SearchChildFromName("allInfo");
+    auto allInfo = CardAllInfoButton.AddChild(std::make_unique<UI>("allInfo"));
     allInfo->SetHitBox(HitBox2D::CreateBoxFromCenter(pos, size));
     allInfo->AddComponent(new RenderComponent("./Data/Sprite/CardCombos/_CardAllInfo.png"));
 
