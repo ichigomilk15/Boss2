@@ -55,7 +55,7 @@ public://functions
 		components.emplace_back(component);
 	}
 
-	void AddChild(std::unique_ptr<UI> child);
+	UI* AddChild(std::unique_ptr<UI> child);
 	UI* SearchChildFromName(const std::string& name)noexcept;
 
 	void ChildsRender(ID3D11DeviceContext* dc);
@@ -82,6 +82,7 @@ private://members
 	std::vector<std::unique_ptr<UI>> childs;
 	HitBox2D collision;
 	std::string name;//ui‚ðŽ¯•Ê‚·‚é—p‚Ì–¼‘O
+	bool deleteflag = false;
 };
 
 //**********************************************************************************************

@@ -346,7 +346,6 @@ void Stage::ResetSquaresAccessible()
 
 void Stage::ReFleshCard()
 {
-	unsigned int specialNum = 0u;
 	std::vector<std::shared_ptr<Card>> cards;
 	for (auto& y : squares)
 	{
@@ -359,12 +358,21 @@ void Stage::ReFleshCard()
 		}
 	}
 
+	if (std::size(cards) <= 1)
+	{
+		for (size_t i = 0; i <ADD_CARD_NUM; i++)
+		{
+			cards.emplace_back(std::make_shared<Card>(DirectX::XMFLOAT2{ .0f,.0f }, CardManager::CARD_SIZE, Card::Type::SPECIAL));
+		}
+	}
+
 	for (size_t i = 0; i < cards.size();)
 	{
 		auto x = random(CommonClass::random);
 		auto y = random(CommonClass::random);
 		auto&& square = GetSquare(x,y);
 		if (square->GetCard() != nullptr)continue;
+		if (square->GetCharacter() != nullptr)continue;
 		square->SetCard(cards[i]);
 		++i;
 	}

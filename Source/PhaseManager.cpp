@@ -17,8 +17,7 @@ PhaseManager::PhaseManager()
 	const DirectX::XMFLOAT2& screenSize = Graphics::Instance().GetScreenSize();
 	okButtonCollision = HitBox2D(DirectX::XMFLOAT2(screenSize.x * 0.8f, screenSize.y * 0.85f),
 		DirectX::XMFLOAT2(screenSize.x * 0.1f, screenSize.y * 0.1f));
-	okButton = std::make_unique<Sprite>();//todo : okボタンの画像読み込み
-
+	okButton = std::make_unique<Sprite>("./Data/Sprite/OK.png");
 	phaseTimer = NEXT_PHASE_WAIT_TIMER;
 }
 
@@ -42,7 +41,6 @@ void PhaseManager::Update(float elapsedTime)
 		NextPhase();//次のフェーズへ
 	}
 	break;
-
 	//***********************************************************************************
 	case PhaseManager::Phase::Phase_NextStage_Init:
 	{
@@ -75,8 +73,12 @@ void PhaseManager::Update(float elapsedTime)
 
 		EnemyManager::Instance().ResetTurnEnemies();
 
-		//配置しているカードの移動
-		Stage::Instance()->ReFleshCard();
+		//最初のターンでは実行しない
+		if (turnCount > 0)
+		{
+			//配置しているカードの移動
+			Stage::Instance()->ReFleshCard();
+		}
 
 		NextPhase();//次のフェーズへ
 	}
@@ -215,13 +217,12 @@ void PhaseManager::Render(ID3D11DeviceContext* dc)
 	{
 		const DirectX::XMFLOAT2& lefttop = okButtonCollision.GetLeftTop();
 		const DirectX::XMFLOAT2& Size = okButtonCollision.GetBoxSize();
-		okButton->Render(dc,
-			lefttop.x, lefttop.y,
-			Size.x, Size.y,
-			.0f, .0f,
-			okButton->GetTextureWidthf(), okButton->GetTextureHeightf(),
-			.0f,
-			1.0f, .0f, .0f, 1.0f);
+		//カードが全てセットされていたら
+		const DirectX::XMFLOAT4 color = phase==Phase::Phase_Player&& CardManager::Instance().IsFillSetCards()?
+			DirectX::XMFLOAT4{ 1.0f,1.0f,1.0f,1.0f }://埋まっているとき
+			DirectX::XMFLOAT4{.5f,.5f,.5f,1.0f};//埋まっていないとき
+		okButton->Render(dc, lefttop, Size, .0f, color);
+		
 	}
 }
 
@@ -257,6 +258,7 @@ void PhaseManager::DrawDebugGUI()
 		}
 		
 		if (ImGui::InputFloat("timer", &phaseTimer), .0f) {};
+		if (ImGui::InputInt("turn", &this->turnCount)) {};
 	}
 	ImGui::End();
 #endif // _DEBUG

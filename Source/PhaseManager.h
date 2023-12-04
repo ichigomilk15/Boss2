@@ -49,7 +49,7 @@ public:
 
 	//Getter&Setter*****************************************************************************
 #if 1
-	const Phase& GetFhase()const noexcept { return static_cast<Phase>(phase); }
+	const Phase GetFhase()const noexcept { return static_cast<Phase>(phase); }
 	const unsigned int& GetTrunCount()const noexcept { return turnCount; }
 	const void StepupUseCardIndex() { ++useCardIndex; }
 	const unsigned int GetUseCardIndex()const noexcept { return useCardIndex; }
@@ -72,7 +72,7 @@ public:
 	static constexpr float NEXT_PHASE_WAIT_TIMER = 1.0f;
 private:
 	Phase phase = Phase::Phase_GameStart_Init;
-	unsigned int turnCount = 0u;
+	int turnCount = 0u;
 	float phaseTimer = -1.0f;
 	bool isNextPhase = false;
 	unsigned int useCardIndex = 0u;

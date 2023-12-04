@@ -68,6 +68,7 @@ private:
 	void SearchSquare(const int x, const int y, const int cost, std::vector<DirectX::XMINT2>& squaresChecked, const std::vector<Square::Type>& typesExclusion = {Square::Type::MAX});
 
 private://static members
+	static constexpr int ADD_CARD_NUM = 3;
 private://members
 	unsigned int stageLevel = 0u;
 	std::shared_ptr<Square> squares[Common::SQUARE_NUM_Y][Common::SQUARE_NUM_X];

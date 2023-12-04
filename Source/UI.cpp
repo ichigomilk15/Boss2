@@ -18,10 +18,11 @@ UI::~UI()
     }
 }
 
-void UI::AddChild(std::unique_ptr<UI> child)
+UI* UI::AddChild(std::unique_ptr<UI> child)
 {
     childs.emplace_back();
     childs.back().swap(child);
+    return childs.back().get();
 }
 
 UI* UI::SearchChildFromName(const std::string& name)noexcept
