@@ -21,6 +21,8 @@ enum class State
 	Move,
 	Moving_Init, //移動している状態
 	Moving,
+	AttackCharge_Init, //攻撃のチャージ
+	AttackCharge,
 	Attack_Init, //攻撃更新処理
 	Attack,
 	Attacking_Init, //攻撃している状態
@@ -197,6 +199,7 @@ protected:
 	//int attackAdjacentRange = 0;
 
 	AttackParent* attack = nullptr;
+	int attackChargeTurn = 0;
 
 public:
 

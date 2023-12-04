@@ -17,7 +17,7 @@ public:
 
 private:
     void Initialize() override;
-    void SetTargetCharaBumpPos();
+    bool SetTargetCharaBumpPos();
 
 private:
     float startAppearTimer = 0.0f;

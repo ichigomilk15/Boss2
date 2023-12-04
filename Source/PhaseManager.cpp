@@ -130,7 +130,7 @@ void PhaseManager::Update(float elapsedTime)
 		UpdatePlayerAct(elapsedTime); 
 
 		//todo : enemyが全員死んでいたらフェーズをphase_nextstage_init　に変更
-		if (/*IsSlowNextPhase(elapsedTime, true)*/IsSlowNextPhase(EnemyManager::Instance().GetIsAllDead()))
+		if (IsSlowNextPhase(EnemyManager::Instance().GetIsAllDead()))
 		{
 			ChangePhase(Phase::Phase_NextStage_Init);
 		}

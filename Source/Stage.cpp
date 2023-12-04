@@ -344,6 +344,17 @@ void Stage::ResetSquaresAccessible()
 	}
 }
 
+void Stage::ResetAllSquareDrawType()
+{
+	for (auto& y : squares)
+	{
+		for (auto& x : y)
+		{
+			x->SetDrawType(Square::DrawType::NONE);
+		}
+	}
+}
+
 void Stage::ReFleshCard()
 {
 	std::vector<std::shared_ptr<Card>> cards;

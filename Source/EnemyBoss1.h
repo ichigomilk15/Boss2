@@ -21,6 +21,9 @@ public:
 private:
 	void UpdateState(float elapsedTime) override;
 	void InitializeAttack(float elapsedTime) override;
+
+private:
+	DirectX::XMINT2 targetChargingMovePos = { -1, -1 };
 };
 
 

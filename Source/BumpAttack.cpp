@@ -17,8 +17,10 @@ void BumpAttack::Update(float elapsedTime)
 		{
 			if (!e.isAttacked)
 			{
-				SetTargetCharaBumpPos();
-				e.targetChara->ApplyDamage(damage);
+				if (SetTargetCharaBumpPos())
+				{
+					e.targetChara->ApplyDamage(damage);
+				}
 				e.isAttacked = true;
 			}
 		}
@@ -44,17 +46,29 @@ void BumpAttack::Initialize()
 	}
 }
 
-void BumpAttack::SetTargetCharaBumpPos()
+bool BumpAttack::SetTargetCharaBumpPos()
 {
 	const int bumpMoveTarget = 1;
 	for (auto& e : targetAttack)
 	{
 		auto pos = e.targetChara->GetPosition();
+		bool isTargetFound = false;
+		for (auto& sqPos : targetAttackPos)
+		{
+			if (sqPos.x == pos.x && sqPos.y == pos.y)
+			{
+				isTargetFound = true;
+				break;
+			}
+		}
+		if (!isTargetFound)
+			return false;
+
 		switch (direction)
 		{
 		case CommonClass::DirectionFace::Back:
 		case CommonClass::DirectionFace::Front:
-			if (parent->GetWhichHorizontalSide({pos.x, pos.y}) > 0)
+			if (parent->GetWhichHorizontalSide({ pos.x, pos.y }) > 0)
 			{
 				if (e.targetChara->IsTargetMovePosValid({ pos.x + bumpMoveTarget, pos.y }))
 				{
@@ -89,4 +103,5 @@ void BumpAttack::SetTargetCharaBumpPos()
 			break;
 		}
 	}
+	return true;
 }

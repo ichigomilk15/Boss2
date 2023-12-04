@@ -9,13 +9,14 @@
 
 Square::Square(const DirectX::XMINT2& pos) :
 	pos(pos),
-	scale(5.0f * 0.2f, 0.01f, 5.0f * 0.2f),
+	scale(5.0f * 0.2f, 0.5f, 5.0f * 0.2f),
 	rotate(),
 	card(nullptr),
 	type(Type::NONE),
+	drawType(DrawType::NONE),
 	SquareBorder(Stage::Instance()->squareBorder),
 	SquareArea(Stage::Instance()->squareArea),
-	areaColor(.0f,.0f,.0f,.0f)
+	areaColor(.0f, .0f, .0f, .0f)
 {
 	this->worldPos = Stage::Instance()->GetWorldPos(pos);
 
@@ -26,6 +27,10 @@ Square::Square(const DirectX::XMINT2& pos) :
 	typeMaps.insert({ Type::MoveAreaChosen, TypeDetail{ "MoveAreaChosen", {1.0f,1.0f,.0f,0.5f}, } });
 	typeMaps.insert({ Type::Inaccessible, TypeDetail{ "Inaccessible", {0.1f,0.1f,0.1f,0.5f}, } });
 	typeMaps.insert({ Type::MAX, TypeDetail{ "Max", {.0f,.0f,.0f,.0f} } });
+
+	drawTypeMaps.insert({ DrawType::NONE, DrawTypeDetail{"None", {1.0f, 1.0f, 1.0f, 0.5f}} });
+	drawTypeMaps.insert({ DrawType::ChargeAttack, DrawTypeDetail{"ChargeAttack", {1.0f, 0.0f, 0.0f, 0.8f}} });
+	drawTypeMaps.insert({ DrawType::MAX, DrawTypeDetail{"Max", {0.0f, 0.0f, 0.0f, 0.0f}} });
 }
 
 Square::~Square()
@@ -51,17 +56,27 @@ void Square::Render(ID3D11DeviceContext* dc, Shader* shader)
 		shader->Draw(dc, model.get());
 
 		//何かのアクション範囲なら板を表示
-		if (type != Type::NONE && !SquareArea.expired())
+		if (!SquareArea.expired())
 		{
-			model = this->SquareArea.lock();
-			model->ChangeMaterialColor(0u, this->areaColor);
-			model->UpdateTransform(transform);
-			shader->Draw(dc, model.get());
+			if (type != Type::NONE)
+			{
+				model = this->SquareArea.lock();
+				model->ChangeMaterialColor(0u, this->areaColor);
+				model->UpdateTransform(transform);
+				shader->Draw(dc, model.get());
+			}
+			else if (drawType > DrawType::NONE && drawType < DrawType::MAX)
+			{
+				model = this->SquareArea.lock();
+				model->ChangeMaterialColor(0u, drawTypeMaps.find(drawType)->second.color);
+				model->UpdateTransform(transform);
+				shader->Draw(dc, model.get());
+			}
 		}
 	}
 
 	DebugRenderer* dr = Graphics::Instance().GetDebugRenderer();
-	if(card!=nullptr)
+	if (card != nullptr)
 		dr->DrawSphere(DirectX::XMFLOAT3(worldPos.x, worldPos.y + 0.5f, worldPos.z), .3f, DirectX::XMFLOAT4(.3f, 1.0f, .0f, 1.0f));
 }
 
