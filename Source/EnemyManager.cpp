@@ -38,6 +38,27 @@ void EnemyManager::Render(ID3D11DeviceContext* context, Shader* shader)
 	}
 }
 
+void EnemyManager::Render2D(ID3D11DeviceContext* dc)
+{
+	const DirectX::XMFLOAT2 ScreenSize = Graphics::Instance().GetScreenSize();
+	const DirectX::XMFLOAT2 AreaTopLeft = { ScreenSize.x * 0.3f,.0f };
+	DirectX::XMFLOAT2 AreaSize = { ScreenSize.x * 0.5f,ScreenSize.y * 0.1f };
+	DirectX::XMFLOAT2 pos = AreaTopLeft;
+	
+	float SumScale = 0;
+	for (auto& enemy : enemies)
+		SumScale += enemy->GetHpBarUseScale();
+
+	for (auto& enemy : enemies)
+	{
+		DirectX::XMFLOAT2 size = { AreaSize.x * 
+			(std::min)(enemy->GetHpBarUseScale() / SumScale,enemy->GetHpBarUseScale()),AreaSize.y };
+		enemy->Render2D(dc, HitBox2D::CreateBoxFromTopLeft(pos, size));
+		
+		pos.x += size.x;
+	}
+}
+
 void EnemyManager::Register(Enemy* enemy)
 {
 	enemies.emplace_back(enemy);
@@ -51,6 +72,7 @@ void EnemyManager::Clear()
 		enemy = nullptr;
 	}
 	enemies.clear();
+	startEnemyNum = 0u;
 }
 
 void EnemyManager::Remove(Enemy* enemy)
@@ -65,9 +87,18 @@ void EnemyManager::DrawDebugGUI()
 	ImGui::SetNextWindowSize(ImVec2(300, 300), ImGuiCond_FirstUseEver);
 	if (ImGui::Begin("Enemy", nullptr, ImGuiWindowFlags_None))
 	{
+		int i = 0;
 		for (auto& e : enemies)
 		{
-			e->DrawDebugGUI();
+			std::string str = "enemy";
+			str += '0' + i++;
+			if (ImGui::CollapsingHeader(str.c_str(), 0))
+			{
+				ImGui::BeginGroup();
+				e->DrawDebugGUI();
+				ImGui::EndGroup();
+			}
+
 		}
 	}
 	ImGui::End();

@@ -25,6 +25,7 @@ public:
 
     //描画処理
     void Render(ID3D11DeviceContext* context, Shader* shader);
+    void Render2D(ID3D11DeviceContext* dc);
 
     //エネミー登録
     void Register(Enemy* enemy);
@@ -64,6 +65,8 @@ public:
     const bool GetIsAllActEnd() const;
     const bool GetIsAllDead() const;
 
+
+    void SetStartEnemyNum()noexcept { startEnemyNum = static_cast<int>(enemies.size()); }
 private:
     void UpdateEnemiesTurn(float elapsedTime); //敵のターン更新処理
 
@@ -71,4 +74,5 @@ private:
     std::vector<Enemy*> enemies;
     std::set<Enemy*>    removes;
     static int enemyTurnIndex; //敵の行動順番
+    unsigned int startEnemyNum = 0u;
 };

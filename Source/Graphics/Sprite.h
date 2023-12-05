@@ -53,6 +53,9 @@ public:
 	int GetTextureHeight() const { return textureHeight; }
 	float GetTextureHeightf()const { return static_cast<float>(textureHeight); }
 
+	const DirectX::XMFLOAT2 GetTextureSize()const noexcept
+		{ return { static_cast<float>(textureWidth),static_cast<float >(textureHeight) }; }
+
 private:
 	Microsoft::WRL::ComPtr<ID3D11VertexShader>			vertexShader;
 	Microsoft::WRL::ComPtr<ID3D11PixelShader>			pixelShader;

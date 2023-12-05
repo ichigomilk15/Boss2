@@ -19,7 +19,9 @@ public:
 	Enemy(Character* p)
 		: Character(),
 		player(p)
-	{}
+	{
+		icon = std::make_unique<Sprite>("./Data/Sprite/icon_enemy.png");
+	}
 	~Enemy()override {}
 
 	//更新処理
@@ -46,6 +48,8 @@ public:
 	//攻撃範囲を取得
 	const int GetAttackRange() const { return this->attackRange; }
 
+	const float& GetHpBarUseScale()const noexcept { return hpBarUseScale; }
+
 protected:
 	//移動の更新処理
 	virtual bool ChooseTargetMove(float elapsedTime);
@@ -66,13 +70,14 @@ protected:
 	int actNo = 0;				//行動回数・ターン始まりにリセット
 
 	int attackRange = 2;
+	float hpBarUseScale = 0.5f;//HPバーの使用率
 
 	struct DestroyedStatus
 	{
 		std::unique_ptr<Effect> destroyedEffect;
 		float destroyedTime = 0.0f;
 		bool isDestroyed = false;
-	} destroyedStatus;
+	} destroyedStatus;//死亡時使用データ
 protected:
 	Character* player;
 };

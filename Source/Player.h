@@ -18,7 +18,7 @@ public:
 
 	void Update(float elapsedTime);
 	void Render(ID3D11DeviceContext* dc, Shader* shader);
-	void Render2D(RenderContext& rc,ID3D11DeviceContext* dc);//2D関係の描画
+	//void Render2D(RenderContext& rc,ID3D11DeviceContext* dc);//2D関係の描画
 	void DrawDebugGUI();
 
 	//デバッグプリミティブ描画

@@ -45,12 +45,14 @@ void PhaseManager::Update(float elapsedTime)
 	case PhaseManager::Phase::Phase_NextStage_Init:
 	{
 		//PlayerManager::Instance().GetFirstPlayer()->SetPositionWorld(Common::PlayerPosInit);
-		NextPhase();//次のフェーズへ
 
 		//ステージのレベルを参照してenemyをセットする
 		Stage::Instance()->StageLevelStepUp();
 		StageInit(Stage::Instance()->GetStageLevel());
 		Stage::Instance()->ResetAllSquare();
+
+
+		NextPhase();//次のフェーズへ
 	}
 	[[fallthrough]];
 	case PhaseManager::Phase::Phase_NextStage:
@@ -380,4 +382,6 @@ void PhaseManager::StageInit(const int level)
 		break;
 
 	}
+
+	EnemyManager::Instance().SetStartEnemyNum();
 }

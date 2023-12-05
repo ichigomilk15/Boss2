@@ -32,7 +32,7 @@ void Enemy::Render(ID3D11DeviceContext* dc, Shader* shader)
 
 void Enemy::DrawDebugGUI()
 {
-	ImGui::Text("HP %d", health);
+	ImGui::InputInt("HP", &health);
 }
 
 void Enemy::Destroy()

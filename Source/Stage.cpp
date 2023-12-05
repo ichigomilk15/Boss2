@@ -98,6 +98,12 @@ void Stage::DrawIMGUI()
 		ImGui::InputFloat3("position", &position.x);
 		ImGui::InputFloat3("scale", &scale.x);
 		ImGui::InputFloat4("rotate", &rotate.x);
+		int level = stageLevel;
+		if (ImGui::InputInt("StageLevel", &level))
+		{
+			stageLevel = level;
+		}
+
 
 		for (auto& sq : squares)
 		{

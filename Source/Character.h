@@ -1,7 +1,10 @@
 #pragma once
+#include <DirectXMath.h>
+#include "Graphics/Sprite.h"
+#include "HitCollisions.h"
+
 #include "Common.h"
 #include "AttackParent.h"
-#include <DirectXMath.h>
 
 enum Animation
 {
@@ -49,7 +52,7 @@ enum class State
 class Character
 {
 public:
-	Character() {};
+	Character();
 	virtual ~Character() {};
 
 	//行列更新処理
@@ -129,6 +132,8 @@ public:
 	//最大健康状態を取得
 	int GetMaxHealth() const { return maxHealth; }
 
+	void Render2D(ID3D11DeviceContext* dc, const HitBox2D& box);
+
 	//Getter&Setter*****************************************************
 #if 1
 	//サイズの設定
@@ -142,6 +147,8 @@ public:
 	const int& Getshield()const { return shield; }
 
 	const bool GetIsActEnd() const { return isActEnd; }
+
+	const Sprite* GetIcon()const noexcept { return icon.get(); }
 #endif // 1
 	//Getter&Setter*****************************************************
 
@@ -181,7 +188,7 @@ protected:
 	int block = 0; //攻撃を受けた数値を減少するステータス・ブロック
 	DirectX::XMINT2 size = { 1, 1 };
 
-	State state;
+	State state = State::Idle_Init;
 	float actTimer = 0; //ステート遷移タイマー
 	bool isActEnd = false;		//ターンにアクションが終わったの判定
 
@@ -192,7 +199,12 @@ protected:
 
 	AttackParent* attack = nullptr;
 
-public:
+	//HPバー関係の値
+	std::unique_ptr<Sprite> icon;
 
+
+private:
+	std::unique_ptr<Sprite> hpBar[3];
+public:
 	DirectX::XMFLOAT3 groundNormal = { 0, 0, 0 };
 };

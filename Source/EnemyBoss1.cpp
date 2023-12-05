@@ -6,7 +6,8 @@ EnemyBoss1::EnemyBoss1(Character* p) :
 	Enemy(p)
 {
 	//model = std::make_unique<Model>("Data/Model/Jammo/Jammo.mdl");
-	model = std::make_unique<Model>("Data/Model/Enemy/Boss/Boss.mdl");
+	model = std::make_unique<Model>("./Data/Model/Enemy/Boss/Boss.mdl");
+	icon = std::make_unique<Sprite>("./Data/Sprite/icon_boss.png");
 
 	//ÉXÉPÅ[ÉãÇÃí≤êÆ
 	scale.x = scale.y = scale.z = 0.18f;
@@ -19,6 +20,7 @@ EnemyBoss1::EnemyBoss1(Character* p) :
 	moveMax = 2;
 	attackPower = 7;
 	isActEnd = false;
+	hpBarUseScale = 1.0f;
 	SetDirection(CommonClass::DirectionFace::BackRight);
 }
 
