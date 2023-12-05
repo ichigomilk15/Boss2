@@ -14,11 +14,8 @@
 
 void CameraController::Update(float elapsedTime)
 {
-#if 0
-	Camera::Instance().SetLookAt();
-#else
+#ifdef _DEBUG
 	UpdateCameraShake(elapsedTime);
-
 	GamePad& gamePad = Input::Instance().GetGamePad();
 	float ax = gamePad.GetAxisRX();
 	float ay = gamePad.GetAxisRY();
@@ -39,6 +36,8 @@ void CameraController::Update(float elapsedTime)
 
 	if (angle.y < -DirectX::XM_PI) angle.y += DirectX::XM_2PI;
 	if (angle.y > DirectX::XM_PI) angle.y -= DirectX::XM_2PI;
+#endif // _DEBUG
+
 
 	//カメラ回転値を回転行列に変換
 	//DirectX::XMMATRIX Transform = DirectX::XMMatrixRotationX(angle.x);
@@ -58,7 +57,7 @@ void CameraController::Update(float elapsedTime)
 
 	//カメラ視点と注視点を設定
 	Camera::Instance().SetLookAt(eye, target, DirectX::XMFLOAT3(0, 1, 0));
-#endif
+
 }
 
 void CameraController::DrawIMGUI()

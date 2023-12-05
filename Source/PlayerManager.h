@@ -20,6 +20,7 @@ public:
 
 	// •`‰æˆ—
 	void Render(ID3D11DeviceContext* context, Shader* shader, RenderContext& rc);
+	void Render2D(ID3D11DeviceContext* dc);
 
 	// ƒvƒŒƒCƒ„[“o˜^
 	void Register(Player* player);

@@ -13,8 +13,8 @@ namespace Common
 	static int STAGE_MAX = 2;
 	
 	//É}ÉXè⁄ç◊
-	static constexpr unsigned int SQUARE_NUM_X = 8u;
-	static constexpr unsigned int SQUARE_NUM_Y = 8u;
+	static constexpr unsigned int SQUARE_NUM_X = 7u;
+	static constexpr unsigned int SQUARE_NUM_Y = 7u;
 	static const float SquareWidth = 5.0f;
 	static const float SquareHeight = 5.0f;
 

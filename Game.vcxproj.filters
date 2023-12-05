@@ -264,6 +264,7 @@
     <ClInclude Include="Source\JumpAttack.h">
       <Filter>Source\Attacks</Filter>
     </ClInclude>
+    <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="External\imgui\imgui.cpp">
@@ -492,5 +493,15 @@
     <FxCompile Include="HLSL\SpritePS.hlsl">
       <Filter>HLSL</Filter>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Game.rc">
+      <Filter>External</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Resource\pointer.png">
+      <Filter>External</Filter>
+    </Image>
   </ItemGroup>
 </Project>

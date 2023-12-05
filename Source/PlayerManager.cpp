@@ -1,4 +1,5 @@
 #include "PlayerManager.h"
+#include "Stage.h"
 
 void PlayerManager::Update(float elapsedTime)
 {
@@ -15,6 +16,11 @@ void PlayerManager::Render(ID3D11DeviceContext* context, Shader* shader, RenderC
 	{
 		player->Render(context, shader);
 	}
+}
+
+void PlayerManager::Render2D(ID3D11DeviceContext* dc)
+{
+	
 }
 
 void PlayerManager::Register(Player* player)

@@ -139,6 +139,7 @@ private://members
 
 	Card::Type PrevUseCardType = Card::Type::NONE;
 	std::shared_ptr<CardComboDataBase> CardComboDatas[static_cast<int>(Card::Type::MAX)][static_cast<int>(Card::Type::MAX)];
+	std::unique_ptr<Sprite> CardNextComboInfos[static_cast<int>(Card::Type::MAX)];
 	Sprite HandsCardSprite;
 	Sprite cardInfoBack;
 	std::unique_ptr<Sprite> SetCardSprites[2];

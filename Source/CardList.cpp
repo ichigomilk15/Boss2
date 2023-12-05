@@ -160,80 +160,80 @@ CardManager::CardManager() :
 		CardComboDatas[typeNone][typeDefence] = Data;
 		CardComboDatas[typeDebuff][typeDefence] = Data;
 
-		//攻撃*防御
-		data.getShield = 0;
-		data.GetBlock = 4;
-		data.heal = 0;
-		data.movecostGetShield = false;
-		Data = std::make_shared<CardComboDefence>(data);
-		Data->infomation = std::make_shared<Sprite>("./Data/Sprite/CardCombos/attack_shield.png");
-		CardComboDatas[typeAttack][typeDefence] = Data;
+//攻撃*防御
+data.getShield = 0;
+data.GetBlock = 4;
+data.heal = 0;
+data.movecostGetShield = false;
+Data = std::make_shared<CardComboDefence>(data);
+Data->infomation = std::make_shared<Sprite>("./Data/Sprite/CardCombos/attack_shield.png");
+CardComboDatas[typeAttack][typeDefence] = Data;
 
-		//移動*防御
-		data.getShield = 3;
-		data.GetBlock = 0;
-		data.heal = 0;
-		data.movecostGetShield = true;
-		Data = std::make_shared<CardComboDefence>(data);
-		Data->infomation = std::make_shared<Sprite>("./Data/Sprite/CardCombos/walk_shield.png");
-		CardComboDatas[typeMove][typeDefence] = Data;
+//移動*防御
+data.getShield = 3;
+data.GetBlock = 0;
+data.heal = 0;
+data.movecostGetShield = true;
+Data = std::make_shared<CardComboDefence>(data);
+Data->infomation = std::make_shared<Sprite>("./Data/Sprite/CardCombos/walk_shield.png");
+CardComboDatas[typeMove][typeDefence] = Data;
 
-		//防御*防御
-		data.getShield = 6;
-		data.GetBlock = 0;
-		data.heal = 5;
-		data.movecostGetShield = false;
-		Data = std::make_shared<CardComboDefence>(data);
-		Data->infomation = std::make_shared<Sprite>("./Data/Sprite/CardCombos/shield_shield.png");
-		CardComboDatas[typeDefence][typeDefence] = Data;
+//防御*防御
+data.getShield = 6;
+data.GetBlock = 0;
+data.heal = 5;
+data.movecostGetShield = false;
+Data = std::make_shared<CardComboDefence>(data);
+Data->infomation = std::make_shared<Sprite>("./Data/Sprite/CardCombos/shield_shield.png");
+CardComboDatas[typeDefence][typeDefence] = Data;
 
-		//スペシャル*防御
-		data.getShield = 10;
-		data.GetBlock = 0;
-		data.heal = 10;
-		data.movecostGetShield = false;
-		Data = std::make_shared<CardComboDefence>(data);
-		Data->infomation = std::make_shared<Sprite>("./Data/Sprite/CardCombos/buff_shield.png");
-		CardComboDatas[typeSpecial][typeDefence] = Data;
+//スペシャル*防御
+data.getShield = 10;
+data.GetBlock = 0;
+data.heal = 10;
+data.movecostGetShield = false;
+Data = std::make_shared<CardComboDefence>(data);
+Data->infomation = std::make_shared<Sprite>("./Data/Sprite/CardCombos/buff_shield.png");
+CardComboDatas[typeSpecial][typeDefence] = Data;
 	}
 
 	//デバフコンボの登録
 	{
-		CardComboDebuff data;
-		data.type = Card::Type::DEBUFF;
+	CardComboDebuff data;
+	data.type = Card::Type::DEBUFF;
 
-		//デバフ単体
-		data.heal = 0;
-		data.takeDamage = 5;
-		data.attackDamage = 0;
-		//data.takeDamagetargets.emplace_back(PlayerManager::Instance().GetFirstPlayer());
-		auto Data = std::make_shared<CardComboDebuff>(data);
-		Data->infomation = std::make_shared<Sprite>("./Data/Sprite/CardCombos/debuff.png");
-		CardComboDatas[typeNone][typeDebuff] = Data;
-		CardComboDatas[typeAttack][typeDebuff] = Data;
-		CardComboDatas[typeMove][typeDebuff] = Data;
-		CardComboDatas[typeDefence][typeDebuff] = Data;
+	//デバフ単体
+	data.heal = 0;
+	data.takeDamage = 5;
+	data.attackDamage = 0;
+	//data.takeDamagetargets.emplace_back(PlayerManager::Instance().GetFirstPlayer());
+	auto Data = std::make_shared<CardComboDebuff>(data);
+	Data->infomation = std::make_shared<Sprite>("./Data/Sprite/CardCombos/debuff.png");
+	CardComboDatas[typeNone][typeDebuff] = Data;
+	CardComboDatas[typeAttack][typeDebuff] = Data;
+	CardComboDatas[typeMove][typeDebuff] = Data;
+	CardComboDatas[typeDefence][typeDebuff] = Data;
 
-		//デバフ*デバフ
-		data.heal = 5;
-		data.takeDamage = 0;
-		data.attackDamage = 0;
-		Data = std::make_shared<CardComboDebuff>(data);
-		Data->infomation = std::make_shared<Sprite>("./Data/Sprite/CardCombos/debuff_debuff.png");
-		CardComboDatas[typeDebuff][typeDebuff] = Data;
+	//デバフ*デバフ
+	data.heal = 5;
+	data.takeDamage = 0;
+	data.attackDamage = 0;
+	Data = std::make_shared<CardComboDebuff>(data);
+	Data->infomation = std::make_shared<Sprite>("./Data/Sprite/CardCombos/debuff_debuff.png");
+	CardComboDatas[typeDebuff][typeDebuff] = Data;
 
-		//バフ*デバフ
-		data.heal = 10;
-		data.takeDamage = 10;
-		data.attackDamage = 10;
-		//data.takeDamagetargets.emplace_back(PlayerManager::Instance().GetFirstPlayer());
-		//for (auto& e : EnemyManager::Instance().GetList())
-		//{
-		//	data.takeDamagetargets.emplace_back(e);
-		//}
-		Data = std::make_shared<CardComboDebuff>(data);
-		Data->infomation = std::make_shared<Sprite>("./Data/Sprite/CardCombos/buff_debuff.png");
-		CardComboDatas[typeSpecial][typeDebuff] = Data;
+	//バフ*デバフ
+	data.heal = 10;
+	data.takeDamage = 10;
+	data.attackDamage = 10;
+	//data.takeDamagetargets.emplace_back(PlayerManager::Instance().GetFirstPlayer());
+	//for (auto& e : EnemyManager::Instance().GetList())
+	//{
+	//	data.takeDamagetargets.emplace_back(e);
+	//}
+	Data = std::make_shared<CardComboDebuff>(data);
+	Data->infomation = std::make_shared<Sprite>("./Data/Sprite/CardCombos/buff_debuff.png");
+	CardComboDatas[typeSpecial][typeDebuff] = Data;
 	}
 
 	//コンボ無しの登録
@@ -256,6 +256,15 @@ CardManager::CardManager() :
 		CardComboDatas[typeSpecial][typeNone] = Data;
 		CardComboDatas[typeSpecial][typeSpecial] = Data;
 	}
+	}
+
+	//カードの次のコンボの表示の
+	{
+		CardNextComboInfos[static_cast<int>(Card::Type::ATTACK)] = std::make_unique<Sprite>("./Data/Sprite/CardCombos/combo_attack.png");
+		CardNextComboInfos[static_cast<int>(Card::Type::DEFENCE)] = std::make_unique<Sprite>("./Data/Sprite/CardCombos/combo_shield.png");
+		CardNextComboInfos[static_cast<int>(Card::Type::MOVE)] = std::make_unique<Sprite>("./Data/Sprite/CardCombos/combo_move.png");
+		CardNextComboInfos[static_cast<int>(Card::Type::SPECIAL)] = std::make_unique<Sprite>("./Data/Sprite/CardCombos/combo_buff.png");
+		CardNextComboInfos[static_cast<int>(Card::Type::DEBUFF)] = std::make_unique<Sprite>("./Data/Sprite/CardCombos/combo_debuff.png");
 	}
 }
 
@@ -399,6 +408,18 @@ void CardManager::Render(ID3D11DeviceContext* dc)
 		Sprite* sprite = nullptr;
 		std::pair<Card::Type, Card::Type> types = { Card::Type::NONE,Card::Type::NONE };
 		renderSize = { renderSize.x,renderSize.y * 0.5f };
+		//左のタイプ決定
+		for (size_t i = 1; i < std::size(SetCards); i++)
+		{
+			DirectX::XMFLOAT2 pos = SET_CARDS_START_POS;
+			pos.y += (CARD_SIZE.y + CARD_DISTANCE) * i;
+			if (Collision2D::BoxVsPos(pos, CardManager::CARD_SIZE, mouse.GetPosition()))
+			{
+				if (auto card = SetCards[i-1])types.first = card->GetType();
+			}
+		}
+
+		//右のタイプ決定
 		if (!haveCard.expired())
 		{
 			types.second = haveCard.lock()->GetType();
@@ -408,8 +429,12 @@ void CardManager::Render(ID3D11DeviceContext* dc)
 			types.second = card->GetType();
 		}
 
-		CardComboDatas[static_cast<int>(types.first)][static_cast<int>(types.second)]->infomation->
-			Render(dc, renderpos, renderSize, .0f, color);
+		renderpos.y += CardComboDatas[static_cast<int>(types.first)][static_cast<int>(types.second)]->infomation->
+			Render(dc, renderpos, renderSize, .0f, color).y;
+
+		if (types.second != Card::Type::NONE)
+			CardNextComboInfos[static_cast<int>(types.second)]->Render(
+				dc, renderpos, renderSize, .0f, color);
 	}
 
 	//renderpos = { ScreenSize.x * 0.1f, ScreenSize.y * 0.2f };
@@ -639,8 +664,8 @@ void CardManager::Replenish()
 			//確率を設定
 			const std::pair<Card::Type, unsigned int> param[] =
 			{
-				{Card::Type::ATTACK,100},
-				{Card::Type::MOVE,120},
+				{Card::Type::ATTACK,110},
+				{Card::Type::MOVE,100},
 				{Card::Type::DEFENCE,100},
 			};
 			size_t paramSize = std::size(param);

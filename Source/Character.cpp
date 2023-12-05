@@ -1,8 +1,16 @@
 #define NOMINMAX
+#include "../ilib/BetterFunction.h"
 #include "Character.h"
 #include "CustomMathf.h"
 #include "Stage.h"
 #undef NOMINMAX
+
+Character::Character()
+{
+	hpBar[0] = std::make_unique<Sprite>("./Data/Sprite/life_waku.png");
+	hpBar[1] = std::make_unique<Sprite>("./Data/Sprite/life_1.png");
+	hpBar[2] = std::make_unique<Sprite>("./Data/Sprite/life_2.png");
+}
 
 void Character::UpdateTransform()
 {
@@ -247,6 +255,36 @@ void Character::AddImpulse(const DirectX::XMFLOAT3& impulse)
 	velocity.x += impulse.x;
 	velocity.y += impulse.y;
 	velocity.z += impulse.z;
+}
+
+void Character::Render2D(ID3D11DeviceContext* dc, const HitBox2D& box)
+{
+	using namespace DirectX::ope;
+	const DirectX::XMFLOAT2& leftTop = box.GetLeftTop();
+	const DirectX::XMFLOAT2& BoxSize = box.GetBoxSize();
+	const DirectX::XMFLOAT2 ScreenSize = Graphics::Instance().GetScreenSize();
+	const float HpParsent[] = { 1.0f,health / (float)maxHealth,shield / (float)maxHealth };
+
+
+	const float min = std::min(BoxSize.x, BoxSize.y);//描画の辺の小さいほうをとる
+	const DirectX::XMFLOAT2 iconSize = { min,min };//正方形のサイズを作る
+	const DirectX::XMFLOAT2 HPBarSize = {BoxSize.x - iconSize.x,BoxSize.y * 0.4f};//HPバーのサイズを計算
+	const DirectX::XMFLOAT2 scale = hpBar[1]->GetTextureSize()/hpBar[0]->GetTextureSize();//HPバーの背景とのサイズ差を計算
+	const DirectX::XMFLOAT2 HpBarPos = { leftTop.x + iconSize.x,leftTop.y+BoxSize.y - HPBarSize.y };//HPバーの描画位置
+	const DirectX::XMFLOAT2 zoomScale = HPBarSize / hpBar[0]->GetTextureSize();
+
+	//キャラクターのアイコンを描画
+	icon->Render(dc, box.GetLeftTop(), iconSize, .0f, DirectX::XMFLOAT4{ 1.0f,1.0f,1.0f,1.0f });
+
+	//HPバーの背景を描画
+	hpBar[0]->Render(dc, HpBarPos, HPBarSize, .0f, { 1.0f,1.0f,1.0f,1.0f });
+	for (size_t i = 1; i < std::size(hpBar); i++)
+	{
+		const DirectX::XMFLOAT2 sub = { hpBar[0]->GetTextureSize() - hpBar[1]->GetTextureSize() };
+		const DirectX::XMFLOAT2 pos = { HpBarPos+((sub*0.5f)*zoomScale)};
+		const DirectX::XMFLOAT2 size = { (HPBarSize.x*scale.x)*HpParsent[i],(HPBarSize.y*scale.y) };
+		hpBar[i]->Render(dc, pos, size , .0f, DirectX::XMFLOAT4{1.0f,1.0f,1.0f,1.0f});
+	}
 }
 
 void Character::Move(int vx, int vy)

@@ -14,7 +14,7 @@ EnemyMinion1::EnemyMinion1(Character* p) :
 	scale.x = scale.y = scale.z = 0.15f;
 
 	height = 1.0f;
-	enemyType = ENEMY_TYPE::BOSS1;
+	enemyType = ENEMY_TYPE::NONE;
 	actMax = 2;
 	actNo = 0;
 	state = State::Act_Init;
@@ -22,6 +22,8 @@ EnemyMinion1::EnemyMinion1(Character* p) :
 	attackPower = 7;
 	//attackAdjacentRange = 2;
 	isActEnd = false;
+	hpBarUseScale = 0.5f;
+
 	SetDirection(CommonClass::DirectionFace::BackRight);
 }
 

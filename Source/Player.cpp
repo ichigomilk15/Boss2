@@ -16,9 +16,10 @@
 #include "PhaseManager.h"
 #include "EnemyManager.h"
 
-Player::Player()
+Player::Player():Character()
 {
 	model = new Model("Data/Model/Player/Player.mdl");
+	icon = std::make_unique<Sprite>("./Data/Sprite/icon_player.png");
 
 	//モデルが大きいのでスケーリング
 	scale.x = scale.y = scale.z = 0.1f;
@@ -62,30 +63,30 @@ void Player::Render(ID3D11DeviceContext* dc, Shader* shader)
 	shader->Draw(dc, model);
 }
 
-void Player::Render2D(RenderContext& rc, ID3D11DeviceContext* dc)
-{
-	Graphics& graphics = Graphics::Instance();
-	D3D11_VIEWPORT viewPort;
-	unsigned int viewNum = 1;
-	dc->RSGetViewports(&viewNum, &viewPort);
-
-	DirectX::XMMATRIX View = DirectX::XMLoadFloat4x4(&rc.view);
-	DirectX::XMMATRIX Projection = DirectX::XMLoadFloat4x4(&rc.projection);
-
-	DirectX::XMVECTOR WorldPos = DirectX::XMVectorSet(positionWorld.x, positionWorld.y + height, positionWorld.z, .0f);
-	DirectX::XMVECTOR ScreenPos = DirectX::XMVector3Project(WorldPos, viewPort.TopLeftX, viewPort.TopLeftY,
-		viewPort.Width, viewPort.Height, viewPort.MinDepth, viewPort.MaxDepth, Projection, View, DirectX::XMMatrixIdentity());
-
-	DirectX::XMFLOAT2 screenPos;
-	DirectX::XMStoreFloat2(&screenPos, ScreenPos);
-	DirectX::XMFLOAT2 size = { 60.0f,30.0f };
-	std::string str;
-	str = std::to_string(health);
-	//str += "/";
-	//str += std::to_string(maxHealth);
-	HitBox2D box = HitBox2D::CreateBoxFromCenter(screenPos, size);
-	NumberSprite::Instance().NumberOut(str.c_str(), dc, box.GetLeftTop(), box.GetBoxSize(), DirectX::XMFLOAT4{ 1.0f,1.0f,1.0f,1.0f });
-}
+//void Player::Render2D(RenderContext& rc, ID3D11DeviceContext* dc)
+//{
+//	Graphics& graphics = Graphics::Instance();
+//	D3D11_VIEWPORT viewPort;
+//	unsigned int viewNum = 1;
+//	dc->RSGetViewports(&viewNum, &viewPort);
+//
+//	DirectX::XMMATRIX View = DirectX::XMLoadFloat4x4(&rc.view);
+//	DirectX::XMMATRIX Projection = DirectX::XMLoadFloat4x4(&rc.projection);
+//
+//	DirectX::XMVECTOR WorldPos = DirectX::XMVectorSet(positionWorld.x, positionWorld.y + height, positionWorld.z, .0f);
+//	DirectX::XMVECTOR ScreenPos = DirectX::XMVector3Project(WorldPos, viewPort.TopLeftX, viewPort.TopLeftY,
+//		viewPort.Width, viewPort.Height, viewPort.MinDepth, viewPort.MaxDepth, Projection, View, DirectX::XMMatrixIdentity());
+//
+//	DirectX::XMFLOAT2 screenPos;
+//	DirectX::XMStoreFloat2(&screenPos, ScreenPos);
+//	DirectX::XMFLOAT2 size = { 60.0f,30.0f };
+//	std::string str;
+//	str = std::to_string(health);
+//	//str += "/";
+//	//str += std::to_string(maxHealth);
+//	HitBox2D box = HitBox2D::CreateBoxFromCenter(screenPos, size);
+//	NumberSprite::Instance().NumberOut(str.c_str(), dc, box.GetLeftTop(), box.GetBoxSize(), DirectX::XMFLOAT4{ 1.0f,1.0f,1.0f,1.0f });
+//}
 
 void Player::DrawDebugGUI()
 {
