@@ -49,7 +49,8 @@ public:
 
 	//Getter&Setter*****************************************************************************
 #if 1
-	const Phase GetFhase()const noexcept { return static_cast<Phase>(phase); }
+	const Phase GetFhase()const noexcept { 
+		return static_cast<Phase>(phase); }
 	const unsigned int& GetTrunCount()const noexcept { return turnCount; }
 	const void StepupUseCardIndex() { ++useCardIndex; }
 	const unsigned int GetUseCardIndex()const noexcept { return useCardIndex; }

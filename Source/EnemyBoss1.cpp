@@ -6,6 +6,7 @@
 #include "BumpAttack.h"
 #include "JumpAttack.h"
 #include "CameraController.h"
+#include "PhaseManager.h"
 
 EnemyBoss1::EnemyBoss1(Character* p) :
 	Enemy(p)
@@ -104,7 +105,11 @@ void EnemyBoss1::UpdateState(float elapsedTime)
 		state = State::AttackCharge;
 		actTimer = 0.5f;
 		if (attackChargeTurn >= 0)
-			isActEnd = true;
+		{
+			isAttackCharging = true;
+			if (PhaseManager::Instance().GetFhase() >= PhaseManager::Phase::Phase_Enemy_Init)
+				isActEnd = true;
+		}
 		[[fallthrough]];
 	case State::AttackCharge:
 		--actTimer;
@@ -114,7 +119,7 @@ void EnemyBoss1::UpdateState(float elapsedTime)
 				SetState(State::Attacking_Init);
 			else if (dynamic_cast<JumpAttack*>(attack))
 				SetState(State::AttackingJump_Fly_Init);
-
+			isAttackCharging = false;
 			++actNo;
 			break;
 		}
@@ -126,7 +131,7 @@ void EnemyBoss1::UpdateState(float elapsedTime)
 		[[fallthrough]];
 	case State::Attack:
 		actTimer -= elapsedTime;
-		if (actTimer < 0.0f || !model->IsPlayAnimation())
+		if ((actTimer < 0.0f || !model->IsPlayAnimation()) && !player->IsMoving())
 		{
 			if (attack && !attack->GetIsDestroy())
 			{
@@ -160,7 +165,6 @@ void EnemyBoss1::UpdateState(float elapsedTime)
 		actTimer -= elapsedTime;
 		if (!IsMoving() && actTimer <= 0.0f)
 		{
-			InitializeAttack(elapsedTime);
 			SetState(AfterBumpAttack());
 			break;
 		}
@@ -201,7 +205,7 @@ void EnemyBoss1::UpdateState(float elapsedTime)
 			Stage::Instance()->ResetAllSquare();
 			AttackManager::Instance().Register(std::move(attack));
 			attack = nullptr;
-			CameraController::Instance().ShakeCamera(0.75f, 7);
+			CameraController::Instance().ShakeCamera(1.05f, 6);
 			Stage::Instance()->ResetAllSquareDrawType();
 			SetState(State::Attack_Init);
 			break;
@@ -237,7 +241,20 @@ void EnemyBoss1::UpdateState(float elapsedTime)
 		actTimer -= elapsedTime;
 		if (!IsMoving() && actTimer < 0.0f)
 		{
-			SetState(State::Idle_Init);
+			if (isAttackCharging)
+			{
+				CancelChargeAttack();
+				//SetState(State::Attack_Init);
+				SetState(State::Idle_Init);
+			}
+			else if (bumpAttackDetail.stunTurn >= 0)
+			{
+				SetState(State::Stunned);
+			}
+			else
+			{
+				SetState(State::Idle_Init);
+			}
 			break;
 		}
 		else
@@ -324,6 +341,7 @@ void EnemyBoss1::InitializeAttack(float elapsedTime) //バンプ攻撃
 	//バンプ攻撃
 	if (isBumpAttack)
 	{
+		bumpAttackDetail.stunTurn = 0;
 		bumpAttackDetail.attackPow = 20;
 		std::vector<DirectX::XMINT2> posVec;
 		for (auto& sq : attackSq)
@@ -355,8 +373,16 @@ void EnemyBoss1::InitializeAttack(float elapsedTime) //バンプ攻撃
 	{
 		jumpAttackDetail.attackPow = 30;
 		std::vector<DirectX::XMINT2> posVec;
-		std::vector<Square*> atkSquare = Stage::Instance()->GetSquaresBoxRange(player->GetPosition().x, player->GetPosition().y, 2);
-		atkSquare.emplace_back(Stage::Instance()->GetSquare(player->GetPosition().x, player->GetPosition().y).get());
+		targetPos = player->GetPosition();
+		if (!this->IsTargetMoveAttackPosValid(targetPos))
+		{
+			//todo: stun処理ここで作成
+			targetPos.x = std::clamp(targetPos.x, 0, abs((int)Common::SQUARE_NUM_X - size.x));
+			targetPos.y = std::clamp(targetPos.y, 0, abs((int)Common::SQUARE_NUM_Y - size.y));
+		}
+
+		std::vector<Square*> atkSquare = Stage::Instance()->GetSquaresBoxRange(targetPos.x, targetPos.y, 2);
+		atkSquare.emplace_back(Stage::Instance()->GetSquare(targetPos.x, targetPos.y).get());
 		for (auto& sq : atkSquare)
 		{
 			posVec.emplace_back(sq->GetPos());
@@ -364,9 +390,14 @@ void EnemyBoss1::InitializeAttack(float elapsedTime) //バンプ攻撃
 			sq->SetDrawType(Square::DrawType::ChargeAttack);
 		}
 		attack = new JumpAttack(this, jumpAttackDetail.attackPow, TargetAttackEnum::Target_Player, posVec);
-		jumpAttackDetail.targetJumpMovePos = player->GetPosition();
+		jumpAttackDetail.targetJumpMovePos = targetPos;
 		return;
 	}
+}
+
+State EnemyBoss1::ChooseAct(float elapsedTime)
+{
+	return State::Attack_Init;
 }
 
 State EnemyBoss1::AfterBumpAttack()
@@ -376,11 +407,11 @@ State EnemyBoss1::AfterBumpAttack()
 	Stage::Instance()->ResetAllSquareDrawType();
 	if (bumpAttackDetail.stunTurn > 0)
 	{
-		CameraController::Instance().ShakeCamera(0.75f, 5);
+		CameraController::Instance().ShakeCamera(1.25f, 8);
 		return State::Stunned_Init;
 	}
 	else
 	{
-		return State::Act_Init;
+		return State::Attack_Init;
 	}
 }

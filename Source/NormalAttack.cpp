@@ -1,6 +1,7 @@
 #include "NormalAttack.h"
 #include "Stage.h"
 #include "Character.h"
+#include "CameraController.h"
 
 void NormalAttack::Update(float elapsedTime)
 {
@@ -20,9 +21,16 @@ void NormalAttack::Update(float elapsedTime)
 			{
 				for (auto& sq : targetAttackPos)
 				{
-					if (sq.x == e.targetChara->GetPosition().x && sq.y == e.targetChara->GetPosition().y)
+					//if (sq.x == e.targetChara->GetPosition().x && sq.y == e.targetChara->GetPosition().y)
+					auto target = Stage::Instance()->GetSquare(sq.x, sq.y)->GetCharacter();
+					if (target && target == e.targetChara)
 					{
 						e.targetChara->ApplyDamage(damage);
+						if (damage >= 15)
+							CameraController::Instance().ShakeCamera(1.25, 6);
+						else
+							CameraController::Instance().ShakeCamera(0.75f, 1);
+						break;
 					}
 				}
 				e.isAttacked = true;
