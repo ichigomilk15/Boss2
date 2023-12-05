@@ -5,7 +5,7 @@
 Graphics* Graphics::instance = nullptr;
 
 // コンストラクタ
-Graphics::Graphics(HWND hWnd):hwnd(hWnd)
+Graphics::Graphics(HWND hWnd) :hwnd(hWnd)
 {
 	// インスタンス設定
 	_ASSERT_EXPR(instance == nullptr, "already instantiated");
@@ -75,7 +75,7 @@ Graphics::Graphics(HWND hWnd):hwnd(hWnd)
 			device.GetAddressOf(),			// 作成が成功した場合に、Deviceのアドレスを格納するポインタ変数へのアドレス。ここで指定したポインタ変数経由でDeviceを操作する。
 			&featureLevel,					// 作成に成功したD3D_FEATURE_LEVELを格納するためのD3D_FEATURE_LEVEL列挙型変数のアドレスを設定する。
 			immediateContext.GetAddressOf()	// 作成が成功した場合に、Contextのアドレスを格納するポインタ変数へのアドレス。ここで指定したポインタ変数経由でContextを操作する。
-			);
+		);
 		_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
 	}
 
@@ -99,14 +99,17 @@ Graphics::Graphics(HWND hWnd):hwnd(hWnd)
 		depthStencilBufferDesc.Width = screenWidth;
 		depthStencilBufferDesc.Height = screenHeight;
 		depthStencilBufferDesc.MipLevels = 1;
+		//depthStencilBufferDesc.MipLevels = 0;
 		depthStencilBufferDesc.ArraySize = 1;
 		depthStencilBufferDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;	// 1ピクセルあたり、深度情報を24Bit / ステンシル情報を8bitのテクスチャを作成する。
 		depthStencilBufferDesc.SampleDesc.Count = 1;
 		depthStencilBufferDesc.SampleDesc.Quality = 0;
 		depthStencilBufferDesc.Usage = D3D11_USAGE_DEFAULT;
 		depthStencilBufferDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;		// 深度ステンシル用のテクスチャを作成する。
+		//depthStencilBufferDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET | D3D11_BIND_DEPTH_STENCIL;
 		depthStencilBufferDesc.CPUAccessFlags = 0;
 		depthStencilBufferDesc.MiscFlags = 0;
+		//depthStencilBufferDesc.MiscFlags = D3D11_RESOURCE_MISC_GENERATE_MIPS;
 		hr = device->CreateTexture2D(&depthStencilBufferDesc, nullptr, depthStencilBuffer.GetAddressOf());
 		_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
 

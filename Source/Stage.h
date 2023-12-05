@@ -56,6 +56,7 @@ public://functions
 	void ReFleshCard();
 	void ResetAllSquare();
 	void ResetSquaresAccessible();
+	void ResetAllSquareDrawType();
 
 	//Getter&Setter***************************************************************************
 #if 1

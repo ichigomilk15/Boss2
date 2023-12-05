@@ -24,6 +24,8 @@ enum class State
 	Move,
 	Moving_Init, //移動している状態
 	Moving,
+	AttackCharge_Init, //攻撃のチャージ
+	AttackCharge,
 	Attack_Init, //攻撃更新処理
 	Attack,
 	Attacking_Init, //攻撃している状態
@@ -63,9 +65,15 @@ public:
 
 	//移動目標位置が妥当か
 	bool IsTargetMovePosValid(const DirectX::XMINT2& targetPos);
+	bool IsTargetMoveAttackPosValid(const DirectX::XMINT2& targetPos);
 
 	//回復
 	void Heal(const int hp);
+
+	//キャラクターのサイズによって指定位置が左右かの判定
+	int GetWhichHorizontalSide(const DirectX::XMINT2& pos);
+	//キャラクターのサイズによって指定位置が上下かの判定
+	int GetWhichVerticalSide(const DirectX::XMINT2& pos);
 
 	//位置取得
 	const DirectX::XMFLOAT3& GetPositionWorld() const { return positionWorld; }
@@ -198,6 +206,7 @@ protected:
 	//int attackAdjacentRange = 0;
 
 	AttackParent* attack = nullptr;
+	int attackChargeTurn = 0;
 
 	//HPバー関係の値
 	std::unique_ptr<Sprite> icon;

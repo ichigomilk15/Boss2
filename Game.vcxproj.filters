@@ -258,6 +258,9 @@
     <ClInclude Include="Source\Graphics\NumberSprite.h">
       <Filter>Source\System\Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="Source\BumpAttack.h">
+      <Filter>Source\Attacks</Filter>
+    </ClInclude>
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
@@ -431,6 +434,9 @@
     </ClCompile>
     <ClCompile Include="Source\Graphics\NumberSprite.cpp">
       <Filter>Source\System\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\BumpAttack.cpp">
+      <Filter>Source\Attacks</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

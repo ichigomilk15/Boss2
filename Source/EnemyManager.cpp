@@ -142,12 +142,28 @@ void EnemyManager::UpdateEnemiesTurn(float elapsedTime)
 	if (enemyTurnIndex < 0)
 	{
 		enemyTurnIndex = 0;
-		enemies.at(enemyTurnIndex)->SetState(State::Act_Init);
+		if (enemies.at(enemyTurnIndex)->GetState() == State::Idle)
+		{
+			enemies.at(enemyTurnIndex)->SetState(State::Act_Init);
+		}
+		else
+		{
+			enemies.at(enemyTurnIndex)->SetState((State)((int)enemies.at(enemyTurnIndex)->GetState() - 1));
+		}
 	}
 
 	if (enemies.at(enemyTurnIndex)->GetIsActEnd())
 	{
 		if (++enemyTurnIndex < enemies.size())
-			enemies.at(enemyTurnIndex)->SetState(State::Act_Init);
+		{
+			if (enemies.at(enemyTurnIndex)->GetState() == State::Idle)
+			{
+				enemies.at(enemyTurnIndex)->SetState(State::Act_Init);
+			}
+			else
+			{
+				enemies.at(enemyTurnIndex)->SetState((State)((int)enemies.at(enemyTurnIndex)->GetState() - 1));
+			}
+		}
 	}
 }

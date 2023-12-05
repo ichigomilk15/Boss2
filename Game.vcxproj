@@ -124,6 +124,7 @@
     <ClInclude Include="Source\Audio\Audio.h" />
     <ClInclude Include="Source\Audio\AudioResource.h" />
     <ClInclude Include="Source\Audio\AudioSource.h" />
+    <ClInclude Include="Source\BumpAttack.h" />
     <ClInclude Include="Source\EnemyBoss1.h" />
     <ClInclude Include="Source\GameSystemManager.h" />
     <ClInclude Include="Source\Graphics\NumberSprite.h" />
@@ -187,6 +188,7 @@
     <ClCompile Include="Source\Audio\Audio.cpp" />
     <ClCompile Include="Source\Audio\AudioResource.cpp" />
     <ClCompile Include="Source\Audio\AudioSource.cpp" />
+    <ClCompile Include="Source\BumpAttack.cpp" />
     <ClCompile Include="Source\Camera.cpp" />
     <ClCompile Include="Source\CameraController.cpp" />
     <ClCompile Include="Source\Card.cpp" />

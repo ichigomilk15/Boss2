@@ -1,6 +1,9 @@
 #include "EnemyBoss1.h"
 #include "Input\Input.h"
 #include "Stage.h"
+#include "AttackManager.h"
+#include "NormalAttack.h"
+#include "BumpAttack.h"
 
 EnemyBoss1::EnemyBoss1(Character* p) :
 	Enemy(p)
@@ -14,7 +17,7 @@ EnemyBoss1::EnemyBoss1(Character* p) :
 
 	height = 1.0f;
 	enemyType = ENEMY_TYPE::BOSS1;
-	actMax = 3;
+	actMax = 1;
 	actNo = 0;
 	state = State::Act_Init;
 	moveMax = 2;
@@ -29,8 +32,8 @@ void EnemyBoss1::UpdateState(float elapsedTime)
 	switch (state)
 	{
 	case State::Idle_Init:
-		if (!this->model->IsPlayAnimation(Animation::Idle))
-			this->model->PlayAnimation(Animation::Idle, true);
+		if (!this->model->IsPlayAnimation(ANIMATION_BOSS::BossIdle))
+			this->model->PlayAnimation(ANIMATION_BOSS::BossIdle, true);
 		state = State::Idle;
 		[[fallthrough]];
 	case State::Idle:
@@ -38,7 +41,7 @@ void EnemyBoss1::UpdateState(float elapsedTime)
 		break;
 
 	case State::Act_Init:
-		this->model->PlayAnimation(Animation::Idle, true);
+		this->model->PlayAnimation(ANIMATION_BOSS::BossIdle, true);
 		actTimer = 0.5f;
 		state = State::Act;
 		Stage::Instance()->ResetAllSquare();
@@ -92,9 +95,27 @@ void EnemyBoss1::UpdateState(float elapsedTime)
 		}
 		break;
 
+	case State::AttackCharge_Init:
+		this->model->PlayAnimation(ANIMATION_BOSS::BossDrop, true);
+		Stage::Instance()->ResetAllSquare();
+		--attackChargeTurn;
+		state = State::AttackCharge;
+		actTimer = 0.5f;
+		if (attackChargeTurn >= 0)
+			isActEnd = true;
+		[[fallthrough]];
+	case State::AttackCharge:
+		--actTimer;
+		if (attackChargeTurn < 0 && actTimer <= 0.0f)
+		{
+			SetState(State::Attacking_Init);
+			++actNo;
+			break;
+		}
+		break;
+
 	case State::Attack_Init:
-		this->model->PlayAnimation(Animation::Run, false);
-		actTimer = 1.0f;
+		actTimer = 0.5f;
 		state = State::Attack;
 		[[fallthrough]];
 	case State::Attack:
@@ -103,7 +124,15 @@ void EnemyBoss1::UpdateState(float elapsedTime)
 		{
 			if (attack && !attack->GetIsDestroy())
 			{
-				SetState(State::Attacking_Init);
+				if (dynamic_cast<BumpAttack*> (attack))
+				{
+					SetState(State::AttackCharge_Init);
+					attackChargeTurn = 1;
+				}
+				else
+				{
+					SetState(State::Attacking_Init);
+				}
 				break;
 			}
 			else
@@ -114,19 +143,24 @@ void EnemyBoss1::UpdateState(float elapsedTime)
 		break;
 
 	case State::Attacking_Init:
-		this->model->PlayAnimation(Animation::Attack, false, 0.0f);
+		this->model->PlayAnimation(ANIMATION_BOSS::BossSpin, false, 0.2f);
+		targetMovePos = targetChargingMovePos;
+		targetChargingMovePos = { -1, -1 };
+		AttackManager::Instance().Register(attack);
 		state = State::Attacking;
 		[[fallthrough]];
 	case State::Attacking:
-		if (!attack || (attack && attack->GetIsDestroy()) || !model->IsPlayAnimation())
+		if ((!attack || (attack && attack->GetIsDestroy())) && !IsMoving())
 		{
+			targetMovePos = { -1, -1 };
 			attack = nullptr;
+			Stage::Instance()->ResetAllSquareDrawType();
 			SetState(State::Act_Init);
 		}
 		break;
 
 	case State::KnockedBack_Init:
-		this->SetDirection({position.x - player->GetPosition().x, position.y - player->GetPosition().y});
+		this->SetDirection({ position.x - player->GetPosition().x, position.y - player->GetPosition().y });
 		actTimer = 0.5f;
 		state = State::KnockedBack;
 		[[fallthrough]];
@@ -155,5 +189,94 @@ void EnemyBoss1::UpdateState(float elapsedTime)
 
 	default:
 		break;
+	}
+}
+
+void EnemyBoss1::InitializeAttack(float elapsedTime)
+{
+	if (attack && !attack->GetIsDestroy()) return;
+	//Ç‘Ç¬ÇØÇÈçUåÇ
+	std::vector<Square*> attackSq;
+	bool isBumpAttack = true;
+	SetDirection(player->GetPosition());
+	DirectX::XMINT2 targetPos = position;
+
+	switch (GetDirection())
+	{
+	case CommonClass::DirectionFace::Back:
+		for (auto& pos : GetSquaresPositionX(position.y + size.y - 1))
+		{
+			for (auto& sq : Stage::Instance()->GetSquaresByDirection(pos.x, pos.y, attackRange, this->GetDirection()))
+			{
+				attackSq.emplace_back(sq);
+			}
+		}
+		targetPos.y += attackRange;
+		break;
+	case CommonClass::DirectionFace::Front:
+		for (auto& pos : GetSquaresPositionX(position.y))
+		{
+			for (auto& sq : Stage::Instance()->GetSquaresByDirection(pos.x, pos.y, attackRange, this->GetDirection()))
+			{
+				attackSq.emplace_back(sq);
+			}
+		}
+		targetPos.y -= attackRange;
+		break;
+	case CommonClass::DirectionFace::Left:
+		for (auto& pos : GetSquaresPositionY(position.x))
+		{
+			for (auto& sq : Stage::Instance()->GetSquaresByDirection(pos.x, pos.y, attackRange, this->GetDirection()))
+			{
+				attackSq.emplace_back(sq);
+			}
+		}
+		targetPos.x -= attackRange;
+		break;
+	case CommonClass::DirectionFace::Right:
+		for (auto& pos : GetSquaresPositionY(position.x + size.x - 1))
+		{
+			for (auto& sq : Stage::Instance()->GetSquaresByDirection(pos.x, pos.y, attackRange, this->GetDirection()))
+			{
+				attackSq.emplace_back(sq);
+			}
+		}
+		targetPos.x += attackRange;
+		break;
+	default:
+		isBumpAttack = false;
+		break;
+	}
+
+	if (isBumpAttack)
+	{
+		std::vector<DirectX::XMINT2> posVec;
+		for (auto& sq : attackSq)
+		{
+			posVec.emplace_back(sq->GetPos());
+		}
+		attack = new BumpAttack(this, attackPower, TargetAttackEnum::Target_Player, GetDirection(), posVec, 0.5f);
+		//AttackManager::Instance().Register(attack);
+
+		for (auto& square : attackSq)
+		{
+			square->SetType(Square::Type::AttackArea);
+			square->SetDrawType(Square::DrawType::ChargeAttack);
+		}
+
+
+		if (!this->IsTargetMoveAttackPosValid(targetPos))
+		{
+			//todo: stunèàóùÇ±Ç±Ç≈çÏê¨
+			targetPos.x = std::clamp(targetPos.x, 0, abs((int)Common::SQUARE_NUM_X - size.x));
+			targetPos.y = std::clamp(targetPos.y, 0, abs((int)Common::SQUARE_NUM_Y - size.y));
+		}
+		//targetMovePos = targetPos;
+		targetChargingMovePos = targetPos;
+		return;
+	}
+	else //Jump Attack
+	{
+
 	}
 }

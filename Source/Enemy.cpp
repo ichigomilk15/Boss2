@@ -141,9 +141,8 @@ void Enemy::InitializeAttack(float elapsedTime)
 {
 	if (attack && !attack->GetIsDestroy()) return;
 	std::vector<Square*> attackSq;
-	DirectX::XMINT2 dirPos = { player->GetPosition().x - position.x, player->GetPosition().y - position.y };
+	//DirectX::XMINT2 dirPos = { player->GetPosition().x - position.x, player->GetPosition().y - position.y };
 
-	//SetDirection(CommonClass::GetDirectionTarget(position, player->GetPosition()));
 	SetDirection(player->GetPosition());
 	/*if (dirPos.x > 0)
 		SetDirection(CommonClass::DirectionFace::Right);

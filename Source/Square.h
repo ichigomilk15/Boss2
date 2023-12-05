@@ -25,14 +25,26 @@ public://class
 		Inaccessible,
 		MAX,
 	};
+	enum class DrawType : unsigned short
+	{
+		NONE,
+		ChargeAttack,
+		MAX,
+	};
 
 	struct TypeDetail
 	{
 		const char* semantic;
 		const DirectX::XMFLOAT4 color;
 	};
+	struct DrawTypeDetail
+	{
+		const char* semantic;
+		const DirectX::XMFLOAT4 color;
+	};
 
 	std::map<Type, TypeDetail> typeMaps;
+	std::map<DrawType, DrawTypeDetail> drawTypeMaps;
 
 public://function
 	Square(const DirectX::XMINT2& pos);
@@ -55,6 +67,8 @@ public://function
 	const DirectX::XMINT2& GetPos() const noexcept { return pos; }
 	void SetType(Type type);
 	const Type& GetType()const noexcept { return type; }
+	void SetDrawType(DrawType type) { drawType = type; }
+	const DrawType& GetDrawType() const noexcept { return drawType; }
 	Card* GetCard()const noexcept { return card.get(); }
 	
 	void SetCharacter(Character* chara) { character = chara; }
@@ -70,6 +84,7 @@ private://function
 	void UpdateDirty();
 private://members
 	Type type = Type::NONE;
+	DrawType drawType = DrawType::NONE;
 	std::shared_ptr<Card> card;
 	std::weak_ptr<Model> SquareBorder;
 	std::weak_ptr<Model> SquareArea;
