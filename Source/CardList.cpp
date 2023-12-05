@@ -664,8 +664,8 @@ void CardManager::Replenish()
 			//ämó¶Çê›íË
 			const std::pair<Card::Type, unsigned int> param[] =
 			{
-				{Card::Type::ATTACK,100},
-				{Card::Type::MOVE,120},
+				{Card::Type::ATTACK,110},
+				{Card::Type::MOVE,100},
 				{Card::Type::DEFENCE,100},
 			};
 			size_t paramSize = std::size(param);
