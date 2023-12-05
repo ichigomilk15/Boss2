@@ -310,7 +310,7 @@ void PhaseManager::StageInit(const int level)
 {
 	switch (level)
 	{
-	case 4:
+	case 1:
 	{
 		PlayerManager::Instance().GetFirstPlayer()->SetPositionWorld(Common::PlayerPosInit);
 		//enemy‚Ì”z’u
@@ -361,7 +361,7 @@ void PhaseManager::StageInit(const int level)
 		enemy2->SetMaxHealth(40);
 	}
 		break;
-	case 1:
+	case 4:
 	{
 		auto player = PlayerManager::Instance().GetFirstPlayer();
 		EnemyBoss1* boss1 = new EnemyBoss1(player);
