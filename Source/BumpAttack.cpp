@@ -20,6 +20,7 @@ void BumpAttack::Update(float elapsedTime)
 				if (SetTargetCharaBumpPos())
 				{
 					e.targetChara->ApplyDamage(damage);
+					e.targetChara->SetState(State::KnockedBack_Init);
 				}
 				e.isAttacked = true;
 			}
@@ -99,7 +100,6 @@ bool BumpAttack::SetTargetCharaBumpPos()
 					e.targetChara->SetTargetMovePosition({ pos.x, pos.y - bumpMoveTarget });
 				}
 			}
-			e.targetChara->SetState(State::KnockedBack_Init);
 			break;
 		}
 	}

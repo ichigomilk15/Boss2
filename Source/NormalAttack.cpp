@@ -18,7 +18,13 @@ void NormalAttack::Update(float elapsedTime)
 		{
 			if (!e.isAttacked)
 			{
-				e.targetChara->ApplyDamage(damage);
+				for (auto& sq : targetAttackPos)
+				{
+					if (sq.x == e.targetChara->GetPosition().x && sq.y == e.targetChara->GetPosition().y)
+					{
+						e.targetChara->ApplyDamage(damage);
+					}
+				}
 				e.isAttacked = true;
 			}
 		}

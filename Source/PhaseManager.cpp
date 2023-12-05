@@ -366,7 +366,7 @@ void PhaseManager::StageInit(const int level)
 		pos.x = (player->GetPosition().x > 4) ? 0 : 5;
 		pos.y = (player->GetPosition().y > 4) ? 0 : 5;
 		//boss1->SetPositionWorld(pos);
-		boss1->SetPositionWorld({0, 2});
+		boss1->SetPositionWorld({3, 4});
 		//boss1->SetPositionWorld({2, 6});
 		boss1->SetTargetMovePosition({ -1, -1 });
 		boss1->SetSize({ 2, 2 });

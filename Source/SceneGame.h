@@ -41,6 +41,6 @@ private:
 
 private://members
 	//Player* player = nullptr;
-	CameraController* cameraController = nullptr;
+	CameraController* cameraController = &(CameraController::Instance());
 	std::unique_ptr<Sprite> playerHP[3];
 };

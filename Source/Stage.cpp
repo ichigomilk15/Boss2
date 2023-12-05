@@ -193,6 +193,31 @@ std::vector<Square*> Stage::GetSquaresEdgeAdjacent(const int& initX, const int& 
 	return foundSq;
 }
 
+std::vector<Square*> Stage::GetSquaresBoxRange(const int& initX, const int& initY, const int& cost, const std::vector<Square::Type>& typesExclusion)
+{
+	std::vector<Square*> foundSq = GetSquares(initX, initY, cost, typesExclusion);
+	std::vector<Square*> removeSq;
+	for (auto& sq : foundSq)
+	{
+		DirectX::XMINT2 sqPos = sq->GetPos();
+		if ((sqPos.x == initX && abs(sqPos.y - initY) == cost) ||
+			(sqPos.y == initY && abs(sqPos.x - initX) == cost))
+		{
+			removeSq.emplace_back(sq);
+		}
+	}
+	for (auto& sq : removeSq)
+	{
+		std::vector<Square*>::iterator it = std::find(foundSq.begin(), foundSq.end(), sq);
+		if (it != foundSq.end())
+		{
+			foundSq.erase(it);
+		}
+	}
+	removeSq.clear();
+	return foundSq;
+}
+
 std::vector<Square*> Stage::GetSquaresByDirection(const int& initX, const int& initY, const int& cost, const int& direction)
 {
 	std::vector<Square*> foundSq = GetSquares(initX, initY, cost);

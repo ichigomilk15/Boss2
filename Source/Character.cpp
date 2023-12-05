@@ -103,6 +103,20 @@ void Character::UpdateVelocity(float elapsedTime)
 	// åoâﬂÉtÉåÅ[ÉÄ
 	float elapsedFrame = 60.0f * elapsedTime;
 
+
+	{
+		isGround = false;
+		positionWorld.y += velocity.y * elapsedFrame;
+		velocity.y += Common::gravity * elapsedTime;
+
+		if (positionWorld.y <= pivotAdjustPosWorld.y)
+		{
+			positionWorld.y = pivotAdjustPosWorld.y;
+			velocity.y = 0.0f;
+			isGround = true;
+		}
+	}
+
 	if (IsMoving())
 	{
 		const DirectX::XMFLOAT3 targetPosWorld = Stage::Instance()->GetWorldPos(targetMovePos);

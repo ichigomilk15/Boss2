@@ -20,7 +20,7 @@ std::map<int, DirectX::XMFLOAT3> CommonClass::directionMaps;
 void SceneGame::Initialize()
 {
 	//カメラコントローラー初期化
-	cameraController = new CameraController();
+	//cameraController = new CameraController();
 
 	//方向マップ設定
 	SetGlobalDirection();
@@ -61,11 +61,11 @@ void SceneGame::Initialize()
 void SceneGame::Finalize()
 {
 	//カメラコントローラー終了化
-	if (cameraController != nullptr)
+	/*if (cameraController != nullptr)
 	{
 		delete cameraController;
 		cameraController = nullptr;
-	}
+	}*/
 
 	PlayerManager::Instance().Clear();
 
@@ -81,6 +81,21 @@ void SceneGame::Update(float elapsedTime)
 #ifdef _DEBUG
 	//カメラコントローラー更新処理
 	cameraController->Update(elapsedTime);
+	GamePad& gamePad = Input::Instance().GetGamePad();
+	if (gamePad.GetButtonDown() & gamePad.BTN_A)
+	{
+		cameraController->ShakeCamera(0.5f);
+	}
+	if (gamePad.GetButtonDown() & gamePad.BTN_B)
+	{
+		auto e = EnemyManager::Instance().GetEnemy(0);
+		e->AddImpulse({ 0.0f, 0.8f, 0.0f });
+	}
+	if (gamePad.GetButtonDown() & gamePad.BTN_X)
+	{
+		auto e = EnemyManager::Instance().GetEnemy(0);
+		e->AddImpulse({ 0.0f, -1.8f, 0.0f });
+	}
 #endif // _DEBUG
 	if (GameSystemManager::Instance().GetIsPoused())
 	{

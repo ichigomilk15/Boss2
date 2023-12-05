@@ -163,6 +163,7 @@ void Player::UpdateState(float elapsedTime)
 		if (!model->IsPlayAnimation(Animation::Idle))
 			this->model->PlayAnimation(Animation::Idle, true);
 		actTimer = 0.5f;
+		Stage::Instance()->ResetAllSquare();
 		SetState(State::Act);
 		[[fallthrough]];
 	case State::Act:
@@ -304,6 +305,7 @@ void Player::UpdateState(float elapsedTime)
 		actTimer -= elapsedTime;
 		if (!IsMoving() && actTimer < 0.0f)
 		{
+			Stage::Instance()->ResetAllSquare();
 			SetState(State::Idle_Init);
 			break;
 		}

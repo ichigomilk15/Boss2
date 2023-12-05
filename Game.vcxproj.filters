@@ -261,6 +261,9 @@
     <ClInclude Include="Source\BumpAttack.h">
       <Filter>Source\Attacks</Filter>
     </ClInclude>
+    <ClInclude Include="Source\JumpAttack.h">
+      <Filter>Source\Attacks</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="External\imgui\imgui.cpp">
@@ -435,6 +438,9 @@
       <Filter>Source\System\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Source\BumpAttack.cpp">
+      <Filter>Source\Attacks</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\JumpAttack.cpp">
       <Filter>Source\Attacks</Filter>
     </ClCompile>
   </ItemGroup>

@@ -4,6 +4,8 @@
 #include "AttackManager.h"
 #include "NormalAttack.h"
 #include "BumpAttack.h"
+#include "JumpAttack.h"
+#include "CameraController.h"
 
 EnemyBoss1::EnemyBoss1(Character* p) :
 	Enemy(p)
@@ -20,7 +22,7 @@ EnemyBoss1::EnemyBoss1(Character* p) :
 	actNo = 0;
 	state = State::Act_Init;
 	moveMax = 2;
-	attackPower = 7;
+	bumpAttackDetail.attackPow = 7;
 	isActEnd = false;
 	SetDirection(CommonClass::DirectionFace::BackRight);
 }
@@ -106,7 +108,11 @@ void EnemyBoss1::UpdateState(float elapsedTime)
 		--actTimer;
 		if (attackChargeTurn < 0 && actTimer <= 0.0f)
 		{
-			SetState(State::Attacking_Init);
+			if (dynamic_cast<BumpAttack*>(attack))
+				SetState(State::Attacking_Init);
+			else if (dynamic_cast<JumpAttack*>(attack))
+				SetState(State::AttackingJump_Fly_Init);
+
 			++actNo;
 			break;
 		}
@@ -122,7 +128,7 @@ void EnemyBoss1::UpdateState(float elapsedTime)
 		{
 			if (attack && !attack->GetIsDestroy())
 			{
-				if (dynamic_cast<BumpAttack*> (attack))
+				if (dynamic_cast<BumpAttack*> (attack) || dynamic_cast<JumpAttack*>(attack))
 				{
 					SetState(State::AttackCharge_Init);
 					attackChargeTurn = 1;
@@ -142,18 +148,80 @@ void EnemyBoss1::UpdateState(float elapsedTime)
 
 	case State::Attacking_Init:
 		this->model->PlayAnimation(ANIMATION_BOSS::BossSpin, false, 0.2f);
-		targetMovePos = targetChargingMovePos;
-		targetChargingMovePos = { -1, -1 };
+		targetMovePos = bumpAttackDetail.targetChargingMovePos;
+		bumpAttackDetail.targetChargingMovePos = { -1, -1 };
+		actTimer = (bumpAttackDetail.stunTurn > 0) ? 0.0f : 1.0f;
 		AttackManager::Instance().Register(attack);
 		state = State::Attacking;
 		[[fallthrough]];
 	case State::Attacking:
-		if ((!attack || (attack && attack->GetIsDestroy())) && !IsMoving())
+		actTimer -= elapsedTime;
+		if (!IsMoving() && actTimer <= 0.0f)
 		{
-			targetMovePos = { -1, -1 };
+			SetState(AfterBumpAttack());
+			break;
+		}
+		break;
+
+	case State::AttackingJump_Fly_Init:
+		this->model->PlayAnimation(ANIMATION_BOSS::BossJump, false, 0.2f);
+		targetMovePos = jumpAttackDetail.targetJumpMovePos;
+		jumpAttackDetail.targetJumpMovePos = { -1, -1 };
+		actTimer = 1.0f;
+		AddImpulse({ 0.0f, 0.8f, 0.0f });
+		state = State::AttackingJump_Fly;
+		[[fallthrough]];
+	case State::AttackingJump_Fly:
+		actTimer -= elapsedTime;
+		if (!IsMoving())
+		{
+			if (velocity.y <= 0.000001f)
+			{
+				SetState(State::AttackingJump_Stump_Init);
+				break;
+			}
+			else
+			{
+				velocity.y = 0.0f;
+			}
+		}
+		break;
+
+	case State::AttackingJump_Stump_Init:
+		AddImpulse({ 0.0f, -1.0f, 0.0f });
+		state = State::AttackingJump_Stump;
+		[[fallthrough]];
+	case State::AttackingJump_Stump:
+		actTimer -= elapsedTime;
+		if (isGround)
+		{
+			Stage::Instance()->ResetAllSquare();
+			AttackManager::Instance().Register(std::move(attack));
 			attack = nullptr;
+			CameraController::Instance().ShakeCamera(0.75f, 7);
 			Stage::Instance()->ResetAllSquareDrawType();
 			SetState(State::Act_Init);
+			break;
+		}
+		break;
+
+	case State::Stunned_Init:
+		this->model->PlayAnimation(ANIMATION_BOSS::BossDamage, true);
+		actTimer = 1.0f;
+		--bumpAttackDetail.stunTurn;
+		if (bumpAttackDetail.stunTurn >= 0)
+			isActEnd = true;
+		state = State::Stunned;
+		[[fallthrough]];
+	case State::Stunned:
+		if (bumpAttackDetail.stunTurn < 0)
+		{
+			if (actTimer -= elapsedTime < 0.0f)
+			{
+				++actNo;
+				state = State::Act_Init;
+				break;
+			}
 		}
 		break;
 
@@ -168,6 +236,10 @@ void EnemyBoss1::UpdateState(float elapsedTime)
 		{
 			SetState(State::Idle_Init);
 			break;
+		}
+		else
+		{
+
 		}
 		break;
 
@@ -190,7 +262,7 @@ void EnemyBoss1::UpdateState(float elapsedTime)
 	}
 }
 
-void EnemyBoss1::InitializeAttack(float elapsedTime)
+void EnemyBoss1::InitializeAttack(float elapsedTime) //ÉoÉìÉvçUåÇ
 {
 	if (attack && !attack->GetIsDestroy()) return;
 	//Ç‘Ç¬ÇØÇÈçUåÇ
@@ -246,14 +318,16 @@ void EnemyBoss1::InitializeAttack(float elapsedTime)
 		break;
 	}
 
+	//ÉoÉìÉvçUåÇ
 	if (isBumpAttack)
 	{
+		bumpAttackDetail.attackPow = 20;
 		std::vector<DirectX::XMINT2> posVec;
 		for (auto& sq : attackSq)
 		{
 			posVec.emplace_back(sq->GetPos());
 		}
-		attack = new BumpAttack(this, attackPower, TargetAttackEnum::Target_Player, GetDirection(), posVec, 0.5f);
+		attack = new BumpAttack(this, bumpAttackDetail.attackPow, TargetAttackEnum::Target_Player, GetDirection(), posVec, 0.5f);
 		//AttackManager::Instance().Register(attack);
 
 		for (auto& square : attackSq)
@@ -268,13 +342,42 @@ void EnemyBoss1::InitializeAttack(float elapsedTime)
 			//todo: stunèàóùÇ±Ç±Ç≈çÏê¨
 			targetPos.x = std::clamp(targetPos.x, 0, abs((int)Common::SQUARE_NUM_X - size.x));
 			targetPos.y = std::clamp(targetPos.y, 0, abs((int)Common::SQUARE_NUM_Y - size.y));
+			bumpAttackDetail.stunTurn = 1;
 		}
 		//targetMovePos = targetPos;
-		targetChargingMovePos = targetPos;
+		bumpAttackDetail.targetChargingMovePos = targetPos;
 		return;
 	}
-	else //Jump Attack
+	else //ÉWÉÉÉìÉvçUåÇ
 	{
+		jumpAttackDetail.attackPow = 30;
+		std::vector<DirectX::XMINT2> posVec;
+		std::vector<Square*> atkSquare = Stage::Instance()->GetSquaresBoxRange(player->GetPosition().x, player->GetPosition().y, 2);
+		atkSquare.emplace_back(Stage::Instance()->GetSquare(player->GetPosition().x, player->GetPosition().y).get());
+		for (auto& sq : atkSquare)
+		{
+			posVec.emplace_back(sq->GetPos());
+			sq->SetType(Square::Type::AttackArea);
+			sq->SetDrawType(Square::DrawType::ChargeAttack);
+		}
+		attack = new JumpAttack(this, jumpAttackDetail.attackPow, TargetAttackEnum::Target_Player, posVec);
+		jumpAttackDetail.targetJumpMovePos = player->GetPosition();
+		return;
+	}
+}
 
+State EnemyBoss1::AfterBumpAttack()
+{
+	targetMovePos = { -1, -1 };
+	attack = nullptr;
+	Stage::Instance()->ResetAllSquareDrawType();
+	if (bumpAttackDetail.stunTurn > 0)
+	{
+		CameraController::Instance().ShakeCamera(0.75f, 5);
+		return State::Stunned_Init;
+	}
+	else
+	{
+		return State::Act_Init;
 	}
 }

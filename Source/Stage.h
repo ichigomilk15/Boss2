@@ -38,6 +38,7 @@ public://functions
 
 	std::vector<Square*> GetSquares(const int& initX, const int& initY, const int& cost, const std::vector<Square::Type>& typesExclusion = {Square::Type::MAX});
 	std::vector<Square*> GetSquaresEdgeAdjacent(const int& initX, const int& initY, const int& cost, const std::vector<Square::Type>& typesExclusion = { Square::Type::MAX });
+	std::vector<Square*> GetSquaresBoxRange(const int& initX, const int& initY, const int& cost, const std::vector<Square::Type>& typesExclusion = { Square::Type::MAX });
 	std::vector<Square*> GetSquaresByDirection(const int& initX, const int& initY, const int& cost, const int& direction);
 	int GetTargetPosCost(const DirectX::XMINT2& posInit, const DirectX::XMINT2& posTarget);
 	const bool IsAdjacent(const DirectX::XMINT2& posInit, const DirectX::XMINT2& posTarget) const;

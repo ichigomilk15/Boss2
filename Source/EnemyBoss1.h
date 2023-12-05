@@ -22,8 +22,21 @@ private:
 	void UpdateState(float elapsedTime) override;
 	void InitializeAttack(float elapsedTime) override;
 
+	//バンプ攻撃後の処理
+	State AfterBumpAttack();
+
 private:
-	DirectX::XMINT2 targetChargingMovePos = { -1, -1 };
+	struct BumpAttackDetail
+	{
+		DirectX::XMINT2 targetChargingMovePos = { -1, -1 };
+		int attackPow = 0;
+		int stunTurn = 1;	//攻撃後壁にぶつかったらスタンされる
+	} bumpAttackDetail;
+	struct JumpAttackDetail
+	{
+		DirectX::XMINT2 targetJumpMovePos = { -1, -1 };
+		int attackPow = 30;
+	} jumpAttackDetail;
 };
 
 

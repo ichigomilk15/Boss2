@@ -15,48 +15,45 @@ AttackParent::AttackParent(Character* parent, const int damage, TargetAttackEnum
 	for (auto& pos : targetAttackPos)
 	{
 		this->targetAttackPos.emplace_back(pos);
+	}
 
-		switch (target)
-		{
-		case TargetAttackEnum::Target_Player:
-		{
-			DirectX::XMINT2 pPos = PlayerManager::Instance().GetFirstPlayer()->GetPosition();
-			if (pos.x == pPos.x && pos.y == pPos.y)
-			{
-				targetAttack.emplace_back(TargetAttack{ PlayerManager::Instance().GetFirstPlayer(), false });
-				break;
-			}
-		}
+	switch (target)
+	{
+	case TargetAttackEnum::Target_Player:
+	{
+		DirectX::XMINT2 pPos = PlayerManager::Instance().GetFirstPlayer()->GetPosition();
+		targetAttack.emplace_back(TargetAttack{ PlayerManager::Instance().GetFirstPlayer(), false });
 		break;
-		case TargetAttackEnum::Target_Enemy:
+	}
+	break;
+	case TargetAttackEnum::Target_Enemy:
+	{
+		for (auto& e : EnemyManager::Instance().GetList())
 		{
-			for (auto& e : EnemyManager::Instance().GetList())
+			DirectX::XMINT2 ePos = e->GetPosition();
+			DirectX::XMINT2 eSize = e->GetSize();
+			auto listE = EnemyManager::Instance().GetList();
+			std::vector<Character*> listTarget;
+			for (auto& target : targetAttack)
 			{
-				DirectX::XMINT2 ePos = e->GetPosition();
-				DirectX::XMINT2 eSize = e->GetSize();
-				auto listE = EnemyManager::Instance().GetList();
-				std::vector<Character*> listTarget;
-				for (auto& target : targetAttack)
-				{
-					listTarget.emplace_back(target.targetChara);
-				}
-				for (int y = ePos.y; y < ePos.y + eSize.y; y++)
-				{
-					for (int x = ePos.x; x < ePos.x + eSize.x; x++)
-					{
-						if (x == pos.x && y == pos.y)
-						{
-							if (std::find(listTarget.begin(), listTarget.end(), e) == listTarget.end())
-							{
-								targetAttack.emplace_back(TargetAttack{ e, false });
-							}
-						}
-					}
-				}
+				listTarget.emplace_back(target.targetChara);
 			}
+			/*for (int y = ePos.y; y < ePos.y + eSize.y; y++)
+			{
+				for (int x = ePos.x; x < ePos.x + eSize.x; x++)
+				{
+					if (x == pos.x && y == pos.y)
+					{*/
+			if (std::find(listTarget.begin(), listTarget.end(), e) == listTarget.end())
+			{
+				targetAttack.emplace_back(TargetAttack{ e, false });
+			}
+			/*}
 		}
-		break;
+	}*/
 		}
+	}
+	break;
 	}
 	Initialize();
 };

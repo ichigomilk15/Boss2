@@ -27,6 +27,10 @@ enum class State
 	Attack,
 	Attacking_Init, //攻撃している状態
 	Attacking,
+	AttackingJump_Fly_Init, //ジャンプをして、攻撃準備をしている状態
+	AttackingJump_Fly,
+	AttackingJump_Stump_Init, //ヒップドロップ・スタンプ攻撃状態
+	AttackingJump_Stump,
 	Defence_Init, //防御アップ
 	Defence,
 	Special_Init, //Specialカードの使用
@@ -37,6 +41,8 @@ enum class State
 	Damage,
 	KnockedBack_Init, //ノックバックされた処理
 	KnockedBack,
+	Stunned_Init, //スタンされる状態
+	Stunned,
 	Act_Finish_Init, //全てのアクションが終わった処理
 	Act_Finish,
 	Max,
@@ -184,7 +190,7 @@ protected:
 	float height = 2.0f;
 	int health = 1000;
 	int maxHealth = 75;
-	int attackPower = 0; //アタック力
+	int attackPower = 0; //ノーマルアタック力
 	int shield = 0; //一時的な防御
 	int block = 0; //攻撃を受けた数値を減少するステータス・ブロック
 	DirectX::XMINT2 size = { 1, 1 };
@@ -200,6 +206,8 @@ protected:
 
 	AttackParent* attack = nullptr;
 	int attackChargeTurn = 0;
+
+	bool isGround = true;
 
 public:
 
