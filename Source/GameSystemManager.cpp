@@ -21,8 +21,8 @@ GameSystemManager::GameSystemManager()
     CardAllInfoButton.SetHitBox(HitBox2D(pos, size));
     CardAllInfoButton.AddComponent(new RenderComponent("./Data/Sprite/card_icon.png"));
 
-    pos = { ScreenSize.x * 0.5f,ScreenSize.y * 0.5f };
-    size = { ScreenSize.x * 0.9f,ScreenSize.y * 0.9f };
+    pos = { ScreenSize.x * 0.55f,ScreenSize.y * 0.4f };
+    size = { ScreenSize.x * 0.75f,ScreenSize.y * 0.8f };
     auto allInfo = CardAllInfoButton.AddChild(std::make_unique<UI>("allInfo"));
     allInfo->SetHitBox(HitBox2D::CreateBoxFromCenter(pos, size));
     allInfo->AddComponent(new RenderComponent("./Data/Sprite/CardCombos/_CardAllInfo.png"));

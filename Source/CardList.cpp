@@ -260,11 +260,21 @@ CardComboDatas[typeSpecial][typeDefence] = Data;
 
 	//カードの次のコンボの表示の
 	{
-		CardNextComboInfos[static_cast<int>(Card::Type::ATTACK)] = std::make_unique<Sprite>("./Data/Sprite/CardCombos/combo_attack.png");
-		CardNextComboInfos[static_cast<int>(Card::Type::DEFENCE)] = std::make_unique<Sprite>("./Data/Sprite/CardCombos/combo_shield.png");
-		CardNextComboInfos[static_cast<int>(Card::Type::MOVE)] = std::make_unique<Sprite>("./Data/Sprite/CardCombos/combo_move.png");
-		CardNextComboInfos[static_cast<int>(Card::Type::SPECIAL)] = std::make_unique<Sprite>("./Data/Sprite/CardCombos/combo_buff.png");
-		CardNextComboInfos[static_cast<int>(Card::Type::DEBUFF)] = std::make_unique<Sprite>("./Data/Sprite/CardCombos/combo_debuff.png");
+		CardNextComboInfos[static_cast<int>(Card::Type::ATTACK)] = 
+			std::make_unique<Sprite>("./Data/Sprite/CardCombos/combo_attack.png");
+
+		CardNextComboInfos[static_cast<int>(Card::Type::DEFENCE)] = 
+			std::make_unique<Sprite>("./Data/Sprite/CardCombos/combo_shield.png");
+
+		CardNextComboInfos[static_cast<int>(Card::Type::MOVE)] = 
+			std::make_unique<Sprite>("./Data/Sprite/CardCombos/combo_move.png");
+
+		CardNextComboInfos[static_cast<int>(Card::Type::SPECIAL)] = 
+			std::make_unique<Sprite>("./Data/Sprite/CardCombos/combo_buff.png");
+
+		CardNextComboInfos[static_cast<int>(Card::Type::DEBUFF)] = 
+			std::make_unique<Sprite>("./Data/Sprite/CardCombos/combo_debuff.png");
+
 	}
 }
 
@@ -677,10 +687,10 @@ void CardManager::Replenish()
 
 void CardManager::Erase()
 {
+	std::unique(cards.begin(), cards.end());
 	for (auto& erase : eraser)
 	{
 		cards.remove_if([&](std::shared_ptr<Card> src) {return src == erase; });
-
 
 		for (size_t i = 0; i < SET_CARD_MAX; i++)
 		{

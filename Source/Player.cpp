@@ -374,10 +374,12 @@ void Player::UpdateMove(float elapsedTime)
 
 State Player::MovingEnd()
 {
-	Card* getCard = Stage::Instance()->GetSquare(position.x, position.y)->GetCard();
+	std::shared_ptr<Square> square = Stage::Instance()->GetSquare(position.x, position.y);
+	Card* getCard = square->GetCard();
 	if (getCard)
 	{
 		GetCard(getCard);
+		square->ResetCard();
 	}
 
 	CardComboMove* moveDetail = dynamic_cast<CardComboMove*>(std::move(cardComboDataBase));

@@ -67,6 +67,9 @@
     <Filter Include="Source\System\UIs">
       <UniqueIdentifier>{28afe971-6a6b-45b3-ab5d-85e3ace09de7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="External\ilib">
+      <UniqueIdentifier>{2c9ffc84-047c-41cd-968b-fbb221e3a831}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="External\imgui\imconfig.h">
@@ -262,6 +265,12 @@
       <Filter>Source\Attacks</Filter>
     </ClInclude>
     <ClInclude Include="resource.h" />
+    <ClInclude Include="Source\DamageEffector.h">
+      <Filter>Source\GameSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="External\ilib\BetterFunction.h">
+      <Filter>External\ilib</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="External\imgui\imgui.cpp">
@@ -437,6 +446,12 @@
     </ClCompile>
     <ClCompile Include="Source\BumpAttack.cpp">
       <Filter>Source\Attacks</Filter>
+    </ClCompile>
+    <ClCompile Include="External\ilib\BetterFunction.cpp">
+      <Filter>External\ilib</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\DamageEffector.cpp">
+      <Filter>Source\GameSystem</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
