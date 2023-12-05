@@ -12,7 +12,7 @@
 #include "PhaseManager.h"
 #include "PlayerManager.h"
 #include "GameSystemManager.h"
-#include "Graphics/NumberSprite.h"
+#include "DamageEffector.h"
 
 std::map<int, DirectX::XMFLOAT3> CommonClass::directionMaps;
 
@@ -55,6 +55,15 @@ void SceneGame::Initialize()
 	Stage::Instance()->ResetSquaresAccessible();
 
 	PhaseManager::Instance().Initialize();
+
+	DamageEffector::EffectData data;
+	data.color = { 1.0f,.0f,.0f,1.0f };
+	data.damage = 100;
+	data.pos = {};
+	data.velocity = { 10.0f,10.0f };
+	data.scale = 3.0f;
+	data.timer = 10.0f;
+	DamageEffector::Instance().Register(data);
 }
 
 // 終了化l
@@ -116,6 +125,7 @@ void SceneGame::Update(float elapsedTime)
 	//エフェクト更新処理
 	EffectManager::Instance().Update(elapsedTime);
 	GameSystemManager::Instance().Update(elapsedTime);
+	DamageEffector::Instance().Update(elapsedTime);
 }
 
 // 描画処理
@@ -180,15 +190,16 @@ void SceneGame::Render()
 		CardManager::Instance().Render(dc);
 		PhaseManager::Instance().Render(dc);
 
+		DamageEffector::Instance().Render(dc);
 
-		GameSystemManager::Instance().Render(dc);
-
+		//体力バー描画
 		{
 			Player* pl = PlayerManager::Instance().GetFirstPlayer();
 			pl->Render2D(dc, HitBox2D::CreateBoxFromTopLeft(DirectX::XMFLOAT2{ .0f,.0f, }, DirectX::XMFLOAT2{ 200.0f,50.0f }));
 
 			EnemyManager::Instance().Render2D(dc);
 		}
+		GameSystemManager::Instance().Render(dc);//一番最後に描画すること
 	}
 	// 2DデバッグGUI描画
 #ifdef _DEBUG

@@ -112,6 +112,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="External\DirectXTex\WICTextureLoader.h" />
+    <ClInclude Include="External\ilib\BetterFunction.h" />
     <ClInclude Include="External\imgui\imconfig.h" />
     <ClInclude Include="External\imgui\imgui.h" />
     <ClInclude Include="External\imgui\imgui_internal.h" />
@@ -125,6 +126,7 @@
     <ClInclude Include="Source\Audio\AudioResource.h" />
     <ClInclude Include="Source\Audio\AudioSource.h" />
     <ClInclude Include="Source\BumpAttack.h" />
+    <ClInclude Include="Source\DamageEffector.h" />
     <ClInclude Include="Source\EnemyBoss1.h" />
     <ClInclude Include="Source\GameSystemManager.h" />
     <ClInclude Include="Source\Graphics\NumberSprite.h" />
@@ -180,6 +182,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="External\DirectXTex\WICTextureLoader.cpp" />
+    <ClCompile Include="External\ilib\BetterFunction.cpp" />
     <ClCompile Include="External\imgui\imgui.cpp" />
     <ClCompile Include="External\imgui\imgui_demo.cpp" />
     <ClCompile Include="External\imgui\imgui_draw.cpp" />
@@ -197,6 +200,7 @@
     <ClCompile Include="Source\Collision.cpp" />
     <ClCompile Include="Source\CardList.cpp" />
     <ClCompile Include="Source\Common.cpp" />
+    <ClCompile Include="Source\DamageEffector.cpp" />
     <ClCompile Include="Source\Effect.cpp" />
     <ClCompile Include="Source\EffectManager.cpp" />
     <ClCompile Include="Source\Enemy.cpp" />
