@@ -160,6 +160,7 @@ void EnemyBoss1::UpdateState(float elapsedTime)
 		actTimer -= elapsedTime;
 		if (!IsMoving() && actTimer <= 0.0f)
 		{
+			InitializeAttack(elapsedTime);
 			SetState(AfterBumpAttack());
 			break;
 		}
@@ -202,7 +203,7 @@ void EnemyBoss1::UpdateState(float elapsedTime)
 			attack = nullptr;
 			CameraController::Instance().ShakeCamera(0.75f, 7);
 			Stage::Instance()->ResetAllSquareDrawType();
-			SetState(State::Act_Init);
+			SetState(State::Attack_Init);
 			break;
 		}
 		break;
@@ -221,7 +222,7 @@ void EnemyBoss1::UpdateState(float elapsedTime)
 			if (actTimer -= elapsedTime < 0.0f)
 			{
 				++actNo;
-				state = State::Act_Init;
+				state = State::Attack_Init;
 				break;
 			}
 		}
