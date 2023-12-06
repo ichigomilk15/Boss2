@@ -28,6 +28,7 @@ public://class
 	enum class DrawType : unsigned short
 	{
 		NONE,
+		NormalAttackView,
 		ChargeAttack,
 		MAX,
 	};
@@ -67,10 +68,13 @@ public://function
 	const DirectX::XMINT2& GetPos() const noexcept { return pos; }
 	void SetType(Type type);
 	const Type& GetType()const noexcept { return type; }
-	void SetDrawType(DrawType type) { drawType = type; }
-	const DrawType& GetDrawType() const noexcept { return drawType; }
+	void InputDrawType(DrawType type) { drawType.emplace_back(type); }
+	const std::vector<DrawType>& GetDrawType() const noexcept { return drawType; }
+	void ResetDrawType();
+	void ResetDrawType(const DrawType drawType);
+	const bool IsHasDrawType(DrawType type) const noexcept;
 	Card* GetCard()const noexcept { return card.get(); }
-	
+
 	void SetCharacter(Character* chara) { character = chara; }
 	const Character* GetCharacter() const { return character; }
 	void SetCard(const std::shared_ptr<Card>& card)noexcept { this->card = card; }
@@ -84,7 +88,7 @@ private://function
 	void UpdateDirty();
 private://members
 	Type type = Type::NONE;
-	DrawType drawType = DrawType::NONE;
+	std::vector<DrawType> drawType = { DrawType::NONE };
 	std::shared_ptr<Card> card;
 	std::weak_ptr<Model> SquareBorder;
 	std::weak_ptr<Model> SquareArea;

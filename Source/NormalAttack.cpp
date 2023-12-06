@@ -27,9 +27,9 @@ void NormalAttack::Update(float elapsedTime)
 					{
 						e.targetChara->ApplyDamage(damage);
 						if (damage >= 15)
-							CameraController::Instance().ShakeCamera(1.25, 6);
+							CameraController::Instance().ShakeCamera(1.0, 6);
 						else
-							CameraController::Instance().ShakeCamera(0.75f, 1);
+							CameraController::Instance().ShakeCamera(0.25f, 1);
 						break;
 					}
 				}

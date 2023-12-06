@@ -2,6 +2,7 @@
 
 #include "Graphics\Model.h"
 #include "Enemy.h"
+#include "Audio\AudioSource.h"
 
 enum ANIMATION_BOSS
 {
@@ -27,6 +28,15 @@ private:
 
 	void InitStunDefence();
 
+	//ダメージを受けた時
+	void OnDamaged() override;
+
+	//死亡した時に呼ばれる
+	void OnDead() override;
+
+	//オーディオの初期化
+	void InitializeAudio();
+
 private:
 	struct BumpAttackDetail
 	{
@@ -41,6 +51,19 @@ private:
 		int attackPowCenter = 25;
 		int attackPowEdge = 15;
 	} jumpAttackDetail;
+
+	struct Boss1Ses
+	{
+		std::unique_ptr<AudioSource> startLineSe;
+		std::unique_ptr<AudioSource> attackLineSe;
+		std::unique_ptr<AudioSource> bumpAtkSe;
+		std::unique_ptr<AudioSource> jumpAtkSe;
+		std::unique_ptr<AudioSource> damageSe;
+		std::unique_ptr<AudioSource> deathSe;
+		std::unique_ptr<AudioSource> angrySe;
+		std::unique_ptr<AudioSource> panicSe;
+		std::unique_ptr<AudioSource> wallHitSe;
+	}boss1Ses;
 };
 
 

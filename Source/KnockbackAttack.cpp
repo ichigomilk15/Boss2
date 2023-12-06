@@ -56,7 +56,7 @@ void KnockbackAttack::Update(float elapsedTime)
 					{
 						e.targetChara->SetTargetMovePosition(movePos);
 						e.targetChara->SetState(State::KnockedBack_Init);
-						CameraController::Instance().ShakeCamera(1.0f, 2);
+						CameraController::Instance().ShakeCamera(0.5f, 2);
 						break;
 					}
 				}

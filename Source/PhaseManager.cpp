@@ -348,26 +348,29 @@ const bool PhaseManager::IsQuickNextPhase(const bool flag)
 
 void PhaseManager::StageInit(const int level)
 {
-	switch (level+1)//todo : debug 
+	switch (level)
 	{
-	//case 4:
-	//{
-	//	//PlayerManager::Instance().GetFirstPlayer()->SetPositionWorld(Common::PlayerPosInit);
-	//	////enemyの配置
-	//	//EnemyMinion1* enemy = new EnemyMinion1(PlayerManager::Instance().GetFirstPlayer());
-	//	//EnemyManager::Instance().Register(enemy);
-	//	//enemy->SetPositionWorld({ 1, 1 });
-	//	//enemy->SetTargetMovePosition({ -1, -1 });
-	//	//enemy->SetState(State::Idle_Init);
-	//	//enemy->SetAttackRange(1);
-	//	//enemy->SetHealth(30);
-	//	//enemy->SetMaxHealth(30);
-	//	//enemy->SetDirection(CommonClass::DirectionFace::Left);
-	//	//Stage::Instance()->GetSquare(0, 0)->SetCard(std::make_shared<Card>(DirectX::XMFLOAT2{ .0f,.0f }, CardManager::CARD_SIZE, Card::Type::SPECIAL));
-	//}
+	case 1:
+	{
+		PlayerManager::Instance().GetFirstPlayer()->SetPositionWorld(Common::PlayerPosInit);
+		//enemyの配置
+		EnemyMinion1* enemy = new EnemyMinion1(PlayerManager::Instance().GetFirstPlayer());
+		EnemyManager::Instance().Register(enemy);
+		enemy->SetPositionWorld({ 1, 1 });
+		enemy->SetTargetMovePosition({ -1, -1 });
+		enemy->SetState(State::Idle_Init);
+		enemy->SetAttackRange(1);
+		enemy->SetHealth(30);
+		enemy->SetMaxHealth(30);
+		enemy->SetDirection(CommonClass::DirectionFace::Left);
+		Stage::Instance()->GetSquare(0, 0)->SetCard(std::make_shared<Card>(DirectX::XMFLOAT2{ .0f,.0f }, CardManager::CARD_SIZE, Card::Type::SPECIAL));
+	}
 	break;
 	case 2:
 	{
+		PlayerManager::Instance().GetFirstPlayer()->SetTargetMovePosition(Common::PlayerPosInit);
+		PlayerManager::Instance().GetFirstPlayer()->SetPositionWorld(Common::PlayerPosInit);
+		Stage::Instance()->ResetAllSquare();
 		//enemyの配置
 		EnemyMinion1* enemy = new EnemyMinion1(PlayerManager::Instance().GetFirstPlayer());
 		EnemyManager::Instance().Register(enemy);
@@ -381,6 +384,9 @@ void PhaseManager::StageInit(const int level)
 	break;
 	case 3:
 	{
+		PlayerManager::Instance().GetFirstPlayer()->SetTargetMovePosition(Common::PlayerPosInit);
+		PlayerManager::Instance().GetFirstPlayer()->SetPositionWorld(Common::PlayerPosInit);
+		Stage::Instance()->ResetAllSquare();
 		//enemyの配置
 		EnemyMinion1* enemy = new EnemyMinion1(PlayerManager::Instance().GetFirstPlayer());
 		EnemyManager::Instance().Register(enemy);
@@ -403,6 +409,9 @@ void PhaseManager::StageInit(const int level)
 		break;
 	case 4:
 	{
+		PlayerManager::Instance().GetFirstPlayer()->SetTargetMovePosition(Common::PlayerPosInit);
+		PlayerManager::Instance().GetFirstPlayer()->SetPositionWorld(Common::PlayerPosInit);
+		Stage::Instance()->ResetAllSquare();
 		auto player = PlayerManager::Instance().GetFirstPlayer();
 		EnemyBoss1* boss1 = new EnemyBoss1(player);
 		EnemyManager::Instance().Register(boss1);
@@ -410,7 +419,7 @@ void PhaseManager::StageInit(const int level)
 		pos.x = (player->GetPosition().x > 4) ? 0 : 5;
 		pos.y = (player->GetPosition().y > 4) ? 0 : 5;
 		//boss1->SetPositionWorld(pos);
-		boss1->SetPositionWorld({3, 2});
+		boss1->SetPositionWorld({4, 4});
 		boss1->SetTargetMovePosition({ -1, -1 });
 		boss1->SetSize({ 2, 2 });
 		DirectX::XMFLOAT3 pivot = { Common::SquareWidth / 2, 1.0f, -Common::SquareHeight / 2 };

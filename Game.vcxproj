@@ -123,6 +123,7 @@
     <ClInclude Include="Source\AttackManager.h" />
     <ClInclude Include="Source\AttackParent.h" />
     <ClInclude Include="Source\Audio\Audio.h" />
+    <ClInclude Include="Source\Audio\AudioLoader.h" />
     <ClInclude Include="Source\Audio\AudioResource.h" />
     <ClInclude Include="Source\Audio\AudioSource.h" />
     <ClInclude Include="Source\BumpAttack.h" />
@@ -192,6 +193,7 @@
     <ClCompile Include="Source\AttackManager.cpp" />
     <ClCompile Include="Source\AttackParent.cpp" />
     <ClCompile Include="Source\Audio\Audio.cpp" />
+    <ClCompile Include="Source\Audio\AudioLoader.cpp" />
     <ClCompile Include="Source\Audio\AudioResource.cpp" />
     <ClCompile Include="Source\Audio\AudioSource.cpp" />
     <ClCompile Include="Source\BumpAttack.cpp" />

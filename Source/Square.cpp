@@ -13,7 +13,7 @@ Square::Square(const DirectX::XMINT2& pos) :
 	rotate(),
 	card(nullptr),
 	type(Type::NONE),
-	drawType(DrawType::NONE),
+	//drawType(DrawType::NONE),
 	SquareBorder(Stage::Instance()->squareBorder),
 	SquareArea(Stage::Instance()->squareArea),
 	areaColor(.0f, .0f, .0f, .0f)
@@ -29,6 +29,7 @@ Square::Square(const DirectX::XMINT2& pos) :
 	typeMaps.insert({ Type::MAX, TypeDetail{ "Max", {.0f,.0f,.0f,.0f} } });
 
 	drawTypeMaps.insert({ DrawType::NONE, DrawTypeDetail{"None", {1.0f, 1.0f, 1.0f, 0.5f}} });
+	drawTypeMaps.insert({ DrawType::NormalAttackView, DrawTypeDetail{"NormalAttackView", {0.6f, 0.1f, 0.1f, 0.6f}} });
 	drawTypeMaps.insert({ DrawType::ChargeAttack, DrawTypeDetail{"ChargeAttack", {1.0f, 0.0f, 0.0f, 0.8f}} });
 	drawTypeMaps.insert({ DrawType::MAX, DrawTypeDetail{"Max", {0.0f, 0.0f, 0.0f, 0.0f}} });
 }
@@ -59,6 +60,7 @@ void Square::Render(ID3D11DeviceContext* dc, Shader* shader)
 		//何かのアクション範囲なら板を表示
 		if (!SquareArea.expired())
 		{
+			
 			if (type != Type::NONE)
 			{
 				model = this->SquareArea.lock();
@@ -66,10 +68,17 @@ void Square::Render(ID3D11DeviceContext* dc, Shader* shader)
 				model->UpdateTransform(transform);
 				shader->Draw(dc, model.get());
 			}
-			else if (drawType > DrawType::NONE && drawType < DrawType::MAX)
+			else if (IsHasDrawType(DrawType::NormalAttackView))
 			{
 				model = this->SquareArea.lock();
-				model->ChangeMaterialColor(0u, drawTypeMaps.find(drawType)->second.color);
+				model->ChangeMaterialColor(0u, drawTypeMaps.find(DrawType::NormalAttackView)->second.color);
+				model->UpdateTransform(transform);
+				shader->Draw(dc, model.get());
+			}
+			else if(IsHasDrawType(DrawType::ChargeAttack))
+			{
+				model = this->SquareArea.lock();
+				model->ChangeMaterialColor(0u, drawTypeMaps.find(DrawType::ChargeAttack)->second.color);
 				model->UpdateTransform(transform);
 				shader->Draw(dc, model.get());
 			}
@@ -119,6 +128,39 @@ void Square::SetType(Type type)
 	{
 		SetIsaccessible(true);
 	}
+}
+
+void Square::ResetDrawType()
+{
+	drawType.clear();
+	drawType.emplace_back(DrawType::NONE);
+}
+
+void Square::ResetDrawType(const DrawType dType)
+{
+	std::vector<DrawType> newDrawTypes;
+	for (auto& d : drawType)
+	{
+		if (d != dType)
+			newDrawTypes.emplace_back(d);
+	}
+
+	ResetDrawType();
+	
+	for (auto& dType : newDrawTypes)
+	{
+		drawType.emplace_back(dType);
+	}
+}
+
+const bool Square::IsHasDrawType(DrawType type) const noexcept
+{
+	for (auto& t : drawType)
+	{
+		if (t == type)
+			return true;
+	}
+	return false;
 }
 
 void Square::ResetSquare()

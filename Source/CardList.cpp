@@ -1,6 +1,7 @@
 #define NOMINMAX
 #include "Common.h"
 #include <random>
+#include "Audio\AudioLoader.h"
 #include "CardList.h"
 #include "Graphics/Graphics.h"
 #include "Input/Input.h"
@@ -22,219 +23,219 @@ CardManager::CardManager() :
 
 	//ƒJ[ƒhƒRƒ“ƒ{İ’è
 	{
-	const int typeNone = (int)Card::Type::NONE;
-	const int typeAttack = (int)Card::Type::ATTACK;
-	const int typeDefence = (int)Card::Type::DEFENCE;
-	const int typeMove = (int)Card::Type::MOVE;
-	const int typeSpecial = (int)Card::Type::SPECIAL;
-	const int typeDebuff = (int)Card::Type::DEBUFF;
+		const int typeNone = (int)Card::Type::NONE;
+		const int typeAttack = (int)Card::Type::ATTACK;
+		const int typeDefence = (int)Card::Type::DEFENCE;
+		const int typeMove = (int)Card::Type::MOVE;
+		const int typeSpecial = (int)Card::Type::SPECIAL;
+		const int typeDebuff = (int)Card::Type::DEBUFF;
 
-	//UŒ‚ƒRƒ“ƒ{‚Ì“o˜^
-	{
-		CardComboAttack data;
-		data.infomation.reset();
-		data.type = Card::Type::ATTACK;
-		//UŒ‚’P”­
-		data.Attackcost = 1u;
-		data.AttackDamage = 9;
-		data.AreaAttackCost = false;
-		data.VAreaAttackCost = false;
-		data.UseShield = false;
-		auto Data = std::make_shared<CardComboAttack>(data);
-		Data->infomation = std::make_shared<Sprite>("./Data/Sprite/CardCombos/attack.png");
-		CardComboDatas[typeNone][typeAttack] = Data;
-		CardComboDatas[typeDebuff][typeAttack] = Data;
+		//UŒ‚ƒRƒ“ƒ{‚Ì“o˜^
+		{
+			CardComboAttack data;
+			data.infomation.reset();
+			data.type = Card::Type::ATTACK;
+			//UŒ‚’P”­
+			data.Attackcost = 1u;
+			data.AttackDamage = 9;
+			data.AreaAttackCost = false;
+			data.VAreaAttackCost = false;
+			data.UseShield = false;
+			auto Data = std::make_shared<CardComboAttack>(data);
+			Data->infomation = std::make_shared<Sprite>("./Data/Sprite/CardCombos/attack.png");
+			CardComboDatas[typeNone][typeAttack] = Data;
+			CardComboDatas[typeDebuff][typeAttack] = Data;
 
-		//	UŒ‚–UŒ‚
-		data.Attackcost = 1u;
-		data.AttackDamage = 12;
-		data.AreaAttackCost = true;
-		data.VAreaAttackCost = false;
-		data.UseShield = false;
-		Data = std::make_shared<CardComboAttack>(data);
-		Data->infomation = std::make_shared<Sprite>("./Data/Sprite/CardCombos/attack_attack.png");
-		CardComboDatas[typeAttack][typeAttack] = Data;
+			//	UŒ‚–UŒ‚
+			data.Attackcost = 1u;
+			data.AttackDamage = 12;
+			data.AreaAttackCost = true;
+			data.VAreaAttackCost = false;
+			data.UseShield = false;
+			Data = std::make_shared<CardComboAttack>(data);
+			Data->infomation = std::make_shared<Sprite>("./Data/Sprite/CardCombos/attack_attack.png");
+			CardComboDatas[typeAttack][typeAttack] = Data;
 
-		//ˆÚ“®–UŒ‚
-		data.Attackcost = 1u;
-		data.AttackDamage = 8;
-		data.AreaAttackCost = false;
-		data.VAreaAttackCost = 1u;
-		data.UseShield = false;
-		Data = std::make_shared<CardComboAttack>(data);
-		Data->infomation = std::make_shared<Sprite>("./Data/Sprite/CardCombos/walk_attack.png");
-		CardComboDatas[typeMove][typeAttack] = Data;
-		
-		//–hŒä–UŒ‚
-		data.Attackcost = 1u;
-		data.AttackDamage = 9;
-		data.AreaAttackCost = false;
-		data.VAreaAttackCost = false;
-		data.UseShield = true;
-		Data = std::make_shared<CardComboAttack>(data);
-		Data->infomation = std::make_shared<Sprite>("./Data/Sprite/CardCombos/shield_attack.png");
-		CardComboDatas[typeDefence][typeAttack] = Data;
+			//ˆÚ“®–UŒ‚
+			data.Attackcost = 1u;
+			data.AttackDamage = 8;
+			data.AreaAttackCost = false;
+			data.VAreaAttackCost = 1u;
+			data.UseShield = false;
+			Data = std::make_shared<CardComboAttack>(data);
+			Data->infomation = std::make_shared<Sprite>("./Data/Sprite/CardCombos/walk_attack.png");
+			CardComboDatas[typeMove][typeAttack] = Data;
 
-		//ƒXƒyƒVƒƒƒ‹–UŒ‚
-		data.Attackcost = 1u;
-		data.AttackDamage = 30;
-		data.AreaAttackCost = false;
-		data.VAreaAttackCost = false;
-		data.UseShield = false;
-		Data = std::make_shared<CardComboAttack>(data);
-		CardComboDatas[typeSpecial][typeAttack] = Data;
-		Data->infomation = std::make_shared<Sprite>("./Data/Sprite/CardCombos/buff_attack.png");
-	}
+			//–hŒä–UŒ‚
+			data.Attackcost = 1u;
+			data.AttackDamage = 9;
+			data.AreaAttackCost = false;
+			data.VAreaAttackCost = false;
+			data.UseShield = true;
+			Data = std::make_shared<CardComboAttack>(data);
+			Data->infomation = std::make_shared<Sprite>("./Data/Sprite/CardCombos/shield_attack.png");
+			CardComboDatas[typeDefence][typeAttack] = Data;
 
-	//ˆÚ“®ƒRƒ“ƒ{‚Ì“o˜^
-	{
-		CardComboMove data;
-		data.infomation.reset();
-		data.type = Card::Type::MOVE;
+			//ƒXƒyƒVƒƒƒ‹–UŒ‚
+			data.Attackcost = 1u;
+			data.AttackDamage = 30;
+			data.AreaAttackCost = false;
+			data.VAreaAttackCost = false;
+			data.UseShield = false;
+			Data = std::make_shared<CardComboAttack>(data);
+			CardComboDatas[typeSpecial][typeAttack] = Data;
+			Data->infomation = std::make_shared<Sprite>("./Data/Sprite/CardCombos/buff_attack.png");
+		}
 
-		//ˆÚ“®’P”­
-		data.moveCost = 1;
-		data.attackDamege = 0u;
-		data.knockbackCost = 0u;
-		data.knockbackDamege = 0u;
-		data.knockbackTakeDamege = 0u;
-		auto Data = std::make_shared<CardComboMove>(data);
-		Data->infomation = std::make_shared<Sprite>("./Data/Sprite/CardCombos/walk.png");
-		CardComboDatas[typeNone][typeMove] = Data;
-		CardComboDatas[typeDebuff][typeMove] = Data;
+		//ˆÚ“®ƒRƒ“ƒ{‚Ì“o˜^
+		{
+			CardComboMove data;
+			data.infomation.reset();
+			data.type = Card::Type::MOVE;
 
-		//UŒ‚*ˆÚ“®
-		data.moveCost = 1u;
-		data.attackDamege = 3;
-		data.knockbackCost = 0;
-		data.knockbackDamege = 0;
-		data.knockbackTakeDamege = 0;
-		Data = std::make_shared<CardComboMove>(data);
-		Data->infomation = std::make_shared<Sprite>("./Data/Sprite/CardCombos/attack_walk.png");
-		CardComboDatas[typeAttack][typeMove] = Data;
+			//ˆÚ“®’P”­
+			data.moveCost = 1;
+			data.attackDamege = 0u;
+			data.knockbackCost = 0u;
+			data.knockbackDamege = 0u;
+			data.knockbackTakeDamege = 0u;
+			auto Data = std::make_shared<CardComboMove>(data);
+			Data->infomation = std::make_shared<Sprite>("./Data/Sprite/CardCombos/walk.png");
+			CardComboDatas[typeNone][typeMove] = Data;
+			CardComboDatas[typeDebuff][typeMove] = Data;
 
-		//ˆÚ“®*ˆÚ“®
-		data.moveCost = 2u;
-		data.attackDamege = 0;
-		data.knockbackCost = 0;
-		data.knockbackDamege = 0;
-		data.knockbackTakeDamege = 0;
-		Data = std::make_shared<CardComboMove>(data);
-		Data->infomation = std::make_shared<Sprite>("./Data/Sprite/CardCombos/walk_walk.png");
-		CardComboDatas[typeMove][typeMove] = Data;
+			//UŒ‚*ˆÚ“®
+			data.moveCost = 1u;
+			data.attackDamege = 3;
+			data.knockbackCost = 0;
+			data.knockbackDamege = 0;
+			data.knockbackTakeDamege = 0;
+			Data = std::make_shared<CardComboMove>(data);
+			Data->infomation = std::make_shared<Sprite>("./Data/Sprite/CardCombos/attack_walk.png");
+			CardComboDatas[typeAttack][typeMove] = Data;
 
-		//–hŒä*ˆÚ“®
-		data.moveCost = 1u;
-		data.attackDamege = 0;
-		data.knockbackCost = 2;
-		data.knockbackDamege = 1;
-		data.knockbackTakeDamege = 2;
-		Data = std::make_shared<CardComboMove>(data);
-		Data->infomation = std::make_shared<Sprite>("./Data/Sprite/CardCombos/shield_walk.png");
-		CardComboDatas[typeDefence][typeMove] = Data;
+			//ˆÚ“®*ˆÚ“®
+			data.moveCost = 2u;
+			data.attackDamege = 0;
+			data.knockbackCost = 0;
+			data.knockbackDamege = 0;
+			data.knockbackTakeDamege = 0;
+			Data = std::make_shared<CardComboMove>(data);
+			Data->infomation = std::make_shared<Sprite>("./Data/Sprite/CardCombos/walk_walk.png");
+			CardComboDatas[typeMove][typeMove] = Data;
 
-		//ƒXƒyƒVƒƒƒ‹*ˆÚ“®
-		data.moveCost = 5u;
-		data.attackDamege = 0;
-		data.knockbackCost = 0;
-		data.knockbackDamege = 0;
-		data.knockbackTakeDamege = 0;
-		Data = std::make_shared<CardComboMove>(data);
-		Data->infomation = std::make_shared<Sprite>("./Data/Sprite/CardCombos/buff_walk.png");
-		CardComboDatas[typeSpecial][typeMove] = Data;
-	}
+			//–hŒä*ˆÚ“®
+			data.moveCost = 1u;
+			data.attackDamege = 0;
+			data.knockbackCost = 2;
+			data.knockbackDamege = 1;
+			data.knockbackTakeDamege = 2;
+			Data = std::make_shared<CardComboMove>(data);
+			Data->infomation = std::make_shared<Sprite>("./Data/Sprite/CardCombos/shield_walk.png");
+			CardComboDatas[typeDefence][typeMove] = Data;
 
-	//–hŒäƒRƒ“ƒ{‚Ì“o˜^
-	{
-		CardComboDefence data;
-		data.infomation.reset();
-		data.type = Card::Type::DEFENCE;
+			//ƒXƒyƒVƒƒƒ‹*ˆÚ“®
+			data.moveCost = 5u;
+			data.attackDamege = 0;
+			data.knockbackCost = 0;
+			data.knockbackDamege = 0;
+			data.knockbackTakeDamege = 0;
+			Data = std::make_shared<CardComboMove>(data);
+			Data->infomation = std::make_shared<Sprite>("./Data/Sprite/CardCombos/buff_walk.png");
+			CardComboDatas[typeSpecial][typeMove] = Data;
+		}
 
-		//–hŒä’P‘Ì
-		data.getShield = 4;
-		data.GetBlock = 0;
-		data.heal = 0;
-		data.movecostGetShield = false;
-		auto Data = std::make_shared<CardComboDefence>(data);
-		Data->infomation = std::make_shared<Sprite>("./Data/Sprite/CardCombos/shield.png");
-		CardComboDatas[typeNone][typeDefence] = Data;
-		CardComboDatas[typeDebuff][typeDefence] = Data;
+		//–hŒäƒRƒ“ƒ{‚Ì“o˜^
+		{
+			CardComboDefence data;
+			data.infomation.reset();
+			data.type = Card::Type::DEFENCE;
 
-//UŒ‚*–hŒä
-data.getShield = 0;
-data.GetBlock = 4;
-data.heal = 0;
-data.movecostGetShield = false;
-Data = std::make_shared<CardComboDefence>(data);
-Data->infomation = std::make_shared<Sprite>("./Data/Sprite/CardCombos/attack_shield.png");
-CardComboDatas[typeAttack][typeDefence] = Data;
+			//–hŒä’P‘Ì
+			data.getShield = 4;
+			data.GetBlock = 0;
+			data.heal = 0;
+			data.movecostGetShield = false;
+			auto Data = std::make_shared<CardComboDefence>(data);
+			Data->infomation = std::make_shared<Sprite>("./Data/Sprite/CardCombos/shield.png");
+			CardComboDatas[typeNone][typeDefence] = Data;
+			CardComboDatas[typeDebuff][typeDefence] = Data;
 
-//ˆÚ“®*–hŒä
-data.getShield = 3;
-data.GetBlock = 0;
-data.heal = 0;
-data.movecostGetShield = true;
-Data = std::make_shared<CardComboDefence>(data);
-Data->infomation = std::make_shared<Sprite>("./Data/Sprite/CardCombos/walk_shield.png");
-CardComboDatas[typeMove][typeDefence] = Data;
+			//UŒ‚*–hŒä
+			data.getShield = 0;
+			data.GetBlock = 4;
+			data.heal = 0;
+			data.movecostGetShield = false;
+			Data = std::make_shared<CardComboDefence>(data);
+			Data->infomation = std::make_shared<Sprite>("./Data/Sprite/CardCombos/attack_shield.png");
+			CardComboDatas[typeAttack][typeDefence] = Data;
 
-//–hŒä*–hŒä
-data.getShield = 6;
-data.GetBlock = 0;
-data.heal = 5;
-data.movecostGetShield = false;
-Data = std::make_shared<CardComboDefence>(data);
-Data->infomation = std::make_shared<Sprite>("./Data/Sprite/CardCombos/shield_shield.png");
-CardComboDatas[typeDefence][typeDefence] = Data;
+			//ˆÚ“®*–hŒä
+			data.getShield = 3;
+			data.GetBlock = 0;
+			data.heal = 0;
+			data.movecostGetShield = true;
+			Data = std::make_shared<CardComboDefence>(data);
+			Data->infomation = std::make_shared<Sprite>("./Data/Sprite/CardCombos/walk_shield.png");
+			CardComboDatas[typeMove][typeDefence] = Data;
 
-//ƒXƒyƒVƒƒƒ‹*–hŒä
-data.getShield = 10;
-data.GetBlock = 0;
-data.heal = 10;
-data.movecostGetShield = false;
-Data = std::make_shared<CardComboDefence>(data);
-Data->infomation = std::make_shared<Sprite>("./Data/Sprite/CardCombos/buff_shield.png");
-CardComboDatas[typeSpecial][typeDefence] = Data;
-	}
+			//–hŒä*–hŒä
+			data.getShield = 6;
+			data.GetBlock = 0;
+			data.heal = 5;
+			data.movecostGetShield = false;
+			Data = std::make_shared<CardComboDefence>(data);
+			Data->infomation = std::make_shared<Sprite>("./Data/Sprite/CardCombos/shield_shield.png");
+			CardComboDatas[typeDefence][typeDefence] = Data;
 
-	//ƒfƒoƒtƒRƒ“ƒ{‚Ì“o˜^
-	{
-	CardComboDebuff data;
-	data.type = Card::Type::DEBUFF;
+			//ƒXƒyƒVƒƒƒ‹*–hŒä
+			data.getShield = 10;
+			data.GetBlock = 0;
+			data.heal = 10;
+			data.movecostGetShield = false;
+			Data = std::make_shared<CardComboDefence>(data);
+			Data->infomation = std::make_shared<Sprite>("./Data/Sprite/CardCombos/buff_shield.png");
+			CardComboDatas[typeSpecial][typeDefence] = Data;
+		}
 
-	//ƒfƒoƒt’P‘Ì
-	data.heal = 0;
-	data.takeDamage = 5;
-	data.attackDamage = 0;
-	//data.takeDamagetargets.emplace_back(PlayerManager::Instance().GetFirstPlayer());
-	auto Data = std::make_shared<CardComboDebuff>(data);
-	Data->infomation = std::make_shared<Sprite>("./Data/Sprite/CardCombos/debuff.png");
-	CardComboDatas[typeNone][typeDebuff] = Data;
-	CardComboDatas[typeAttack][typeDebuff] = Data;
-	CardComboDatas[typeMove][typeDebuff] = Data;
-	CardComboDatas[typeDefence][typeDebuff] = Data;
+		//ƒfƒoƒtƒRƒ“ƒ{‚Ì“o˜^
+		{
+			CardComboDebuff data;
+			data.type = Card::Type::DEBUFF;
 
-	//ƒfƒoƒt*ƒfƒoƒt
-	data.heal = 5;
-	data.takeDamage = 0;
-	data.attackDamage = 0;
-	Data = std::make_shared<CardComboDebuff>(data);
-	Data->infomation = std::make_shared<Sprite>("./Data/Sprite/CardCombos/debuff_debuff.png");
-	CardComboDatas[typeDebuff][typeDebuff] = Data;
+			//ƒfƒoƒt’P‘Ì
+			data.heal = 0;
+			data.takeDamage = 5;
+			data.attackDamage = 0;
+			//data.takeDamagetargets.emplace_back(PlayerManager::Instance().GetFirstPlayer());
+			auto Data = std::make_shared<CardComboDebuff>(data);
+			Data->infomation = std::make_shared<Sprite>("./Data/Sprite/CardCombos/debuff.png");
+			CardComboDatas[typeNone][typeDebuff] = Data;
+			CardComboDatas[typeAttack][typeDebuff] = Data;
+			CardComboDatas[typeMove][typeDebuff] = Data;
+			CardComboDatas[typeDefence][typeDebuff] = Data;
 
-	//ƒoƒt*ƒfƒoƒt
-	data.heal = 10;
-	data.takeDamage = 10;
-	data.attackDamage = 10;
-	//data.takeDamagetargets.emplace_back(PlayerManager::Instance().GetFirstPlayer());
-	//for (auto& e : EnemyManager::Instance().GetList())
-	//{
-	//	data.takeDamagetargets.emplace_back(e);
-	//}
-	Data = std::make_shared<CardComboDebuff>(data);
-	Data->infomation = std::make_shared<Sprite>("./Data/Sprite/CardCombos/buff_debuff.png");
-	CardComboDatas[typeSpecial][typeDebuff] = Data;
-	}
+			//ƒfƒoƒt*ƒfƒoƒt
+			data.heal = 5;
+			data.takeDamage = 0;
+			data.attackDamage = 0;
+			Data = std::make_shared<CardComboDebuff>(data);
+			Data->infomation = std::make_shared<Sprite>("./Data/Sprite/CardCombos/debuff_debuff.png");
+			CardComboDatas[typeDebuff][typeDebuff] = Data;
+
+			//ƒoƒt*ƒfƒoƒt
+			data.heal = 10;
+			data.takeDamage = 10;
+			data.attackDamage = 10;
+			//data.takeDamagetargets.emplace_back(PlayerManager::Instance().GetFirstPlayer());
+			//for (auto& e : EnemyManager::Instance().GetList())
+			//{
+			//	data.takeDamagetargets.emplace_back(e);
+			//}
+			Data = std::make_shared<CardComboDebuff>(data);
+			Data->infomation = std::make_shared<Sprite>("./Data/Sprite/CardCombos/buff_debuff.png");
+			CardComboDatas[typeSpecial][typeDebuff] = Data;
+		}
 
 	//ƒRƒ“ƒ{–³‚µ‚Ì“o˜^
 	{
@@ -264,22 +265,24 @@ CardComboDatas[typeSpecial][typeDefence] = Data;
 
 	//ƒJ[ƒh‚ÌŸ‚ÌƒRƒ“ƒ{‚Ì•\¦‚Ì
 	{
-		CardNextComboInfos[static_cast<int>(Card::Type::ATTACK)] = 
+		CardNextComboInfos[static_cast<int>(Card::Type::ATTACK)] =
 			std::make_unique<Sprite>("./Data/Sprite/CardCombos/combo_attack.png");
 
-		CardNextComboInfos[static_cast<int>(Card::Type::DEFENCE)] = 
+		CardNextComboInfos[static_cast<int>(Card::Type::DEFENCE)] =
 			std::make_unique<Sprite>("./Data/Sprite/CardCombos/combo_shield.png");
 
-		CardNextComboInfos[static_cast<int>(Card::Type::MOVE)] = 
+		CardNextComboInfos[static_cast<int>(Card::Type::MOVE)] =
 			std::make_unique<Sprite>("./Data/Sprite/CardCombos/combo_move.png");
 
-		CardNextComboInfos[static_cast<int>(Card::Type::SPECIAL)] = 
+		CardNextComboInfos[static_cast<int>(Card::Type::SPECIAL)] =
 			std::make_unique<Sprite>("./Data/Sprite/CardCombos/combo_buff.png");
 
-		CardNextComboInfos[static_cast<int>(Card::Type::DEBUFF)] = 
+		CardNextComboInfos[static_cast<int>(Card::Type::DEBUFF)] =
 			std::make_unique<Sprite>("./Data/Sprite/CardCombos/combo_debuff.png");
 
 	}
+
+	InitializeAudio();
 }
 
 void CardManager::Update(float elapsedTime)
@@ -396,7 +399,7 @@ void CardManager::Render(ID3D11DeviceContext* dc)
 	Mouse& mouse = Input::Instance().GetMouse();
 	DirectX::XMFLOAT2 pos = SET_CARDS_START_POS;
 	const DirectX::XMFLOAT2 ScreenSize = Graphics::Instance().GetScreenSize();
-	
+
 	DirectX::XMFLOAT2 renderpos;
 	DirectX::XMFLOAT2 renderSize = { ScreenSize.x,ScreenSize.y * 0.2f };
 	DirectX::XMFLOAT4 color = { 1.0f,1.0f,1.0f,1.0f };
@@ -404,7 +407,7 @@ void CardManager::Render(ID3D11DeviceContext* dc)
 	//èD‚Ì”wŒi
 	HandsCardSprite.Render(dc,
 		0.0f, ScreenSize.y - renderSize.y,
-		renderSize.x,renderSize.y,
+		renderSize.x, renderSize.y,
 		.0f, .0f,
 		HandsCardSprite.GetTextureWidthf(), HandsCardSprite.GetTextureHeightf(),
 		.0f,
@@ -414,7 +417,7 @@ void CardManager::Render(ID3D11DeviceContext* dc)
 	//ƒJ[ƒhà–¾‚Ì•`‰æ
 	{
 		renderpos = { ScreenSize.x * 0.75f,ScreenSize.y * 0.2f };
-		renderSize = { ScreenSize.x*0.2f,ScreenSize.y * 0.5f };
+		renderSize = { ScreenSize.x * 0.2f,ScreenSize.y * 0.5f };
 		//”wŒi
 		cardInfoBack.Render(dc, renderpos, renderSize, .0f, color);
 
@@ -429,7 +432,7 @@ void CardManager::Render(ID3D11DeviceContext* dc)
 			pos.y += (CARD_SIZE.y + CARD_DISTANCE) * i;
 			if (Collision2D::BoxVsPos(pos, CardManager::CARD_SIZE, mouse.GetPosition()))
 			{
-				if (auto card = SetCards[i-1])types.first = card->GetType();
+				if (auto card = SetCards[i - 1])types.first = card->GetType();
 			}
 		}
 
@@ -438,7 +441,7 @@ void CardManager::Render(ID3D11DeviceContext* dc)
 		{
 			types.second = haveCard.lock()->GetType();
 		}
-		else if(auto card = this->HitCheck(mouse.GetPosition()))
+		else if (auto card = this->HitCheck(mouse.GetPosition()))
 		{
 			types.second = card->GetType();
 		}
@@ -459,7 +462,7 @@ void CardManager::Render(ID3D11DeviceContext* dc)
 	renderSize = { 185.f,590.f };//todo ihigomilk: screensize‚É‡‚í‚¹‚é‚æ‚¤‚É
 
 	//ƒZƒbƒgƒJ[ƒh‚Ì•`‰æ— ‘¤
-	SetCardSprites[0]->Render(dc,renderpos,renderSize,.0f,color);
+	SetCardSprites[0]->Render(dc, renderpos, renderSize, .0f, color);
 
 	for (auto& card : cards)
 	{
@@ -473,7 +476,7 @@ void CardManager::Render(ID3D11DeviceContext* dc)
 	}
 
 	//ƒZƒbƒgƒJ[ƒh‚Ì•`‰æ•\‘¤
-	SetCardSprites[1]->Render(dc,renderpos,renderSize,.0f,color);
+	SetCardSprites[1]->Render(dc, renderpos, renderSize, .0f, color);
 
 
 }
@@ -515,8 +518,8 @@ void CardManager::DrawDebugGUI()
 			AddCardReserved(std::make_shared<Card>(DirectX::XMFLOAT2{ .0f,.0f }, CARD_SIZE, Card::Type::DEBUFF));
 		}
 
-		if (ImGui::SliderFloat2("renderpos", &testdatas[1].x,.0f,500.0f)) {};
-		if (ImGui::SliderFloat2("rendersize", &testdatas[0].x,.0f,1000.0f)) {};
+		if (ImGui::SliderFloat2("renderpos", &testdatas[1].x, .0f, 500.0f)) {};
+		if (ImGui::SliderFloat2("rendersize", &testdatas[0].x, .0f, 1000.0f)) {};
 	}
 	ImGui::End();
 }
@@ -621,6 +624,8 @@ const Card::Type CardManager::GetUseCard() noexcept
 
 CardComboDataBase* CardManager::PopAndGetUseCard() noexcept
 {
+	/*cardListSes.cardSelectSe.get()->Stop();
+	cardListSes.cardSelectSe.get()->Play(false);*/
 
 	for (size_t i = 0; i < std::size(SetCards); i++)
 	{
@@ -744,4 +749,9 @@ void CardManager::ChangeHaveCard(std::shared_ptr<Card>* card)
 		(*card)->SetMoveLock(true);
 		haveCard = *card;
 	}
+}
+
+void CardManager::InitializeAudio()
+{
+	//AudioLoader::Load(AUDIO::SE_SELECT, cardListSes.cardSelectSe);
 }

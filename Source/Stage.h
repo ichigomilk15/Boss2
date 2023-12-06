@@ -58,6 +58,7 @@ public://functions
 	void ResetAllSquare();
 	void ResetSquaresAccessible();
 	void ResetAllSquareDrawType();
+	void ResetAllSquareDrawType(const Square::DrawType drawType);
 
 	//Getter&Setter***************************************************************************
 #if 1
