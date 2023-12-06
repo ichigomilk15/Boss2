@@ -352,21 +352,19 @@ void PhaseManager::StageInit(const int level)
 	{
 	case 1:
 	{
-	//case 4:
-	//{
-	//	//PlayerManager::Instance().GetFirstPlayer()->SetPositionWorld(Common::PlayerPosInit);
-	//	////enemyの配置
-	//	//EnemyMinion1* enemy = new EnemyMinion1(PlayerManager::Instance().GetFirstPlayer());
-	//	//EnemyManager::Instance().Register(enemy);
-	//	//enemy->SetPositionWorld({ 1, 1 });
-	//	//enemy->SetTargetMovePosition({ -1, -1 });
-	//	//enemy->SetState(State::Idle_Init);
-	//	//enemy->SetAttackRange(1);
-	//	//enemy->SetHealth(30);
-	//	//enemy->SetMaxHealth(30);
-	//	//enemy->SetDirection(CommonClass::DirectionFace::Left);
-	//	//Stage::Instance()->GetSquare(0, 0)->SetCard(std::make_shared<Card>(DirectX::XMFLOAT2{ .0f,.0f }, CardManager::CARD_SIZE, Card::Type::SPECIAL));
-	//}
+		PlayerManager::Instance().GetFirstPlayer()->SetPositionWorld(Common::PlayerPosInit);
+		//enemyの配置
+		EnemyMinion1* enemy = new EnemyMinion1(PlayerManager::Instance().GetFirstPlayer());
+		EnemyManager::Instance().Register(enemy);
+		enemy->SetPositionWorld({ 1, 1 });
+		enemy->SetTargetMovePosition({ -1, -1 });
+		enemy->SetState(State::Idle_Init);
+		enemy->SetAttackRange(1);
+		enemy->SetHealth(30);
+		enemy->SetMaxHealth(30);
+		enemy->SetDirection(CommonClass::DirectionFace::Left);
+		Stage::Instance()->GetSquare(0, 0)->SetCard(std::make_shared<Card>(DirectX::XMFLOAT2{ .0f,.0f }, CardManager::CARD_SIZE, Card::Type::SPECIAL));
+	}
 	break;
 	case 2:
 	{
