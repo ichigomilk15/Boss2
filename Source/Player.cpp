@@ -378,7 +378,7 @@ State Player::MovingEnd()
 {
 	std::shared_ptr<Square> square = Stage::Instance()->GetSquare(position.x, position.y);
 	Card* getCard = square->GetCard();
-	if (getCard)
+	if (getCard && CardManager::Instance().GetHaveSpecial() < CardManager::SPECIAL_CARD_MAX)
 	{
 		GetCard(getCard);
 		square->ResetCard();

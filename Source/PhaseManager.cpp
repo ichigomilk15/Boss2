@@ -75,11 +75,13 @@ void PhaseManager::Update(float elapsedTime)
 
 		EnemyManager::Instance().ResetTurnEnemies();
 
+		//配置しているカードの移動
+		Stage::Instance()->ReFleshCard();
+
+
 		//最初のターンでは実行しない
 		if (turnCount > 0)
 		{
-			//配置しているカードの移動
-			Stage::Instance()->ReFleshCard();
 		}
 
 		NextPhase();//次のフェーズへ

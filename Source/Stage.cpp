@@ -391,35 +391,35 @@ void Stage::ResetAllSquareDrawType()
 
 void Stage::ReFleshCard()
 {
-	std::vector<std::shared_ptr<Card>> cards;
+	int cardnum = 0;
+	//std::vector<std::shared_ptr<Card>> cards;
 	for (auto& y : squares)
 	{
 		for (auto& x : y)
 		{
 			auto card = x->GetSharedCard();
 			if (card == nullptr||card->GetType()!=Card::Type::SPECIAL)continue;
-			cards.push_back(card);
-			x->ResetCard();
+			cardnum++;
 		}
 	}
-
-	if (std::size(cards) <= 1)
+	if (cardnum < 1)
 	{
-		for (size_t i = 0; i <ADD_CARD_NUM; i++)
+		for (size_t i = 0; i < ADD_CARD_NUM; i++)
 		{
-			cards.emplace_back(std::make_shared<Card>(DirectX::XMFLOAT2{ .0f,.0f }, CardManager::CARD_SIZE, Card::Type::SPECIAL));
-		}
-	}
+			auto x = random(CommonClass::random);//x座標ランダム
+			auto y = random(CommonClass::random);//y座標ランダム
+			auto&& square = GetSquare(x, y);//座標のマスを取得
+			if (auto card = square->GetCard()|| square->GetCharacter())
+			{
+				i--; continue;
+			}
+			else
+			{
+				//todo : カード位置変更
+				square->SetCard(std::make_shared<Card>(DirectX::XMFLOAT2{ .0f,.0f, }, CardManager::CARD_SIZE, Card::Type::SPECIAL));
+			}
 
-	for (size_t i = 0; i < cards.size();)
-	{
-		auto x = random(CommonClass::random);
-		auto y = random(CommonClass::random);
-		auto&& square = GetSquare(x,y);
-		if (square->GetCard() != nullptr)continue;
-		if (square->GetCharacter() != nullptr)continue;
-		square->SetCard(cards[i]);
-		++i;
+		}
 	}
 }
 
