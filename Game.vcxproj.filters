@@ -280,6 +280,9 @@
     <ClInclude Include="Source\SceneGameOver.h">
       <Filter>Source\Scenes</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Audio\AudioLoader.h">
+      <Filter>Source\System\Audio</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="External\imgui\imgui.cpp">
@@ -470,6 +473,9 @@
     </ClCompile>
     <ClCompile Include="Source\SceneGameOver.cpp">
       <Filter>Source\Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Audio\AudioLoader.cpp">
+      <Filter>Source\System\Audio</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -1,5 +1,6 @@
 #include "Graphics/Graphics.h"
 #include "Input\Input.h"
+#include "Audio\AudioLoader.h"
 #include "SceneGame.h"
 #include "Camera.h"
 #include "EffectManager.h"
@@ -65,6 +66,15 @@ void SceneGame::Initialize()
 	data.timer = 10.0f;
 	DamageEffector::Instance().Register(data);
 
+#if _DEBUG
+	/*AudioLoader::Load(AUDIO::BGM_GAME, gameSe);
+	AudioLoader::Load(AUDIO::BGM_GAMEOVER, gameOverSe);
+	AudioLoader::Load(AUDIO::BGM_GAMECLEAR, gameClearSe);*/
+#endif
+
+	// BGMÄ¶
+	//gameSe->Play(true);
+
 	SaveData::Instance().Load();
 	GameSystemManager::Instance().CollTutorial();
 }
@@ -85,6 +95,9 @@ void SceneGame::Finalize()
 	EnemyManager::Instance().Clear();
 
 	GameSystemManager::Instance().SetPoused(false);
+
+	// BGM’âŽ~
+	//gameSe->Stop();
 }
 
 // XVˆ—

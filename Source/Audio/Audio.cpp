@@ -52,8 +52,8 @@ Audio::~Audio()
 }
 
 // オーディオソース読み込み
-std::unique_ptr<AudioSource> Audio::LoadAudioSource(const char* filename)
+std::unique_ptr<AudioSource> Audio::LoadAudioSource(const char* filename, bool loop)
 {
 	std::shared_ptr<AudioResource> resource = std::make_shared<AudioResource>(filename);
-	return std::make_unique<AudioSource>(xaudio, resource);
+	return std::make_unique<AudioSource>(xaudio, resource, loop);
 }

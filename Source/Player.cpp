@@ -15,10 +15,11 @@
 #include "AttackManager.h"
 #include "PhaseManager.h"
 #include "EnemyManager.h"
+#include "Audio\AudioLoader.h"
 
-Player::Player():Character()
+Player::Player() :Character()
 {
-	model = new Model("Data/Model/Player/Player.mdl");
+	this->model = std::make_unique<Model>("Data/Model/Player/Player.mdl");
 	icon = std::make_unique<Sprite>("./Data/Sprite/icon_player.png");
 
 	//モデルが大きいのでスケーリング
@@ -32,13 +33,18 @@ Player::Player():Character()
 	maxHealth = 75;
 	//attackAdjacentRange = 3;
 	SetDirection(CommonClass::DirectionFace::BackRight);
+	InitializeAudio();
 }
 
 Player::~Player()
 {
 	delete hitEffect;
 
-	delete model;
+	this->playerSes.attackSe->Stop();
+	this->playerSes.damageSe->Stop();
+	this->playerSes.deadSe->Stop();
+	this->playerSes.shieldSe->Stop();
+	this->playerSes.moveSe->Stop();
 }
 
 void Player::Update(float elapsedTime)
@@ -60,7 +66,7 @@ void Player::Update(float elapsedTime)
 
 void Player::Render(ID3D11DeviceContext* dc, Shader* shader)
 {
-	shader->Draw(dc, model);
+	shader->Draw(dc, model.get());
 }
 
 //void Player::Render2D(RenderContext& rc, ID3D11DeviceContext* dc)
@@ -127,29 +133,6 @@ void Player::DrawDebugPrimitive()
 
 void Player::UpdateState(float elapsedTime)
 {
-	//#if _DEBUG
-	//	GamePad& gamePad = Input::Instance().GetGamePad();
-	//	if (gamePad.GetButtonDown() & gamePad.BTN_UP)
-	//	{
-	//		targetMovePos.y = position.y - 1;
-	//		SetState(State::Moving_Init);
-	//	}
-	//	if (gamePad.GetButtonDown() & gamePad.BTN_DOWN)
-	//	{
-	//		targetMovePos.y = position.y + 1;
-	//		SetState(State::Moving_Init);
-	//	}
-	//	if (gamePad.GetButtonDown() & gamePad.BTN_LEFT)
-	//	{
-	//		targetMovePos.y = position.x - 1;
-	//		SetState(State::Moving_Init);
-	//	}
-	//	if (gamePad.GetButtonDown() & gamePad.BTN_RIGHT)
-	//	{
-	//		targetMovePos.y = position.x + 1;
-	//		SetState(State::Moving_Init);
-	//	}
-	//#endif
 	switch (state)
 	{
 	case State::Idle_Init:
@@ -157,7 +140,7 @@ void Player::UpdateState(float elapsedTime)
 		state = State::Idle;
 		[[fallthrough]];
 	case State::Idle:
-
+		UpdateViewEnemyDetail();
 		break;
 
 	case State::Act_Init:
@@ -196,12 +179,14 @@ void Player::UpdateState(float elapsedTime)
 	case State::Moving_Init:
 		this->model->PlayAnimation(Animation::Run, true);
 		state = State::Moving;
+		playerSes.moveSe.get()->Play(true);
 		this->SetDirection(this->targetMovePos);
 		[[fallthrough]];
 	case State::Moving:
 	{
 		if (!IsMoving())
 		{
+			playerSes.moveSe.get()->Stop();
 			Stage::Instance()->ResetAllSquare();
 			SetState(MovingEnd());
 			if (cardComboDataBase)
@@ -226,6 +211,7 @@ void Player::UpdateState(float elapsedTime)
 
 	case State::Attacking_Init:
 		this->model->PlayAnimation(Animation::Attack, false);
+		playerSes.attackSe.get()->Play(false);
 		state = State::Attacking;
 		[[fallthrough]];
 	case State::Attacking:
@@ -241,6 +227,8 @@ void Player::UpdateState(float elapsedTime)
 		actTimer = 0.5f;
 		Stage::Instance()->ResetAllSquare();
 		SetShieldAction();
+		playerSes.shieldSe.get()->Stop();
+		playerSes.shieldSe.get()->Play(false);
 		state = State::Defence;
 		[[fallthrough]];
 	case State::Defence:
@@ -589,6 +577,12 @@ State Player::ChooseAct(float elapsedTime)
 void Player::OnDamaged()
 {
 	state = State::Damage_Init;
+	playerSes.damageSe.get()->Play(false);
+}
+
+void Player::OnDead()
+{
+	playerSes.deadSe.get()->Play(false);
 }
 
 void Player::GetCard(Card* getCard)
@@ -602,4 +596,90 @@ void Player::GetCard(Card* getCard)
 		CardManager::Instance().AddCardReserved(std::make_shared<Card>(DirectX::XMFLOAT2{ .0f,.0f }, CardManager::CARD_SIZE, Card::Type::DEBUFF));
 		break;
 	}
+}
+
+void Player::UpdateViewEnemyDetail()
+{
+	Mouse& mouse = Input::Instance().GetMouse();
+	Camera& camera = Camera::Instance();
+	auto dc = Graphics::Instance().GetDeviceContext();
+	if (lookAtEnemyDetail.isLookAtEnemyDetail)
+	{
+		if (!lookAtEnemyDetail.target || (mouse.GetButtonDown() & mouse.BTN_LEFT))
+		{
+			lookAtEnemyDetail.isLookAtEnemyDetail = false;
+			Stage::Instance()->ResetAllSquareDrawType(Square::DrawType::NormalAttackView);
+			return;
+		}
+	}
+	else
+	{
+		DirectX::XMFLOAT3 startMousePos = CommonClass::GetWorldStartPosition(dc, mouse.GetPositionX(), mouse.GetPositionY(), camera.GetView(), camera.GetProjection());
+		DirectX::XMFLOAT3 endMousePos = CommonClass::GetWorldEndPosition(dc, mouse.GetPositionX(), mouse.GetPositionY(), camera.GetView(), camera.GetProjection());
+
+		HitResult hit;
+		if (mouse.GetButtonDown() & Mouse::BTN_LEFT)
+		{
+			for (auto& e : EnemyManager::Instance().GetList())
+			{
+				if (e->RayCast(startMousePos, endMousePos, hit))
+				{
+					lookAtEnemyDetail.isLookAtEnemyDetail = true;
+					lookAtEnemyDetail.target = e;
+
+					for (auto& sq : e->GetSquaresPosition())
+					{
+						auto atkPos = Stage::Instance()->GetSquaresEdgeAdjacent(sq.x, sq.y, e->GetAttackRange());
+						for (auto& sq : atkPos)
+						{
+							auto sqPos = sq->GetPos();
+							Stage::Instance()->GetSquare(sqPos.x, sqPos.y)->InputDrawType(Square::DrawType::NormalAttackView);
+						}
+					}
+					return;
+				}
+			}
+
+			for (int y = 0; y < Common::SQUARE_NUM_Y; y++)
+			{
+				for (int x = 0; x < Common::SQUARE_NUM_X; x++)
+				{
+					auto sq = Stage::Instance()->GetSquare(x, y);
+					auto findChara = sq->GetCharacter();
+					if (!findChara) continue;
+
+					if (sq->Raycast(startMousePos, endMousePos, hit))
+					{
+						auto e = dynamic_cast<Enemy*>(const_cast<Character*>(findChara));
+						if (e)
+						{
+							lookAtEnemyDetail.isLookAtEnemyDetail = true;
+							lookAtEnemyDetail.target = e;
+							/*auto atkPos = Stage::Instance()->GetSquaresEdgeAdjacent(e->GetPosition().x, e->GetPosition().y, e->GetAttackRange());*/
+							for (auto& ePos : e->GetSquaresPosition())
+							{
+								auto atkPos = Stage::Instance()->GetSquaresEdgeAdjacent(ePos.x, ePos.y, e->GetAttackRange());
+
+								for (auto& sq : atkPos)
+								{
+									auto sqPos = sq->GetPos();
+									Stage::Instance()->GetSquare(sqPos.x, sqPos.y)->InputDrawType(Square::DrawType::NormalAttackView);
+								}
+							}
+							return;
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+void Player::InitializeAudio()
+{
+	AudioLoader::Load(AUDIO::SE_PLAYER_ATTACK, playerSes.attackSe);
+	AudioLoader::Load(AUDIO::SE_PLAYER_DAMAGE, playerSes.damageSe);
+	AudioLoader::Load(AUDIO::SE_PLAYER_DEAD, playerSes.deadSe);
+	AudioLoader::Load(AUDIO::SE_PLAYER_SHIELD, playerSes.shieldSe);
+	AudioLoader::Load(AUDIO::SE_PLAYER_MOVE, playerSes.moveSe);
 }

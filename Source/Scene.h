@@ -1,4 +1,5 @@
 #pragma once
+#include "Audio\AudioSource.h"
 
 //ÉVÅ[Éì
 class Scene
@@ -27,4 +28,9 @@ public:
 
 private:
 	bool ready = false;
+
+protected:
+	/*std::unique_ptr<AudioSource> gameSe;
+	std::unique_ptr<AudioSource> gameOverSe;
+	std::unique_ptr<AudioSource> gameClearSe;*/
 };

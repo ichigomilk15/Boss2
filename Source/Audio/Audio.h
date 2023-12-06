@@ -15,7 +15,7 @@ public:
 	static Audio& Instance() { return *instance; }
 
 	// オーディオソース読み込み
-	std::unique_ptr<AudioSource> LoadAudioSource(const char* filename);
+	std::unique_ptr<AudioSource> LoadAudioSource(const char* filename, bool loop);
 
 private:
 	static Audio*			instance;

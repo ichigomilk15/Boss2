@@ -7,6 +7,7 @@
 #include "JumpAttack.h"
 #include "CameraController.h"
 #include "PhaseManager.h"
+#include "Audio\AudioLoader.h"
 
 EnemyBoss1::EnemyBoss1(Character* p) :
 	Enemy(p)
@@ -28,6 +29,9 @@ EnemyBoss1::EnemyBoss1(Character* p) :
 	isActEnd = false;
 	hpBarUseScale = 1.0f;
 	SetDirection(CommonClass::DirectionFace::BackRight);
+
+	InitializeAudio();
+	boss1Ses.startLineSe.get()->Play(false);
 }
 
 void EnemyBoss1::UpdateState(float elapsedTime)
@@ -158,7 +162,10 @@ void EnemyBoss1::UpdateState(float elapsedTime)
 		targetMovePos = bumpAttackDetail.targetChargingMovePos;
 		bumpAttackDetail.targetChargingMovePos = { -1, -1 };
 		actTimer = (bumpAttackDetail.stunTurn > 0) ? 0.0f : 1.0f;
-		AttackManager::Instance().Register(attack);
+		boss1Ses.attackLineSe.get()->Play(false);
+		boss1Ses.bumpAtkSe.get()->Play(false);
+		AttackManager::Instance().Register(std::move(attack));
+		attack = nullptr;
 		state = State::Attacking;
 		[[fallthrough]];
 	case State::Attacking:
@@ -196,12 +203,14 @@ void EnemyBoss1::UpdateState(float elapsedTime)
 
 	case State::AttackingJump_Stump_Init:
 		AddImpulse({ 0.0f, -1.0f, 0.0f });
+		boss1Ses.attackLineSe.get()->Play(false);
 		state = State::AttackingJump_Stump;
 		[[fallthrough]];
 	case State::AttackingJump_Stump:
 		actTimer -= elapsedTime;
 		if (isGround)
 		{
+			boss1Ses.jumpAtkSe.get()->Play(false);
 			Stage::Instance()->ResetAllSquare();
 			AttackManager::Instance().Register(std::move(attack));
 			attack = nullptr;
@@ -216,6 +225,8 @@ void EnemyBoss1::UpdateState(float elapsedTime)
 		this->model->PlayAnimation(ANIMATION_BOSS::BossDamage, true);
 		actTimer = 1.0f;
 		--bumpAttackDetail.stunTurn;
+		boss1Ses.panicSe.get()->Stop();
+		boss1Ses.panicSe.get()->Play(true);
 		if (bumpAttackDetail.stunTurn >= 0)
 			isActEnd = true;
 		state = State::Stunned;
@@ -226,6 +237,7 @@ void EnemyBoss1::UpdateState(float elapsedTime)
 			if (actTimer -= elapsedTime < 0.0f)
 			{
 				++actNo;
+				boss1Ses.panicSe.get()->Stop();
 				state = State::Attack_Init;
 				break;
 			}
@@ -354,7 +366,7 @@ void EnemyBoss1::InitializeAttack(float elapsedTime) //ƒoƒ“ƒvUŒ‚
 		for (auto& square : attackSq)
 		{
 			square->SetType(Square::Type::AttackArea);
-			square->SetDrawType(Square::DrawType::ChargeAttack);
+			square->InputDrawType(Square::DrawType::ChargeAttack);
 		}
 
 
@@ -389,7 +401,7 @@ void EnemyBoss1::InitializeAttack(float elapsedTime) //ƒoƒ“ƒvUŒ‚
 		{
 			posVec.emplace_back(sq->GetPos());
 			sq->SetType(Square::Type::AttackArea);
-			sq->SetDrawType(Square::DrawType::ChargeAttack);
+			sq->InputDrawType(Square::DrawType::ChargeAttack);
 		}
 		//attack = new JumpAttack(this, jumpAttackDetail.attackPow, TargetAttackEnum::Target_Player, posVec);
 		attack = new JumpAttack(this, jumpAttackDetail.attackPowCenter, jumpAttackDetail.attackPowEdge, TargetAttackEnum::Target_Player, player->GetPosition(), posVec);
@@ -407,10 +419,12 @@ State EnemyBoss1::AfterBumpAttack()
 {
 	targetMovePos = { -1, -1 };
 	attack = nullptr;
+	Stage::Instance()->ResetAllSquare();
 	Stage::Instance()->ResetAllSquareDrawType();
 	if (bumpAttackDetail.stunTurn > 0)
 	{
 		CameraController::Instance().ShakeCamera(1.25f, 8);
+		boss1Ses.wallHitSe.get()->Play(false);
 		--bumpAttackDetail.stunDefence;
 		if (bumpAttackDetail.stunDefence > 0)
 		{
@@ -437,10 +451,40 @@ void EnemyBoss1::InitStunDefence()
 	}
 	else if (perc >= 30.0f)
 	{
+		if (bumpAttackDetail.stunDefence < 2)
+			boss1Ses.angrySe.get()->Play(false);
 		bumpAttackDetail.stunDefence = 2;
 	}
 	else
 	{
+		if (bumpAttackDetail.stunDefence < 3)
+			boss1Ses.angrySe.get()->Play(false);
 		bumpAttackDetail.stunDefence = 3;
 	}
+}
+
+void EnemyBoss1::OnDamaged()
+{
+	boss1Ses.damageSe.get()->Play(false);
+	Enemy::OnDamaged();
+}
+
+void EnemyBoss1::OnDead()
+{
+	boss1Ses.deathSe.get()->Play(false);
+	Enemy::OnDead();
+}
+
+void EnemyBoss1::InitializeAudio()
+{
+	AudioLoader::Load(AUDIO::SE_BOSS1_ATTACKLINE, boss1Ses.attackLineSe);
+	AudioLoader::Load(AUDIO::SE_BOSS1_BUMPATTACK, boss1Ses.bumpAtkSe);
+	AudioLoader::Load(AUDIO::SE_BOSS1_JUMPATTACK, boss1Ses.jumpAtkSe);
+	AudioLoader::Load(AUDIO::SE_BOSS1_START, boss1Ses.startLineSe);
+	AudioLoader::Load(AUDIO::SE_BOSS1_DAMAGE, boss1Ses.damageSe);
+	AudioLoader::Load(AUDIO::SE_BOSS1_DEATH, boss1Ses.deathSe);
+	AudioLoader::Load(AUDIO::SE_BOSS1_PANIC, boss1Ses.panicSe);
+	AudioLoader::Load(AUDIO::SE_BOSS1_ANGRY, boss1Ses.angrySe);
+	AudioLoader::Load(AUDIO::SE_BOSS1_WALLHIT, boss1Ses.wallHitSe);
+
 }
