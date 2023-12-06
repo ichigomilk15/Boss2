@@ -1,3 +1,5 @@
+
+#define NOMINMAX
 #include "PhaseManager.h"
 
 #include "Input/Input.h"
@@ -11,10 +13,12 @@
 #include "SceneGameOver.h"
 #include "SceneClear.h"
 #include "SceneGame.h"
+#include "DamageEffector.h"
 
 #ifdef _DEBUG
 #include "Graphics/ImGuiRenderer.h"
 #endif // _DEBUG
+#undef NOMINMAX
 
 PhaseManager::PhaseManager()
 {
@@ -48,19 +52,17 @@ void PhaseManager::Update(float elapsedTime)
 	//***********************************************************************************
 	case PhaseManager::Phase::Phase_NextStage_Init:
 	{
+		const DirectX::XMFLOAT2 ScreenSize = Graphics::Instance().GetScreenSize();
 		//PlayerManager::Instance().GetFirstPlayer()->SetPositionWorld(Common::PlayerPosInit);
 
-		//ステージのレベルを参照してenemyをセットする
 
-		unsigned int stageLevel = Stage::Instance()->GetStageLevel();
-		if(stageLevel<=0)
-			stageLevel = Stage::Instance()->StageLevelStepUp();
-
+		unsigned int stageLevel = Stage::Instance()->StageLevelStepUp();
 		if (stageLevel > Stage::STAGE_LEVEL_MAX)
 		{
 			SceneManager::Instance().ChangeScene(new SceneClear);
 			return;
 		}
+		//ステージのレベルを参照してenemyをセットする
 		StageInit(stageLevel);
 		Stage::Instance()->ResetAllSquare();
 
@@ -69,7 +71,7 @@ void PhaseManager::Update(float elapsedTime)
 		{
 			//セーブに失敗したら
 			int a = 0;
-		}
+		}		
 
 		NextPhase();//次のフェーズへ
 	}

@@ -66,6 +66,7 @@ void SceneGame::Initialize()
 	DamageEffector::Instance().Register(data);
 
 	SaveData::Instance().Load();
+	GameSystemManager::Instance().CollTutorial();
 }
 
 // I—¹‰»
@@ -342,7 +343,7 @@ const bool SaveData::ReSet()
 	bool ok;
 	ok = true;
 
-	this->StageLevel = 0;
+	this->StageLevel = 1;
 	this->PhaseTurn = 0;
 	this->playerHp = -1;
 	this->playerpos = { -1,-1 };
@@ -352,7 +353,7 @@ const bool SaveData::ReSet()
 const bool SaveData::Load()
 {
 	bool ok = true;
-	Stage::Instance()->SetStageLevel(this->StageLevel);
+	Stage::Instance()->SetStageLevel(this->StageLevel-1);
 	PhaseManager::Instance().SetTurnCount(this->PhaseTurn);
 	if (auto player = PlayerManager::Instance().GetFirstPlayer())
 	{

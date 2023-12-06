@@ -78,6 +78,7 @@ void Square::Render(ID3D11DeviceContext* dc, Shader* shader)
 
 	if (card != nullptr)
 	{
+		//ñ≥óùÇ‚ÇËâÒì]Ç≥ÇπÇÈ
 		DirectX::XMVECTOR Old = DirectX::XMLoadFloat4(&rotate);
 		DirectX::XMVECTOR V = DirectX::XMQuaternionRotationRollPitchYaw(.0f, DirectX::XMConvertToRadians(180), .0f);
 		DirectX::XMStoreFloat4(&rotate, DirectX::XMVectorAdd(Old, V));
