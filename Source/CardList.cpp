@@ -1,6 +1,7 @@
 #define NOMINMAX
 #include "Common.h"
 #include <random>
+#include "Audio\AudioLoader.h"
 #include "CardList.h"
 #include "Graphics/Graphics.h"
 #include "Input/Input.h"
@@ -276,6 +277,8 @@ CardManager::CardManager() :
 			std::make_unique<Sprite>("./Data/Sprite/CardCombos/combo_debuff.png");
 
 	}
+
+	InitializeAudio();
 }
 
 void CardManager::Update(float elapsedTime)
@@ -617,6 +620,8 @@ const Card::Type CardManager::GetUseCard() noexcept
 
 CardComboDataBase* CardManager::PopAndGetUseCard() noexcept
 {
+	/*cardListSes.cardSelectSe.get()->Stop();
+	cardListSes.cardSelectSe.get()->Play(false);*/
 
 	for (size_t i = 0; i < std::size(SetCards); i++)
 	{
@@ -716,4 +721,9 @@ void CardManager::ChangeHaveCard(std::shared_ptr<Card>* card)
 		(*card)->SetMoveLock(true);
 		haveCard = *card;
 	}
+}
+
+void CardManager::InitializeAudio()
+{
+	//AudioLoader::Load(AUDIO::SE_SELECT, cardListSes.cardSelectSe);
 }

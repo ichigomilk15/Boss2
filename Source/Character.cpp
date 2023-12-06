@@ -15,6 +15,15 @@ Character::Character()
 	hpBar[2] = std::make_unique<Sprite>("./Data/Sprite/life_2.png");
 }
 
+Character::~Character()
+{
+	if (attack)
+	{
+		delete attack;
+		attack = nullptr;
+	}
+}
+
 void Character::UpdateTransform()
 {
 	SetAngle(CommonClass::directionMaps.find(direction)->second);
@@ -267,16 +276,16 @@ bool Character::ApplyDamage(int damage)
 	if (health <= 0) return false;
 
 	damage -= block;
-	if (damage <= 0)
-		return false;
+	/*if (damage <= 0)
+		return false;*/
 
 	if (shield > 0)
 	{
 		int tempDamage = (shield >= damage) ? damage : shield;
 		shield -= tempDamage;
 		damage -= tempDamage;
-		if (damage <= 0)
-			return false;
+		/*if (damage <= 0)
+			return false;*/
 	}
 
 	//ƒ_ƒ[ƒWˆ—

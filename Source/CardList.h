@@ -3,6 +3,7 @@
 #include <list>
 #include <stack>
 #include <map>
+#include "Audio\AudioSource.h"
 #include "Card.h"
 #include "Character.h"
 
@@ -119,6 +120,10 @@ private://functions
 
 	//マウスが持つカードの変更
 	void ChangeHaveCard(std::shared_ptr<Card>* card);
+
+	//オーディオの初期化
+	void InitializeAudio();
+
 public://static memberes
 	static constexpr unsigned int CARD_MAX = 5u;
 	static constexpr unsigned int SPECIAL_CARD_MAX = 1u;
@@ -145,4 +150,9 @@ private://members
 	Sprite cardInfoBack;
 	std::unique_ptr<Sprite> SetCardSprites[2];
 	DirectX::XMFLOAT2 testdatas[2];
+
+	/*struct CardListSes
+	{
+		std::unique_ptr<AudioSource> cardSelectSe;
+	}cardListSes;*/
 };

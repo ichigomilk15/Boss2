@@ -8,6 +8,7 @@
 #include "CameraController.h"
 #include "Effect.h"
 #include "CardList.h"
+#include "Audio\AudioSource.h"
 
 class Player : public Character
 {
@@ -50,12 +51,18 @@ private:
 
 	//ダメージを受けた時
 	void OnDamaged() override;
+	
+	//死亡した時に呼ばれる
+	void OnDead() override;
 
 	//ステージからのカードを取得処理
 	void GetCard(Card* getCard);
 
 	//敵の詳細を見る更新処理
 	void UpdateViewEnemyDetail();
+
+	//オーディオの初期化
+	void InitializeAudio();
 
 private:
 	//Model* model = nullptr;
@@ -69,4 +76,12 @@ private:
 		Character* target = nullptr;
 		std::vector<DirectX::XMINT2> targetAttackRange{};
 	} lookAtEnemyDetail;
+	struct PlayerSes
+	{
+		std::unique_ptr<AudioSource> attackSe;
+		std::unique_ptr<AudioSource> damageSe;
+		std::unique_ptr<AudioSource> deadSe;
+		std::unique_ptr<AudioSource> shieldSe;
+		std::unique_ptr<AudioSource> moveSe;
+	}playerSes;
 };

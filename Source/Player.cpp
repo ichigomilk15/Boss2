@@ -15,6 +15,7 @@
 #include "AttackManager.h"
 #include "PhaseManager.h"
 #include "EnemyManager.h"
+#include "Audio\AudioLoader.h"
 
 Player::Player() :Character()
 {
@@ -32,11 +33,18 @@ Player::Player() :Character()
 	maxHealth = 75;
 	//attackAdjacentRange = 3;
 	SetDirection(CommonClass::DirectionFace::BackRight);
+	InitializeAudio();
 }
 
 Player::~Player()
 {
 	delete hitEffect;
+
+	this->playerSes.attackSe->Stop();
+	this->playerSes.damageSe->Stop();
+	this->playerSes.deadSe->Stop();
+	this->playerSes.shieldSe->Stop();
+	this->playerSes.moveSe->Stop();
 }
 
 void Player::Update(float elapsedTime)
@@ -171,12 +179,14 @@ void Player::UpdateState(float elapsedTime)
 	case State::Moving_Init:
 		this->model->PlayAnimation(Animation::Run, true);
 		state = State::Moving;
+		playerSes.moveSe.get()->Play(true);
 		this->SetDirection(this->targetMovePos);
 		[[fallthrough]];
 	case State::Moving:
 	{
 		if (!IsMoving())
 		{
+			playerSes.moveSe.get()->Stop();
 			Stage::Instance()->ResetAllSquare();
 			SetState(MovingEnd());
 			if (cardComboDataBase)
@@ -201,6 +211,7 @@ void Player::UpdateState(float elapsedTime)
 
 	case State::Attacking_Init:
 		this->model->PlayAnimation(Animation::Attack, false);
+		playerSes.attackSe.get()->Play(false);
 		state = State::Attacking;
 		[[fallthrough]];
 	case State::Attacking:
@@ -216,6 +227,8 @@ void Player::UpdateState(float elapsedTime)
 		actTimer = 0.5f;
 		Stage::Instance()->ResetAllSquare();
 		SetShieldAction();
+		playerSes.shieldSe.get()->Stop();
+		playerSes.shieldSe.get()->Play(false);
 		state = State::Defence;
 		[[fallthrough]];
 	case State::Defence:
@@ -561,6 +574,12 @@ State Player::ChooseAct(float elapsedTime)
 void Player::OnDamaged()
 {
 	state = State::Damage_Init;
+	playerSes.damageSe.get()->Play(false);
+}
+
+void Player::OnDead()
+{
+	playerSes.deadSe.get()->Play(false);
 }
 
 void Player::GetCard(Card* getCard)
@@ -651,4 +670,13 @@ void Player::UpdateViewEnemyDetail()
 			}
 		}
 	}
+}
+
+void Player::InitializeAudio()
+{
+	AudioLoader::Load(AUDIO::SE_PLAYER_ATTACK, playerSes.attackSe);
+	AudioLoader::Load(AUDIO::SE_PLAYER_DAMAGE, playerSes.damageSe);
+	AudioLoader::Load(AUDIO::SE_PLAYER_DEAD, playerSes.deadSe);
+	AudioLoader::Load(AUDIO::SE_PLAYER_SHIELD, playerSes.shieldSe);
+	AudioLoader::Load(AUDIO::SE_PLAYER_MOVE, playerSes.moveSe);
 }

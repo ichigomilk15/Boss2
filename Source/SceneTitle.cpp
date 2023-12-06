@@ -5,6 +5,7 @@
 #include "SceneManager.h"
 #include "SceneLoading.h"
 #include "HitCollisions.h"
+#include "Audio\AudioLoader.h"
 
 void SceneTitle::Initialize()
 {
@@ -12,6 +13,10 @@ void SceneTitle::Initialize()
 	sprite = new Sprite("Data/Sprite/title_back.png");
 	title = std::make_unique<Sprite>("./Data/Sprite/SceneBack/title.png");
 	pressClick = std::make_unique<Sprite>("./Data/Sprite/SceneBack/press_click.png");
+
+	/*AudioLoader::Load(AUDIO::BGM_GAME, gameSe);
+	AudioLoader::Load(AUDIO::BGM_GAMEOVER, gameOverSe);
+	AudioLoader::Load(AUDIO::BGM_GAMECLEAR, gameClearSe);*/
 }
 
 void SceneTitle::Finalize()

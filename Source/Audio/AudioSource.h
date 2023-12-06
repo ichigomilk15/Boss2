@@ -8,16 +8,27 @@
 class AudioSource
 {
 public:
-	AudioSource(IXAudio2* xaudio, std::shared_ptr<AudioResource>& resource);
+	AudioSource(IXAudio2* xaudio, std::shared_ptr<AudioResource>& resource, bool loop);
 	~AudioSource();
 
 	// Ä¶
 	void Play(bool loop);
 
+	// ˆê“x’âŽ~‚µ‚Ä‚©‚çÄ¶‚·‚é
+	void ResetPlay();
+
 	// ’âŽ~
 	void Stop();
 
+	// Ä¶’†‚Å‚ ‚é‚©
+	bool Queuing();
+
+	// ƒ{ƒŠƒ…[ƒ€Ý’è
+	void SetVolume(float volume) { this->volume = volume; }
+
 private:
-	IXAudio2SourceVoice*			sourceVoice = nullptr;
+	IXAudio2SourceVoice* sourceVoice = nullptr;
+	XAUDIO2_BUFFER					buffer = { 0 };
 	std::shared_ptr<AudioResource>	resource;
+	float volume = 1.0f;
 };

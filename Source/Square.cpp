@@ -68,8 +68,7 @@ void Square::Render(ID3D11DeviceContext* dc, Shader* shader)
 				model->UpdateTransform(transform);
 				shader->Draw(dc, model.get());
 			}
-
-			if (IsHasDrawType(DrawType::NormalAttackView))
+			else if (IsHasDrawType(DrawType::NormalAttackView))
 			{
 				model = this->SquareArea.lock();
 				model->ChangeMaterialColor(0u, drawTypeMaps.find(DrawType::NormalAttackView)->second.color);

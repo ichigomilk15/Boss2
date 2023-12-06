@@ -3,6 +3,7 @@
 #include "Stage.h"
 #include "NormalAttack.h"
 #include "AttackManager.h"
+#include "Audio\AudioLoader.h"
 
 EnemyMinion1::EnemyMinion1(Character* p) :
 	Enemy(p)
@@ -25,6 +26,8 @@ EnemyMinion1::EnemyMinion1(Character* p) :
 	hpBarUseScale = 0.5f;
 
 	SetDirection(CommonClass::DirectionFace::BackRight);
+
+	InitializeAudio();
 }
 
 void EnemyMinion1::UpdateState(float elapsedTime)
@@ -85,6 +88,7 @@ void EnemyMinion1::UpdateState(float elapsedTime)
 
 	case State::Moving_Init:
 		this->SetDirection(this->targetMovePos);
+		minion1Ses.walkSe.get()->ResetPlay();
 		state = State::Moving;
 		[[fallthrough]];
 	case State::Moving:
@@ -118,6 +122,8 @@ void EnemyMinion1::UpdateState(float elapsedTime)
 
 	case State::Attacking_Init:
 		this->model->PlayAnimation(Animation::Attack, false, 0.0f);
+		minion1Ses.attackSe.get()->Stop();
+		minion1Ses.attackSe.get()->ResetPlay();
 		state = State::Attacking;
 		[[fallthrough]];
 	case State::Attacking:
@@ -164,4 +170,24 @@ void EnemyMinion1::UpdateState(float elapsedTime)
 	default:
 		break;
 	}
+}
+
+void EnemyMinion1::OnDamaged()
+{
+	Enemy::OnDamaged();
+	minion1Ses.damageSe.get()->Play(false);
+}
+
+void EnemyMinion1::OnDead()
+{
+	minion1Ses.deathSe.get()->Play(false);
+	Enemy::OnDead();
+}
+
+void EnemyMinion1::InitializeAudio()
+{
+	AudioLoader::Load(AUDIO::SE_MINION1_ATTACK, minion1Ses.attackSe);
+	AudioLoader::Load(AUDIO::SE_MINION1_DAMAGE, minion1Ses.damageSe);
+	AudioLoader::Load(AUDIO::SE_MINION1_DEATH, minion1Ses.deathSe);
+	AudioLoader::Load(AUDIO::SE_MINION1_WALK, minion1Ses.walkSe);
 }

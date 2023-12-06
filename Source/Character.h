@@ -62,7 +62,7 @@ class Character
 {
 public:
 	Character();
-	virtual ~Character() {};
+	virtual ~Character();
 
 	//s—ñXVˆ—
 	void UpdateTransform();
