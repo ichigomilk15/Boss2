@@ -65,6 +65,7 @@ private://members
 	std::unique_ptr<Sprite> playerHP[3];
 #ifdef _DEBUG
 	Sprite sprite;
+	std::unique_ptr<Effect> effec;
 #endif // _DEBUG
 
 };

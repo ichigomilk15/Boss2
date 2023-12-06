@@ -20,6 +20,7 @@ Effect::Effect(const char* filename)
 
 	//Effekseerエフェクトを読み込み
 	effekseerEffect = Effekseer::Effect::Create(effekseerManager, (EFK_CHAR*)utf16Filename);
+	assert(effekseerEffect!=nullptr);
 }
 
 //再生

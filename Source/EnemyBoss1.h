@@ -68,6 +68,7 @@ private:
 	struct
 	{
 		std::unique_ptr<Effect> dizzy;
+		std::unique_ptr<Effect> shockWave;
 	}effects;
 };
 

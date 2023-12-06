@@ -27,6 +27,8 @@ EnemyMinion1::EnemyMinion1(Character* p) :
 
 	SetDirection(CommonClass::DirectionFace::BackRight);
 
+	effects.vortex = std::make_unique<Effect>("./Data/Effect/vortex.efk");
+
 	InitializeAudio();
 }
 
@@ -102,6 +104,7 @@ void EnemyMinion1::UpdateState(float elapsedTime)
 	case State::Attack_Init:
 		this->model->PlayAnimation(Animation::Run, false);
 		actTimer = 1.0f;
+		effects.vortex->Play(positionWorld, 1.0f);
 		state = State::Attack;
 		[[fallthrough]];
 	case State::Attack:

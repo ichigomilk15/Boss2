@@ -62,7 +62,7 @@ public:
 
 	void Quit()const noexcept;
 
-	const bool GetIsFullScreen() { return isFullScreen; }
+	const bool IsFullScreen() { return isFullScreen; }
 
 private:
 	static Graphics*								instance;

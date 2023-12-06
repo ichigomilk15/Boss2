@@ -35,6 +35,7 @@ EnemyBoss1::EnemyBoss1(Character* p) :
 	boss1Ses.startLineSe.get()->Play(false);
 
 	effects.dizzy = std::make_unique<Effect>("./Data/Effect/dizzy.efk");
+	effects.shockWave = std::make_unique<Effect>("./Data/Effect/shockwave.efk");
 }
 
 void EnemyBoss1::UpdateState(float elapsedTime)
@@ -220,6 +221,7 @@ void EnemyBoss1::UpdateState(float elapsedTime)
 			CameraController::Instance().ShakeCamera(1.05f, 6);
 			Stage::Instance()->ResetAllSquareDrawType();
 			SetState(State::Attack_Init);
+			effects.shockWave->Play(positionWorld, 2.0f);
 			break;
 		}
 		break;
@@ -246,6 +248,7 @@ void EnemyBoss1::UpdateState(float elapsedTime)
 			{
 				++actNo;
 				boss1Ses.panicSe.get()->Stop();
+				effects.dizzy->Stop(effects.dizzy->GetHandle());
 				state = State::Attack_Init;
 				break;
 			}
@@ -443,7 +446,7 @@ State EnemyBoss1::AfterBumpAttack()
 			InitStunDefence();
 			auto nodetransform = model->FindNode("J_head_end")->worldTransform;
 			DirectX::XMFLOAT3 pos = { nodetransform._41,nodetransform._42,nodetransform._43 };
-			effects.dizzy->Play({.0f,.0f,.0f}, 10.f);
+			effects.dizzy->Play(pos, 0.8f);
 			return State::Stunned_Init;
 		}
 	}

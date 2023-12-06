@@ -86,4 +86,10 @@ private:
 		std::unique_ptr<AudioSource> shieldSe;
 		std::unique_ptr<AudioSource> moveSe;
 	}playerSes;
+
+	struct 
+	{
+		std::unique_ptr<Effect> attack;
+		std::unique_ptr<Effect> damage;
+	}effects;
 };

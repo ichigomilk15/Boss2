@@ -26,6 +26,8 @@ void NormalAttack::Update(float elapsedTime)
 					if (target && target == e.targetChara)
 					{
 						e.targetChara->ApplyDamage(damage);
+
+
 						if (damage >= 15)
 							CameraController::Instance().ShakeCamera(1.0, 6);
 						else

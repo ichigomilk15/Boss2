@@ -26,9 +26,10 @@ Player::Player() :Character()
 	scale.x = scale.y = scale.z = 0.1f;
 
 	//effectÇΩÇøÇÃê›íË
-	hitEffect = new Effect("Data/Effect/Hit.efk");
 	buffEffect = std::make_unique<Effect>("./Data/Effect/vortex.efk");
 	shieldEffect = std::make_unique<Effect>("./Data/Effect/sheild.efk");
+	effects.attack = std::make_unique<Effect>("./Data/Effect/attack.efk");
+	effects.damage = std::make_unique<Effect>("./Data/Effect/damage.efk");
 
 	attackPower = 10;
 	maxHealth = 75;
@@ -230,7 +231,7 @@ void Player::UpdateState(float elapsedTime)
 		actTimer = 0.5f;
 		Stage::Instance()->ResetAllSquare();
 		SetShieldAction();
-		shieldEffect->Play(positionWorld, 10.f);
+		shieldEffect->Play(positionWorld, 2.f);
 
 		playerSes.shieldSe.get()->Stop();
 		playerSes.shieldSe.get()->Play(false);
@@ -426,12 +427,14 @@ void Player::UpdateAttack(float elapsedTime)
 	DirectX::XMFLOAT3 endMousePos = CommonClass::GetWorldEndPosition(dc, mouse.GetPositionX(), mouse.GetPositionY(), camera.GetView(), camera.GetProjection());
 
 	HitResult hit;
+	Square* hitSquare = nullptr;
 	std::vector<Square*> attackSq;
 
 	for (auto& sq : squares)
 	{
 		if (sq->Raycast(startMousePos, endMousePos, hit))
 		{
+			hitSquare = sq;
 			SetDirection(sq->GetPos());
 			int cost = (attackDetail->VAreaAttackCost) ? 2 : 1;
 			attackSq = Stage::Instance()->GetSquaresByDirection(this->position.x, this->position.y, cost, this->GetDirection());
@@ -453,6 +456,8 @@ void Player::UpdateAttack(float elapsedTime)
 	if (!attackSq.empty() && mouse.GetButtonDown() & Mouse::BTN_LEFT)
 	{
 		//Stage::Instance()->ResetAllSquare();
+		if(hitSquare)
+			effects.attack->Play(hitSquare->GetWorldPos(),static_cast<float>(attackDetail->AreaAttackCost+1));
 
 		int attackDamage = attackDetail->AttackDamage;
 		if (attackDetail->UseShield)
@@ -582,6 +587,7 @@ State Player::ChooseAct(float elapsedTime)
 
 void Player::OnDamaged()
 {
+	//effects.damage->Play(positionWorld, 1.0f);
 	state = State::Damage_Init;
 	playerSes.damageSe.get()->Play(false);
 }

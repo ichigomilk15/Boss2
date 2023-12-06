@@ -71,6 +71,7 @@ void SceneGame::Initialize()
 
 #ifdef _DEBUG
 	sprite = Sprite(nullptr);
+	effec = std::make_unique<Effect>("./Data/Effect/dizzy.efk");
 #endif // _DEBUG
 
 }
@@ -91,6 +92,8 @@ void SceneGame::Finalize()
 	EnemyManager::Instance().Clear();
 
 	GameSystemManager::Instance().SetPoused(false);
+
+	EffectManager::Instance().GetEffekseerManager()->StopAllEffects();
 
 	// BGM’âŽ~
 	//gameSe->Stop();
