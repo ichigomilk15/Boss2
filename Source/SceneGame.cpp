@@ -67,13 +67,11 @@ void SceneGame::Initialize()
 	DamageEffector::Instance().Register(data);
 
 #if _DEBUG
-	/*AudioLoader::Load(AUDIO::BGM_GAME, gameSe);
-	AudioLoader::Load(AUDIO::BGM_GAMEOVER, gameOverSe);
-	AudioLoader::Load(AUDIO::BGM_GAMECLEAR, gameClearSe);*/
+	AudioLoader::Load(AUDIO::BGM_GAME, gameSe);
 #endif
 
 	// BGMÄ¶
-	//gameSe->Play(true);
+	gameSe->Play(true);
 
 	SaveData::Instance().Load();
 	GameSystemManager::Instance().CollTutorial();
@@ -97,7 +95,7 @@ void SceneGame::Finalize()
 	GameSystemManager::Instance().SetPoused(false);
 
 	// BGM’âŽ~
-	//gameSe->Stop();
+	gameSe->Stop();
 }
 
 // XVˆ—
@@ -371,6 +369,7 @@ const bool SaveData::Load()
 	if (auto player = PlayerManager::Instance().GetFirstPlayer())
 	{
 		player->SetHealth((this->playerHp > 0 ? this->playerHp : player->GetMaxHealth()));
+		//player->SetHealth(1);
 		if (this->playerpos.first < 0 || this->playerpos.second < 0) { ok = false; }
 		else player->SetTurnPosInit({ playerpos.first,playerpos.second });
 	}

@@ -4,11 +4,12 @@
 #include "Stage.h"
 #include <algorithm>
 
-AttackParent::AttackParent(Character* parent, const int damage, TargetAttackEnum target, const std::vector<DirectX::XMINT2> targetAttackPos, const float damageTimer) :
+AttackParent::AttackParent(Character* parent, const int damage, TargetAttackEnum target, const std::vector<DirectX::XMINT2> targetAttackPos, const float damageTimer, const bool isAttackActive) :
 	parent(parent),
 	damage(damage),
 	damageTimer(damageTimer),
-	lifeTimer(2.0f)
+	lifeTimer(2.0f),
+	isAttackActivated(isAttackActive)
 {
 	if (this->damageTimer > lifeTimer || this->damageTimer < 0.0f)
 		this->damageTimer = lifeTimer;

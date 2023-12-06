@@ -1,6 +1,7 @@
 #pragma once
 #include <d3d11.h>
 #include <memory>
+#include "Audio\AudioSource.h"
 #include "Graphics/Sprite.h"
 #include "HitCollisions.h"
 
@@ -70,6 +71,8 @@ private:
 	const bool IsQuickNextPhase(const bool flag);
 
 	void StageInit(const int level);
+
+	void InitializeAudio();
 public:
 	static constexpr float NEXT_PHASE_WAIT_TIMER = 1.0f;
 private:
@@ -81,4 +84,7 @@ private:
 
 	HitBox2D okButtonCollision;
 	std::unique_ptr<Sprite> okButton;
+
+
+	
 };

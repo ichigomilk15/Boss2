@@ -754,5 +754,19 @@ void CardManager::ChangeHaveCard(std::shared_ptr<Card>* card)
 
 void CardManager::InitializeAudio()
 {
-	//AudioLoader::Load(AUDIO::SE_SELECT, cardListSes.cardSelectSe);
+	/*struct CardSes
+	{
+		std::unique_ptr<AudioSource> cardDecideSe;
+		std::unique_ptr<AudioSource> cardDraw;
+		std::unique_ptr<AudioSource> cardSet;
+	}cardSes;
+	AudioLoader::Load(AUDIO::SE_CARD_DECIDE, cardSes.cardDecideSe);
+	AudioLoader::Load(AUDIO::SE_CARD_DRAW, cardSes.cardDraw);
+	AudioLoader::Load(AUDIO::SE_CARD_SET, cardSes.cardSet);*/
+
+	/*
+	std::unique_ptr<AudioSource> cardDecideSe;
+		std::unique_ptr<AudioSource> cardDraw;
+		std::unique_ptr<AudioSource> cardSet;
+		std::unique_ptr<AudioSource> buff;*/
 }

@@ -1,7 +1,7 @@
 
 #define NOMINMAX
 #include "PhaseManager.h"
-
+#include "Audio\AudioLoader.h"
 #include "Input/Input.h"
 #include "EnemyManager.h"
 #include "CardList.h"
@@ -27,6 +27,8 @@ PhaseManager::PhaseManager()
 		DirectX::XMFLOAT2(screenSize.x * 0.1f, screenSize.y * 0.1f));
 	okButton = std::make_unique<Sprite>("./Data/Sprite/OK.png");
 	phaseTimer = NEXT_PHASE_WAIT_TIMER;
+
+	InitializeAudio();
 }
 
 void PhaseManager::Initialize()
@@ -209,7 +211,7 @@ void PhaseManager::Update(float elapsedTime)
 		bool isGameOver = true;
 		for (auto& player : *PlayerManager::Instance().GetPlayerVector())
 		{
-			if (player->GetHealth() > 0) { isGameOver = false; break; }
+			if (player->GetHealth() > 0 /*|| player->GetPlayerDeadTime() > 0.000001f*/) { isGameOver = false; break; }
 		}
 		if (isGameOver)
 			SceneManager::Instance().ChangeScene(new SceneGameOver);
@@ -433,5 +435,10 @@ void PhaseManager::StageInit(const int level)
 
 	}
 
+
 	EnemyManager::Instance().SetStartEnemyNum();
+}
+
+void PhaseManager::InitializeAudio()
+{
 }

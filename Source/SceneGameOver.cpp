@@ -6,15 +6,19 @@
 #include "SceneGame.h"
 #include "SceneTitle.h"
 #include "SceneManager.h"
+#include "Audio\AudioLoader.h"
 
 
 SceneGameOver::SceneGameOver():
     GoTitle(),Retry(),back()
 {
+    AudioLoader::Load(AUDIO::BGM_GAMEOVER, gameOverSe);
+    gameOverSe->Play(true);
 }
 
 SceneGameOver::~SceneGameOver()
 {
+    gameOverSe->Stop();
 }
 
 void SceneGameOver::Initialize()

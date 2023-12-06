@@ -26,6 +26,8 @@ public:
 	void DrawDebugPrimitive();
 
 	void SetTurnPosInit(const DirectX::XMINT2& pos) { this->turnPosInit = pos; }
+
+	const float GetPlayerDeadTime() const { return playerDeadTime; }
 private:
 	//ステート更新処理
 	void UpdateState(float elapsedTime) override;
@@ -83,5 +85,16 @@ private:
 		std::unique_ptr<AudioSource> deadSe;
 		std::unique_ptr<AudioSource> shieldSe;
 		std::unique_ptr<AudioSource> moveSe;
+
+		std::unique_ptr<AudioSource> buff;
 	}playerSes;
+
+	struct CardSes
+	{
+		std::unique_ptr<AudioSource> cardDecideSe;
+		std::unique_ptr<AudioSource> cardDraw;
+		std::unique_ptr<AudioSource> cardSet;
+	}cardSes;
+
+	bool playerDeadTime = 0.0f;
 };

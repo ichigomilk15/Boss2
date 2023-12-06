@@ -30,7 +30,7 @@ private:
 	bool ready = false;
 
 protected:
-	/*std::unique_ptr<AudioSource> gameSe;
+	std::unique_ptr<AudioSource> gameSe;
 	std::unique_ptr<AudioSource> gameOverSe;
-	std::unique_ptr<AudioSource> gameClearSe;*/
+	std::unique_ptr<AudioSource> gameClearSe;
 };

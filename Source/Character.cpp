@@ -19,11 +19,11 @@ Character::Character()
 
 Character::~Character()
 {
-	if (attack)
+	/*if (attack)
 	{
 		delete attack;
 		attack = nullptr;
-	}
+	}*/
 }
 
 void Character::UpdateTransform()

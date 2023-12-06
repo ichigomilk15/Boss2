@@ -16,7 +16,7 @@ enum class TargetAttackEnum
 class AttackParent
 {
 public: //function
-	AttackParent(Character* parent, const int damage, TargetAttackEnum target, const std::vector<DirectX::XMINT2> targetAttackPos = {}, const float damageTimer = 0.0f);
+	AttackParent(Character* parent, const int damage, TargetAttackEnum target, const std::vector<DirectX::XMINT2> targetAttackPos = {}, const float damageTimer = 0.0f, const bool isAttackActive = true);
 	virtual ~AttackParent();
 
 	// XVˆ—
@@ -32,6 +32,8 @@ public: //function
 	Character* GetParent()const { return parent; }
 
 	const bool GetIsDestroy()const { return isDestroy; }
+
+	void ActivateAttack() { isAttackActivated = true; }
 
 	//Getter&Setter*************************************************************************
 #if 1
@@ -59,6 +61,7 @@ protected: //members
 		bool isAttacked = false;
 	};
 	std::vector<TargetAttack> targetAttack = {};
+	bool isAttackActivated = true;
 	/*std::vector<Character*> targetAttack = {};
 	std::vector < std::map<Character*, bool> IsTargetAttacked;*/
 };

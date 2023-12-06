@@ -4,15 +4,18 @@
 #include "SceneManager.h"
 #include "SceneClear.h"
 #include "SceneTitle.h"
+#include"Audio\AudioLoader.h"
 
 SceneClear::SceneClear() :
     back()
 {
-
+    AudioLoader::Load(AUDIO::BGM_GAMECLEAR, gameClearSe);
+    gameClearSe->Play(true);
 }
 
 SceneClear::~SceneClear()
 {
+    gameClearSe->Stop();
 }
 
 void SceneClear::Initialize()
