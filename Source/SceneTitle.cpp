@@ -14,7 +14,10 @@ void SceneTitle::Initialize()
 	title = std::make_unique<Sprite>("./Data/Sprite/SceneBack/title.png");
 	pressClick = std::make_unique<Sprite>("./Data/Sprite/SceneBack/press_click.png");
 
-	AudioLoader::Load(AUDIO::BGM_GAME, gameSe);
+	AudioLoader::Load(AUDIO::BGM_GAMEOVER, gameOverSe);
+
+	// BGMÄ¶
+	gameOverSe->Play(true);
 }
 
 void SceneTitle::Finalize()
@@ -25,6 +28,7 @@ void SceneTitle::Finalize()
 		delete sprite;
 		sprite = nullptr;
 	}
+	gameOverSe->Stop();
 }
 
 void SceneTitle::Update(float elapsedTime)
