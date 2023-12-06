@@ -370,8 +370,8 @@ State Player::MovingEnd()
 		if ((getCard->GetType() == Card::Type::SPECIAL && CardManager::Instance().GetHaveSpecial() < CardManager::SPECIAL_CARD_MAX) 
 			|| getCard->GetType() == Card::Type::DEBUFF)
 		{
-			square->ResetCard();
 			GetCard(getCard);
+			square->ResetCard();
 		}
 	}
 
