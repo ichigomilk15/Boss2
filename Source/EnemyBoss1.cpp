@@ -8,6 +8,7 @@
 #include "CameraController.h"
 #include "PhaseManager.h"
 #include "Audio\AudioLoader.h"
+#include "EffectManager.h"
 
 EnemyBoss1::EnemyBoss1(Character* p) :
 	Enemy(p)
@@ -32,6 +33,8 @@ EnemyBoss1::EnemyBoss1(Character* p) :
 
 	InitializeAudio();
 	boss1Ses.startLineSe.get()->Play(false);
+
+	effects.dizzy = std::make_unique<Effect>("./Data/Effect/dizzy.efk");
 }
 
 void EnemyBoss1::UpdateState(float elapsedTime)
@@ -228,7 +231,12 @@ void EnemyBoss1::UpdateState(float elapsedTime)
 		boss1Ses.panicSe.get()->Stop();
 		boss1Ses.panicSe.get()->Play(true);
 		if (bumpAttackDetail.stunTurn >= 0)
+		{
 			isActEnd = true;
+			EffectManager::Instance().GetEffekseerManager()->SendTrigger(effects.dizzy->GetHandle(),0);
+		}
+
+
 		state = State::Stunned;
 		[[fallthrough]];
 	case State::Stunned:
@@ -433,6 +441,9 @@ State EnemyBoss1::AfterBumpAttack()
 		else
 		{
 			InitStunDefence();
+			auto nodetransform = model->FindNode("J_head_end")->worldTransform;
+			DirectX::XMFLOAT3 pos = { nodetransform._41,nodetransform._42,nodetransform._43 };
+			effects.dizzy->Play({.0f,.0f,.0f}, 10.f);
 			return State::Stunned_Init;
 		}
 	}

@@ -3,6 +3,7 @@
 #include <memory>
 #include "Graphics/Sprite.h"
 #include "HitCollisions.h"
+#include "Stage.h"
 
 #define PHASE_LIST \
 	X(Phase_GameStart_Init)   \
@@ -78,6 +79,7 @@ private:
 	float phaseTimer = -1.0f;
 	bool isNextPhase = false;
 	unsigned int useCardIndex = 0u;
+	std::unique_ptr<Sprite> waveSprites[Stage::STAGE_LEVEL_MAX];
 
 	HitBox2D okButtonCollision;
 	std::unique_ptr<Sprite> okButton;

@@ -52,6 +52,8 @@ public:
 	bool IsPlayAnimation() const;
 	bool IsPlayAnimation(const int index) const;
 
+	Model::Node* FindNode(const char* nodeName);
+
 private:
 	std::shared_ptr<ModelResource>	resource;
 	std::vector<Node>				nodes;

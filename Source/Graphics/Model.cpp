@@ -200,3 +200,17 @@ bool Model::IsPlayAnimation(const int index) const
 	if (currentAnimationIndex >= resource->GetAnimations().size()) return false;
 	return true;
 }
+
+Model::Node* Model::FindNode(const char* nodeName)
+{
+	//全てのノードを総当たりで名前比較をする
+	for (auto& node : this->nodes)
+	{
+		if (strcmp(nodeName, node.name) == 0)
+		{
+			return &node;
+		}
+	}
+	//見つからなかった場合
+	return nullptr;
+}

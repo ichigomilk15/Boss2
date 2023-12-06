@@ -22,7 +22,7 @@ public://functions
 #if 1
 	const bool& GetIsPoused()const noexcept { return isPoused; }
 	void SetPoused(const bool& flag)noexcept { isPoused = flag; }
-	void CollTutorial()noexcept { isTutorial = true; }
+	void CollTutorial()noexcept { isTutorial = true; isPoused = true; }
 #endif // 1
 	//Getter&Setter************************************************************************************
 

@@ -64,6 +64,11 @@ private:
 		std::unique_ptr<AudioSource> panicSe;
 		std::unique_ptr<AudioSource> wallHitSe;
 	}boss1Ses;
+
+	struct
+	{
+		std::unique_ptr<Effect> dizzy;
+	}effects;
 };
 
 

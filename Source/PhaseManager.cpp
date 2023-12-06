@@ -27,6 +27,10 @@ PhaseManager::PhaseManager()
 		DirectX::XMFLOAT2(screenSize.x * 0.1f, screenSize.y * 0.1f));
 	okButton = std::make_unique<Sprite>("./Data/Sprite/OK.png");
 	phaseTimer = NEXT_PHASE_WAIT_TIMER;
+
+	waveSprites[0] = std::make_unique<Sprite>("./Data/Sprite/WAVE_01.png");
+	waveSprites[1] = std::make_unique<Sprite>("./Data/Sprite/WAVE_02.png");
+	waveSprites[2] = std::make_unique<Sprite>("./Data/Sprite/WAVE_03.png");
 }
 
 void PhaseManager::Initialize()
@@ -78,7 +82,10 @@ void PhaseManager::Update(float elapsedTime)
 	[[fallthrough]];
 	case PhaseManager::Phase::Phase_NextStage:
 	{
-		NextPhase();//次のフェーズへ
+		if (IsSlowNextPhase(true))
+		{
+			NextPhase();//次のフェーズへ
+		}
 	}
 	break;
 	//***********************************************************************************
@@ -250,6 +257,13 @@ void PhaseManager::Render(ID3D11DeviceContext* dc)
 {
 	const DirectX::XMFLOAT2 ScreenSize = Graphics::Instance().GetScreenSize();
 
+	if (phase == Phase::Phase_NextStage)
+	{
+		HitBox2D box = HitBox2D::CreateBoxFromCenter({ ScreenSize.x * 0.5f,ScreenSize.y * 0.5f }, { ScreenSize.x,ScreenSize.y * 0.3f });
+		waveSprites[Stage::Instance()->GetStageLevel()-1]->Render(dc,
+			box.GetLeftTop(), box.GetBoxSize(), .0f, { 1.0f,1.0f,1.0f,1.0f });
+	}
+
 	//完了ボタン描画
 	{
 		const DirectX::XMFLOAT2& lefttop = okButtonCollision.GetLeftTop();
@@ -350,7 +364,7 @@ void PhaseManager::StageInit(const int level)
 {
 	switch (level)
 	{
-	case 1:
+	case 0:
 	{
 		PlayerManager::Instance().GetFirstPlayer()->SetPositionWorld(Common::PlayerPosInit);
 		//enemyの配置
@@ -407,7 +421,7 @@ void PhaseManager::StageInit(const int level)
 		enemy2->SetMaxHealth(40);
 	}
 		break;
-	case 4:
+	case 1:
 	{
 		PlayerManager::Instance().GetFirstPlayer()->SetTargetMovePosition(Common::PlayerPosInit);
 		PlayerManager::Instance().GetFirstPlayer()->SetPositionWorld(Common::PlayerPosInit);
