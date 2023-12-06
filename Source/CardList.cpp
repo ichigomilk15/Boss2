@@ -716,7 +716,6 @@ void CardManager::Replenish()
 
 void CardManager::Erase()
 {
-	std::unique(cards.begin(), cards.end());
 	for (auto& erase : eraser)
 	{
 		cards.remove_if([&](std::shared_ptr<Card> src) {return src == erase; });

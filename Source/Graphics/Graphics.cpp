@@ -54,6 +54,7 @@ Graphics::Graphics(HWND hWnd) :hwnd(hWnd)
 			swapchainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 			swapchainDesc.BufferCount = 1;		// バックバッファの数
 			swapchainDesc.OutputWindow = hWnd;	// DirectXで描いた画を表示するウインドウ
+			//todo : fullscreen
 			swapchainDesc.Windowed = TRUE;		// ウインドウモードか、フルスクリーンにするか。
 			swapchainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 			swapchainDesc.Flags = 0; // DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH
@@ -142,11 +143,17 @@ Graphics::Graphics(HWND hWnd) :hwnd(hWnd)
 		lineRenderer = std::make_unique<LineRenderer>(device.Get(), 1024);
 		imguiRenderer = std::make_unique<ImGuiRenderer>(hWnd, device.Get());
 	}
+
+	swapchain->GetFullscreenState(&isFullScreen, nullptr);
 }
 
 // デストラクタ
 Graphics::~Graphics()
 {
+	BOOL isFullScreen = FALSE;
+	swapchain->GetFullscreenState(&isFullScreen, nullptr);
+	if(isFullScreen)
+		swapchain->SetFullscreenState(FALSE, nullptr);
 }
 
 void Graphics::Quit() const noexcept

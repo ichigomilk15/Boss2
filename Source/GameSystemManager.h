@@ -42,6 +42,6 @@ private:
 	UI CardAllInfoButton;
 	UI pouseBackGround;
 	std::vector<std::unique_ptr<Sprite>> tutorialSprite;
-	int tutrialIndex;
+	int tutrialIndex = 0;
 	bool isTutorial = false;
 };

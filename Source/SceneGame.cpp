@@ -67,6 +67,11 @@ void SceneGame::Initialize()
 
 	SaveData::Instance().Load();
 	GameSystemManager::Instance().CollTutorial();
+
+#ifdef _DEBUG
+	sprite = Sprite(nullptr);
+#endif // _DEBUG
+
 }
 
 // èIóπâª
@@ -217,6 +222,9 @@ void SceneGame::Render()
 		CardManager::Instance().DrawDebugGUI();
 		PhaseManager::Instance().DrawDebugGUI();
 	}
+
+
+	sprite.Render(dc, Input::Instance().GetMouse().GetPosition(), { 5.0f,5.0f }, .0f, { 1.0f,.0f,.0f,1.0f });
 #endif // _DEBUG
 }
 
