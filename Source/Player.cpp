@@ -16,9 +16,9 @@
 #include "PhaseManager.h"
 #include "EnemyManager.h"
 
-Player::Player():Character()
+Player::Player() :Character()
 {
-	model = new Model("Data/Model/Player/Player.mdl");
+	this->model = std::make_unique<Model>("Data/Model/Player/Player.mdl");
 	icon = std::make_unique<Sprite>("./Data/Sprite/icon_player.png");
 
 	//モデルが大きいのでスケーリング
@@ -37,8 +37,6 @@ Player::Player():Character()
 Player::~Player()
 {
 	delete hitEffect;
-
-	delete model;
 }
 
 void Player::Update(float elapsedTime)
@@ -60,7 +58,7 @@ void Player::Update(float elapsedTime)
 
 void Player::Render(ID3D11DeviceContext* dc, Shader* shader)
 {
-	shader->Draw(dc, model);
+	shader->Draw(dc, model.get());
 }
 
 //void Player::Render2D(RenderContext& rc, ID3D11DeviceContext* dc)
@@ -127,29 +125,6 @@ void Player::DrawDebugPrimitive()
 
 void Player::UpdateState(float elapsedTime)
 {
-	//#if _DEBUG
-	//	GamePad& gamePad = Input::Instance().GetGamePad();
-	//	if (gamePad.GetButtonDown() & gamePad.BTN_UP)
-	//	{
-	//		targetMovePos.y = position.y - 1;
-	//		SetState(State::Moving_Init);
-	//	}
-	//	if (gamePad.GetButtonDown() & gamePad.BTN_DOWN)
-	//	{
-	//		targetMovePos.y = position.y + 1;
-	//		SetState(State::Moving_Init);
-	//	}
-	//	if (gamePad.GetButtonDown() & gamePad.BTN_LEFT)
-	//	{
-	//		targetMovePos.y = position.x - 1;
-	//		SetState(State::Moving_Init);
-	//	}
-	//	if (gamePad.GetButtonDown() & gamePad.BTN_RIGHT)
-	//	{
-	//		targetMovePos.y = position.x + 1;
-	//		SetState(State::Moving_Init);
-	//	}
-	//#endif
 	switch (state)
 	{
 	case State::Idle_Init:
@@ -157,7 +132,7 @@ void Player::UpdateState(float elapsedTime)
 		state = State::Idle;
 		[[fallthrough]];
 	case State::Idle:
-
+		UpdateViewEnemyDetail();
 		break;
 
 	case State::Act_Init:
@@ -598,5 +573,53 @@ void Player::GetCard(Card* getCard)
 	case Card::Type::DEBUFF:
 		CardManager::Instance().AddCardReserved(std::make_shared<Card>(DirectX::XMFLOAT2{ .0f,.0f }, CardManager::CARD_SIZE, Card::Type::DEBUFF));
 		break;
+	}
+}
+
+void Player::UpdateViewEnemyDetail()
+{
+	Mouse& mouse = Input::Instance().GetMouse();
+	Camera& camera = Camera::Instance();
+	auto dc = Graphics::Instance().GetDeviceContext();
+	if (lookAtEnemyDetail.isLookAtEnemyDetail)
+	{
+		if (!lookAtEnemyDetail.target || (mouse.GetButtonDown() & mouse.BTN_LEFT))
+		{
+			lookAtEnemyDetail.isLookAtEnemyDetail = false;
+			Stage::Instance()->ResetAllSquareDrawType(Square::DrawType::NormalAttackView);
+			return;
+		}
+	}
+	else
+	{
+		DirectX::XMFLOAT3 startMousePos = CommonClass::GetWorldStartPosition(dc, mouse.GetPositionX(), mouse.GetPositionY(), camera.GetView(), camera.GetProjection());
+		DirectX::XMFLOAT3 endMousePos = CommonClass::GetWorldEndPosition(dc, mouse.GetPositionX(), mouse.GetPositionY(), camera.GetView(), camera.GetProjection());
+
+		HitResult hit;
+		if (mouse.GetButtonDown() & Mouse::BTN_LEFT)
+		{
+			for (auto& e : EnemyManager::Instance().GetList())
+			{
+				if (e->RayCast(startMousePos, endMousePos, hit))
+				{
+					lookAtEnemyDetail.isLookAtEnemyDetail = true;
+					lookAtEnemyDetail.target = e;
+
+					for (auto& sq : e->GetSquaresPosition())
+					{
+						auto atkPos = Stage::Instance()->GetSquaresEdgeAdjacent(sq.x, sq.y, e->GetAttackRange());
+						for (auto& sq : atkPos)
+						{
+							auto sqPos = sq->GetPos();
+							Stage::Instance()->GetSquare(sqPos.x, sqPos.y)->InputDrawType(Square::DrawType::NormalAttackView);
+						}
+					}
+				}
+			}
+			/*for (auto& sq : Stage::Instance()->)
+			{
+
+			}*/
+		}
 	}
 }

@@ -25,7 +25,7 @@ namespace Common
 	const float moveSpeed = 0.5f; //秒数
 
 	//プレイヤーの初期値
-	static const DirectX::XMINT2 PlayerPosInit = { 0, 2 };
+	static const DirectX::XMINT2 PlayerPosInit = { 0, 4 };
 
 	static const float gravity = -1.0f;
 

@@ -354,7 +354,7 @@ void EnemyBoss1::InitializeAttack(float elapsedTime) //ƒoƒ“ƒvUŒ‚
 		for (auto& square : attackSq)
 		{
 			square->SetType(Square::Type::AttackArea);
-			square->SetDrawType(Square::DrawType::ChargeAttack);
+			square->InputDrawType(Square::DrawType::ChargeAttack);
 		}
 
 
@@ -389,7 +389,7 @@ void EnemyBoss1::InitializeAttack(float elapsedTime) //ƒoƒ“ƒvUŒ‚
 		{
 			posVec.emplace_back(sq->GetPos());
 			sq->SetType(Square::Type::AttackArea);
-			sq->SetDrawType(Square::DrawType::ChargeAttack);
+			sq->InputDrawType(Square::DrawType::ChargeAttack);
 		}
 		//attack = new JumpAttack(this, jumpAttackDetail.attackPow, TargetAttackEnum::Target_Player, posVec);
 		attack = new JumpAttack(this, jumpAttackDetail.attackPowCenter, jumpAttackDetail.attackPowEdge, TargetAttackEnum::Target_Player, player->GetPosition(), posVec);

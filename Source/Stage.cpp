@@ -25,7 +25,7 @@ Stage::Stage() :
 	cardModel[Card::Type::DEBUFF] = std::make_unique<Model>("./Data/Model/Stage/card_debuff.mdl");
 	this->scale = { 3.0f,0.01f,3.0f };
 	this->position = { 0.0f, -1.0f, 0.0f };
-	random = std::uniform_int_distribution<unsigned int>(0u,Common::SQUARE_NUM_X-1);
+	random = std::uniform_int_distribution<unsigned int>(0u, Common::SQUARE_NUM_X - 1);
 }
 
 void Stage::ClearStage() noexcept
@@ -110,7 +110,7 @@ void Stage::DrawIMGUI()
 			for (auto& x : sq)
 			{
 				auto chara = x->GetCharacter();
-				if( chara != nullptr)
+				if (chara != nullptr)
 				{
 					auto sqPos = x->GetPos();
 					ImGui::InputInt2("sq pos", &sqPos.x);
@@ -300,7 +300,7 @@ const int Stage::IsAdjacent(const Character* chara1, const Character* chara2) co
 			{
 				for (int x2 = chara2->GetPosition().x; x2 < chara2->GetPosition().x + chara2->GetSize().x; x2++)
 				{
-					if (Stage::Instance()->IsAdjacent(DirectX::XMINT2{ x, y }, DirectX::XMINT2{x2, y2}))
+					if (Stage::Instance()->IsAdjacent(DirectX::XMINT2{ x, y }, DirectX::XMINT2{ x2, y2 }))
 					{
 						int dir = CommonClass::GetDirectionTarget({ x, y }, { x2, y2 });
 						return dir;
@@ -384,7 +384,18 @@ void Stage::ResetAllSquareDrawType()
 	{
 		for (auto& x : y)
 		{
-			x->SetDrawType(Square::DrawType::NONE);
+			x->ResetDrawType();
+		}
+	}
+}
+
+void Stage::ResetAllSquareDrawType(const Square::DrawType drawType)
+{
+	for (auto& y : squares)
+	{
+		for (auto& x : y)
+		{
+			x->ResetDrawType(drawType);
 		}
 	}
 }
@@ -398,7 +409,7 @@ void Stage::ReFleshCard()
 		for (auto& x : y)
 		{
 			auto card = x->GetSharedCard();
-			if (card == nullptr||card->GetType()!=Card::Type::SPECIAL)continue;
+			if (card == nullptr || card->GetType() != Card::Type::SPECIAL)continue;
 			cardnum++;
 		}
 	}
@@ -409,7 +420,7 @@ void Stage::ReFleshCard()
 			auto x = random(CommonClass::random);//x座標ランダム
 			auto y = random(CommonClass::random);//y座標ランダム
 			auto&& square = GetSquare(x, y);//座標のマスを取得
-			if (auto card = square->GetCard()|| square->GetCharacter())
+			if (auto card = square->GetCard() || square->GetCharacter())
 			{
 				i--; continue;
 			}

@@ -53,9 +53,20 @@ private:
 
 	//ステージからのカードを取得処理
 	void GetCard(Card* getCard);
+
+	//敵の詳細を見る更新処理
+	void UpdateViewEnemyDetail();
+
 private:
-	Model* model = nullptr;
+	//Model* model = nullptr;
 	Effect* hitEffect = nullptr;
 	CardComboDataBase* cardComboDataBase;
 	DirectX::XMINT2 turnPosInit;			//ターン開始の位置
+
+	struct LookAtEnemyDetail
+	{
+		bool isLookAtEnemyDetail = false;
+		Character* target = nullptr;
+		std::vector<DirectX::XMINT2> targetAttackRange{};
+	} lookAtEnemyDetail;
 };

@@ -63,7 +63,7 @@ protected:
 	virtual State ChooseAct(float elapsedTime);
 
 protected:
-	std::unique_ptr<Model> model;
+	//std::unique_ptr<Model> model;
 
 	int moveMax = 2;
 	int actMax = 3;				//1ƒ^[ƒ“‚És“®”

@@ -5,6 +5,7 @@
 
 #include "Common.h"
 #include "AttackParent.h"
+#include "Collision.h"
 
 enum Animation
 {
@@ -169,6 +170,12 @@ public:
 	const bool GetIsActEnd() const { return isActEnd; }
 
 	const Sprite* GetIcon()const noexcept { return icon.get(); }
+
+	void ShowDamageNumber( const int damageNumber );
+
+	//レイキャスト用
+	bool RayCast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end, HitResult& hit);
+
 #endif // 1
 	//Getter&Setter*****************************************************
 
@@ -226,6 +233,7 @@ protected:
 	//HPバー関係の値
 	std::unique_ptr<Sprite> icon;
 
+	std::unique_ptr<Model> model;
 
 private:
 	std::unique_ptr<Sprite> hpBar[3];

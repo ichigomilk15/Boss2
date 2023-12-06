@@ -11,7 +11,7 @@ EnemyMinion1::EnemyMinion1(Character* p) :
 	model = std::make_unique<Model>("Data/Model/Enemy/Normal1/NormalEnemy1.mdl");
 
 	//ÉXÉPÅ[ÉãÇÃí≤êÆ
-	scale.x = scale.y = scale.z = 0.15f;
+	scale.x = scale.y = scale.z = 0.18f;
 
 	height = 1.0f;
 	enemyType = ENEMY_TYPE::NONE;

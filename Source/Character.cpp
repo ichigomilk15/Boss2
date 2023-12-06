@@ -4,6 +4,8 @@
 #include "CustomMathf.h"
 #include "Stage.h"
 #include "EnemyManager.h"
+#include "DamageEffector.h"
+#include "Camera.h"
 #undef NOMINMAX
 
 Character::Character()
@@ -288,6 +290,7 @@ bool Character::ApplyDamage(int damage)
 	//ダメージ通知
 	else
 	{
+		ShowDamageNumber(damage);
 		OnDamaged();
 	}
 
@@ -342,6 +345,68 @@ void Character::Render2D(ID3D11DeviceContext* dc, const HitBox2D& box)
 		const DirectX::XMFLOAT2 size = { (HPBarSize.x * scale.x) * HpParsent[i],(HPBarSize.y * scale.y) };
 		hpBar[i]->Render(dc, pos, size, .0f, DirectX::XMFLOAT4{ 1.0f,1.0f,1.0f,1.0f });
 	}
+}
+
+void Character::ShowDamageNumber(const int damageNumber)
+{
+	DamageEffector::EffectData data;
+	data.color = { 1.0f,.0f,.0f,1.0f };
+	data.damage = damageNumber;
+	data.velocity = { 30.0f,-80.0f };
+	data.scale = 2.5f;
+	data.timer = 1.0f;
+
+	//ビューポート
+	D3D11_VIEWPORT viewport;
+	UINT numViewports = 1;
+	auto dc = Graphics::Instance().GetDeviceContext();
+	dc->RSGetViewports(&numViewports, &viewport);
+
+	auto& camera = Camera::Instance();
+
+	//変換行列
+	DirectX::XMMATRIX View = DirectX::XMLoadFloat4x4(&camera.GetView());
+	DirectX::XMMATRIX Projection = DirectX::XMLoadFloat4x4(&camera.GetProjection());
+	DirectX::XMMATRIX World = DirectX::XMMatrixIdentity();
+
+	DirectX::XMVECTOR CharaPos = DirectX::XMVectorSet(
+		positionWorld.x, positionWorld.y + 2.0f, positionWorld.z, 0);
+	DirectX::XMVECTOR ScreenPosition = DirectX::XMVector3Project(
+		CharaPos,
+		viewport.TopLeftX,
+		viewport.TopLeftY,
+		viewport.Width,
+		viewport.Height,
+		viewport.MinDepth,
+		viewport.MaxDepth,
+		Projection,
+		View,
+		World
+	);
+
+	DirectX::XMFLOAT3 screenPos;
+	DirectX::XMStoreFloat3(&screenPos, ScreenPosition);
+
+	data.pos = { screenPos.x, screenPos.y };
+	DamageEffector::Instance().Register(data);
+}
+
+bool Character::RayCast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end, HitResult& hit)
+{
+	bool result = false;
+	hit.distance = FLT_MAX;
+
+	HitResult findClosest;
+	if (Collision::IntersectRayVsModel(start, end, this->model.get(), hit))
+	{
+		if (findClosest.distance < hit.distance)
+		{
+			hit = findClosest;
+			result = true;
+		}
+	}
+
+	return result;
 }
 
 void Character::Move(int vx, int vy)
