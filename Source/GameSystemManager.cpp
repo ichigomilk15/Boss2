@@ -56,7 +56,7 @@ GameSystemManager::GameSystemManager()
 
     tutorialSprite.push_back(std::make_unique<Sprite>("./Data/Sprite/tutorial1.png"));
     tutorialSprite.push_back(std::make_unique<Sprite>("./Data/Sprite/tutorial2.png"));
-    //tutorialSprite.push_back(std::make_unique<Sprite>("./Data/Sprite/title_back.png"));//todo : チュートリアル画像差し替え
+    tutorialSprite.push_back(std::make_unique<Sprite>("./Data/Sprite/tutorial3.png"));
 }
 
 void GameSystemManager::Update(float elapsedTime)

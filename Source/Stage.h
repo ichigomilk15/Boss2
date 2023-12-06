@@ -90,7 +90,7 @@ private://members
 		DirectX::XMFLOAT3 pos;
 		DirectX::XMFLOAT3 rotate;
 		DirectX::XMFLOAT3 scale;
-	}rockDatas[(Common::SQUARE_NUM_X - 1) * 2 + (Common::SQUARE_NUM_Y - 1) * 2];
+	}rockData;
 
 	DirectX::XMFLOAT3 position{};
 	DirectX::XMFLOAT3 scale{};

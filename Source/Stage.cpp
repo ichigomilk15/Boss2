@@ -19,7 +19,7 @@ Stage::Stage() :
 	model(std::make_unique<Model>("./Data/Model/Stage/BackGround.mdl")),
 	squareBorder(std::make_shared<Model>("./Data/Model/Stage/SquareBorder.mdl")),
 	squareArea(std::make_shared<Model>("./Data/Model/Stage/SquareArea.mdl")),
-	rockModel(std::make_shared<Model>("./Data/Model/Stage/SquareBorder.mdl")),//todo : modelÇÃì«Ç›çûÇ›ïœçX
+	rockModel(std::make_shared<Model>("./Data/Model/Stage/iwa.mdl")),
 	cardModel()
 {
 	cardModel[Card::Type::SPECIAL] = std::make_unique<Model>("./Data/Model/Stage/card_buff.mdl");
@@ -29,10 +29,11 @@ Stage::Stage() :
 	random = std::uniform_int_distribution<unsigned int>(0u, Common::SQUARE_NUM_X - 1);
 	frand = std::uniform_real_distribution<float>(-DirectX::XM_PI, DirectX::XM_PI);
 
-	for (size_t i = 0,end = std::size(rockDatas); i < end; i++)
-	{
-		auto& data = rockDatas[i];
-	}
+	DirectX::XMFLOAT2 squareSize = { Common::SquareHeight, Common::SquareWidth };
+
+	rockData.pos ={};
+	rockData.rotate ={};
+	rockData.scale = { 0.6f,1.0f,0.6f };
 }
 
 void Stage::ClearStage() noexcept
@@ -94,8 +95,7 @@ void Stage::Render(ID3D11DeviceContext* dc, Shader* shader)
 		}
 	}
 
-	for (auto& data : rockDatas)
-	{
+	auto& data = rockData;
 		DirectX::XMFLOAT4X4 transform;
 		DirectX::XMStoreFloat4x4(&transform,
 			DirectX::XMMatrixScaling(data.scale.x,data.scale.y,data.scale.z)*
@@ -103,8 +103,7 @@ void Stage::Render(ID3D11DeviceContext* dc, Shader* shader)
 			DirectX::XMMatrixTranslation(data.pos.x,data.pos.y,data.pos.z)
 		);
 		rockModel->UpdateTransform(transform);
-		shader->Draw(dc, model.get());
-	}
+	shader->Draw(dc, rockModel.get());
 
 	shader->Draw(dc, model.get());
 }
