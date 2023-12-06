@@ -4,11 +4,14 @@
 #include "SceneGame.h"
 #include "SceneManager.h"
 #include "SceneLoading.h"
+#include "HitCollisions.h"
 
 void SceneTitle::Initialize()
 {
 	//スプライト初期化
 	sprite = new Sprite("Data/Sprite/title_back.png");
+	title = std::make_unique<Sprite>("./Data/Sprite/SceneBack/title.png");
+	pressClick = std::make_unique<Sprite>("./Data/Sprite/SceneBack/press_click.png");
 }
 
 void SceneTitle::Finalize()
@@ -65,5 +68,11 @@ void SceneTitle::Render()
 			0, 0, textureWidth, textureHeight,
 			0,
 			1, 1, 1, 1);
+
+		HitBox2D box = HitBox2D::CreateBoxFromCenter({ screenWidth * 0.7f,screenHeight * 0.3f }, { screenWidth * 0.6f,screenHeight * 0.6f });
+		title->Render(dc, box.GetLeftTop(), box.GetBoxSize(), .0f, DirectX::XMFLOAT4{ 1.0f,1.0f,1.0f,1.0f });
+
+		box = HitBox2D::CreateBoxFromCenter({ screenWidth * 0.5f,screenHeight * 0.9f }, { screenWidth * 0.5f,screenHeight * 0.1f });
+		pressClick->Render(dc, box.GetLeftTop(), box.GetBoxSize(), .0f, DirectX::XMFLOAT4{ 1.0f,1.0f,1.0f,1.0f });
 	}
 }

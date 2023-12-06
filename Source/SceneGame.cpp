@@ -58,15 +58,15 @@ void SceneGame::Initialize()
 
 	DamageEffector::EffectData data;
 	data.color = { 1.0f,.0f,.0f,1.0f };
-	data.damage = 100;
+	data.damage = 1;
 	data.pos = {};
 	data.velocity = { 10.0f,10.0f };
-	data.scale = 3.0f;
+	data.scale = 1.0f;
 	data.timer = 10.0f;
 	DamageEffector::Instance().Register(data);
 }
 
-// 終了化l
+// 終了化
 void SceneGame::Finalize()
 {
 	//カメラコントローラー終了化

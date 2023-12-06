@@ -29,11 +29,12 @@ INT WINAPI wWinMain(HINSTANCE instance, HINSTANCE prev_instance, LPWSTR cmd_line
 	wcex.cbWndExtra = 0;
 	wcex.hInstance = instance;
 	wcex.hIcon = 0;
+	wcex.hIcon = static_cast<HICON>(LoadImage(instance, MAKEINTRESOURCE(IDI_ICON1),IMAGE_ICON,64,64,0));
 	wcex.hCursor = static_cast<HCURSOR>(LoadImage(NULL, MAKEINTRESOURCE(IDC_ARROW), IMAGE_CURSOR,0,0,LR_DEFAULTSIZE|LR_SHARED));
 	wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
 	wcex.lpszMenuName = NULL;
 	wcex.lpszClassName = _T("Game");
-	wcex.hIconSm = 0;
+	wcex.hIconSm = static_cast<HICON>(LoadImage(instance, MAKEINTRESOURCE(IDI_ICON1), IMAGE_ICON, 32, 32, 0));
 	RegisterClassEx(&wcex);
 
 

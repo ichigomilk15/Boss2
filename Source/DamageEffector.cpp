@@ -38,7 +38,8 @@ void DamageEffector::Render(ID3D11DeviceContext* dc) const
 	using namespace DirectX::ope;
 	const DirectX::XMFLOAT2 ScreenSize = Graphics::Instance().GetScreenSize();
 	const float aspect = ScreenSize.y / ScreenSize.x;
-	DirectX::XMFLOAT2 normalSize = { ScreenSize.x * 0.05f * aspect,ScreenSize.x * 0.05f };
+	DirectX::XMFLOAT2 normalSize = { ScreenSize.x * 0.05f * aspect,ScreenSize.y * 0.05f };//基本サイズ
+
 	for (auto& data : datas)
 	{
 		NumberSprite::Instance().NumberOut(std::to_string(data.damage).c_str(), dc, data.pos, normalSize * data.scale, data.color);

@@ -360,6 +360,7 @@
     <ResourceCompile Include="Game.rc" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="Resource\icon.ico" />
     <Image Include="Resource\pointer.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
