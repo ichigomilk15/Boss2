@@ -4,11 +4,14 @@
 class JumpAttack : public AttackParent
 {
 public:
-    JumpAttack(Character* parent, const int damage,
-        const TargetAttackEnum target, const std::vector<DirectX::XMINT2> targetAttackPos, const float damageTimer = 0.0f)
+    JumpAttack(Character* parent, const int damageCenter, const int damageEdge,
+        const TargetAttackEnum target, const DirectX::XMINT2 centerAttackPos, const std::vector<DirectX::XMINT2> targetAttackPos, const float damageTimer = 0.0f)
         :
-        AttackParent(parent, damage, target, targetAttackPos, damageTimer),
-        boxHitRange(boxHitRange)
+        AttackParent(parent, damageCenter, target, targetAttackPos, damageTimer),
+        boxHitRange(boxHitRange),
+        damageCenter(damageCenter),
+        damageEdge(damageEdge),
+        centerAttackPos(centerAttackPos)
     {
         Initialize();
     };
@@ -23,4 +26,7 @@ private:
 private:
     float startAppearTimer = 0.0f;
     int boxHitRange = 0;
+    int damageCenter = 25;
+    int damageEdge = 15;
+    DirectX::XMINT2 centerAttackPos = { -1, -1 };
 };

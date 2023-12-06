@@ -35,7 +35,8 @@ private:
 	struct JumpAttackDetail
 	{
 		DirectX::XMINT2 targetJumpMovePos = { -1, -1 };
-		int attackPow = 30;
+		int attackPowCenter = 25;
+		int attackPowEdge = 15;
 	} jumpAttackDetail;
 };
 

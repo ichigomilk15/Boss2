@@ -6,6 +6,7 @@
 #include "BumpAttack.h"
 #include "JumpAttack.h"
 #include "CameraController.h"
+#include "PhaseManager.h"
 
 EnemyBoss1::EnemyBoss1(Character* p) :
 	Enemy(p)
@@ -103,7 +104,7 @@ void EnemyBoss1::UpdateState(float elapsedTime)
 		--attackChargeTurn;
 		state = State::AttackCharge;
 		actTimer = 0.5f;
-		if (attackChargeTurn >= 0)
+		if (attackChargeTurn >= 0 && PhaseManager::Instance().GetFhase() >= PhaseManager::Phase::Phase_EnemyAct_Init)
 			isActEnd = true;
 		[[fallthrough]];
 	case State::AttackCharge:
@@ -353,7 +354,8 @@ void EnemyBoss1::InitializeAttack(float elapsedTime) //バンプ攻撃
 	}
 	else //ジャンプ攻撃
 	{
-		jumpAttackDetail.attackPow = 30;
+		jumpAttackDetail.attackPowCenter = 25;
+		jumpAttackDetail.attackPowEdge = 15;
 		std::vector<DirectX::XMINT2> posVec;
 		std::vector<Square*> atkSquare = Stage::Instance()->GetSquaresBoxRange(player->GetPosition().x, player->GetPosition().y, 2);
 		atkSquare.emplace_back(Stage::Instance()->GetSquare(player->GetPosition().x, player->GetPosition().y).get());
@@ -363,7 +365,7 @@ void EnemyBoss1::InitializeAttack(float elapsedTime) //バンプ攻撃
 			sq->SetType(Square::Type::AttackArea);
 			sq->SetDrawType(Square::DrawType::ChargeAttack);
 		}
-		attack = new JumpAttack(this, jumpAttackDetail.attackPow, TargetAttackEnum::Target_Player, posVec);
+		attack = new JumpAttack(this, jumpAttackDetail.attackPowCenter, jumpAttackDetail.attackPowEdge, TargetAttackEnum::Target_Player, player->GetPosition(), posVec);
 		jumpAttackDetail.targetJumpMovePos = player->GetPosition();
 		return;
 	}

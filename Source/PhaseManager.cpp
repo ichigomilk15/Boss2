@@ -377,8 +377,8 @@ void PhaseManager::StageInit(const int level)
 		DirectX::XMFLOAT3 pivot = { Common::SquareWidth / 2, 1.0f, -Common::SquareHeight / 2 };
 		boss1->SetPivotAdjustPosWorld(pivot);
 		boss1->SetState(State::Attack_Init);
-		boss1->SetHealth(100);
-		boss1->SetMaxHealth(100);
+		boss1->SetHealth(200);
+		boss1->SetMaxHealth(200);
 		boss1->SetAttackRange(4);
 	}	
 		break;
