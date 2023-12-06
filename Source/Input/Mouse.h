@@ -62,6 +62,8 @@ public:
 	// ƒXƒNƒŠ[ƒ“‚‚³æ“¾
 	int GetScreenHeight() const { return screenHeight; }
 
+	void ClearButtonDown()noexcept { buttonDown = 0; }
+
 private:
 	MouseButton		buttonState[2] = { 0 };
 	MouseButton		buttonDown = 0;

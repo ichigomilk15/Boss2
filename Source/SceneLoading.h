@@ -30,6 +30,7 @@ private:
 
 private:
 	Sprite* sprite = nullptr;
+	std::unique_ptr<Sprite> back;
 	float angle = 0.0f;
 	Scene* nextScene = nullptr;
 	std::thread* thread = nullptr;

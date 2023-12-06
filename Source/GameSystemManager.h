@@ -22,12 +22,16 @@ public://functions
 #if 1
 	const bool& GetIsPoused()const noexcept { return isPoused; }
 	void SetPoused(const bool& flag)noexcept { isPoused = flag; }
+	void CollTutorial()noexcept { isTutorial = true; }
 #endif // 1
 	//Getter&Setter************************************************************************************
 
 private://functions
 	void PousedOnlyUpdate(float elapsedTime);
 	void PousedOnlyRender(ID3D11DeviceContext* dc);
+
+	void TutorialOnlyUpdate(float elapsedTime);
+	void TutorialOnlyRender(ID3D11DeviceContext* dc);
 private:
 
 	bool isPoused = false;
@@ -37,4 +41,7 @@ private:
 	UI tutorialButton;
 	UI CardAllInfoButton;
 	UI pouseBackGround;
+	std::vector<std::unique_ptr<Sprite>> tutorialSprite;
+	int tutrialIndex;
+	bool isTutorial = false;
 };

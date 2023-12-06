@@ -8,6 +8,7 @@ void SceneLoading::Initialize()
 {
 	//スプライト初期化
 	sprite = new Sprite("Data/Sprite/LoadingIcon.png");
+	back = std::make_unique<Sprite>("./Data/Sprite/loading_back.png");
 
 	//スレッド開始
 	/*using Mover = void(Scene* scene);
@@ -71,6 +72,9 @@ void SceneLoading::Render()
 		float textureHeight = static_cast<float>(sprite->GetTextureHeight());
 		float positionX = screenWidth - textureWidth;
 		float positionY = screenHeight - textureHeight;
+
+		back->Render(dc,
+			.0f, .0f, graphics.GetScreenWidth(), graphics.GetScreenHeight(), .0f, .0f, back->GetTextureWidthf(), back->GetTextureHeightf(), .0f, 1.0f, 1.0f, 1.0f, 1.0f);
 
 		sprite->Render(dc,
 			positionX, positionY, textureWidth, textureHeight,
