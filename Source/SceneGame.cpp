@@ -57,15 +57,6 @@ void SceneGame::Initialize()
 
 	PhaseManager::Instance().Initialize();
 
-	DamageEffector::EffectData data;
-	data.color = { 1.0f,.0f,.0f,1.0f };
-	data.damage = 1;
-	data.pos = {};
-	data.velocity = { 10.0f,10.0f };
-	data.scale = 1.0f;
-	data.timer = 10.0f;
-	DamageEffector::Instance().Register(data);
-
 #if _DEBUG
 	AudioLoader::Load(AUDIO::BGM_GAME, gameSe);
 #endif
@@ -75,6 +66,11 @@ void SceneGame::Initialize()
 
 	SaveData::Instance().Load();
 	GameSystemManager::Instance().CollTutorial();
+
+#ifdef _DEBUG
+	sprite = Sprite(nullptr);
+#endif // _DEBUG
+
 }
 
 // I—¹‰»
@@ -228,6 +224,9 @@ void SceneGame::Render()
 		CardManager::Instance().DrawDebugGUI();
 		PhaseManager::Instance().DrawDebugGUI();
 	}
+
+
+	sprite.Render(dc, Input::Instance().GetMouse().GetPosition(), { 5.0f,5.0f }, .0f, { 1.0f,.0f,.0f,1.0f });
 #endif // _DEBUG
 }
 
@@ -368,8 +367,7 @@ const bool SaveData::Load()
 	PhaseManager::Instance().SetTurnCount(this->PhaseTurn);
 	if (auto player = PlayerManager::Instance().GetFirstPlayer())
 	{
-		player->SetHealth((this->playerHp > 0 ? this->playerHp : player->GetMaxHealth()));
-		//player->SetHealth(1);
+		//player->SetHealth((this->playerHp > 0 ? this->playerHp : player->GetMaxHealth()));
 		if (this->playerpos.first < 0 || this->playerpos.second < 0) { ok = false; }
 		else player->SetTurnPosInit({ playerpos.first,playerpos.second });
 	}

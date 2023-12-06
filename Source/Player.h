@@ -69,6 +69,8 @@ private:
 private:
 	//Model* model = nullptr;
 	Effect* hitEffect = nullptr;
+	std::unique_ptr<Effect> buffEffect;
+	std::unique_ptr<Effect> shieldEffect;
 	CardComboDataBase* cardComboDataBase;
 	DirectX::XMINT2 turnPosInit;			//ターン開始の位置
 

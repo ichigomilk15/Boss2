@@ -22,7 +22,7 @@ public://functions
 #if 1
 	const bool& GetIsPoused()const noexcept { return isPoused; }
 	void SetPoused(const bool& flag)noexcept { isPoused = flag; }
-	void CollTutorial()noexcept { isTutorial = true; }
+	void CollTutorial()noexcept { isTutorial = true; isPoused = true; }
 #endif // 1
 	//Getter&Setter************************************************************************************
 
@@ -42,6 +42,6 @@ private:
 	UI CardAllInfoButton;
 	UI pouseBackGround;
 	std::vector<std::unique_ptr<Sprite>> tutorialSprite;
-	int tutrialIndex;
+	int tutrialIndex = 0;
 	bool isTutorial = false;
 };

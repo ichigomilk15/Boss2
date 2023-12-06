@@ -63,4 +63,8 @@ private://members
 	//Player* player = nullptr;
 	CameraController* cameraController = &(CameraController::Instance());
 	std::unique_ptr<Sprite> playerHP[3];
+#ifdef _DEBUG
+	Sprite sprite;
+#endif // _DEBUG
+
 };

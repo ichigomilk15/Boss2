@@ -1,4 +1,5 @@
 #include "Input/Mouse.h"
+#include "Graphics/Graphics.h"
 
 static const int KeyMap[] =
 {
@@ -54,10 +55,16 @@ void Mouse::Update()
 	UINT screenH = rc.bottom - rc.top;
 	UINT viewportW = screenWidth;
 	UINT viewportH = screenHeight;
+	float rate = 1.0f;
+	if (Graphics::Instance().GetIsFullScreen())
+	{
+		auto dpi = GetDeviceCaps(GetDC(nullptr), LOGPIXELSY);
+		rate = dpi / static_cast<float>(USER_DEFAULT_SCREEN_DPI);
+	}
 
 	// âÊñ ï‚ê≥
 	positionX[1] = positionX[0];
 	positionY[1] = positionY[0];
-	positionX[0] = (LONG)(cursor.x / static_cast<float>(viewportW) * static_cast<float>(screenW));
-	positionY[0] = (LONG)(cursor.y / static_cast<float>(viewportH) * static_cast<float>(screenH));
+	positionX[0] = (LONG)((cursor.x / static_cast<float>(viewportW) * static_cast<float>(screenW))/(rate*rate));
+	positionY[0] = (LONG)((cursor.y / static_cast<float>(viewportH) * static_cast<float>(screenH))/(rate*rate));
 }

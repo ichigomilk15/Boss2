@@ -25,7 +25,10 @@ Player::Player() :Character()
 	//モデルが大きいのでスケーリング
 	scale.x = scale.y = scale.z = 0.1f;
 
+	//effectたちの設定
 	hitEffect = new Effect("Data/Effect/Hit.efk");
+	buffEffect = std::make_unique<Effect>("./Data/Effect/vortex.efk");
+	shieldEffect = std::make_unique<Effect>("./Data/Effect/sheild.efk");
 
 	attackPower = 10;
 	maxHealth = 75;
@@ -232,6 +235,8 @@ void Player::UpdateState(float elapsedTime)
 		actTimer = 0.5f;
 		Stage::Instance()->ResetAllSquare();
 		SetShieldAction();
+		shieldEffect->Play(positionWorld, 10.f);
+
 		playerSes.shieldSe.get()->Stop();
 		playerSes.shieldSe.get()->Play(false);
 		state = State::Defence;
@@ -246,10 +251,11 @@ void Player::UpdateState(float elapsedTime)
 		break;
 
 	case State::Special_Init:
-		actTimer = 0.5f;
+		actTimer = 1.0f;
 		Stage::Instance()->ResetAllSquare();
 		state = State::Special;
 		cardComboDataBase = nullptr;
+		buffEffect->Play(positionWorld, 0.5f);//effect再生
 		[[fallthrough]];
 	case State::Special:
 		actTimer -= elapsedTime;

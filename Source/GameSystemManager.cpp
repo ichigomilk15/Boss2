@@ -134,6 +134,7 @@ void GameSystemManager::PousedOnlyUpdate(float elapsedTime)
     if (mouse.GetButtonDown() & Mouse::BTN_LEFT && tutorialButton.GetHitBox().Hit(mouse.GetPosition()))
     {
         isTutorial = true;
+        isPoused = true;
     }
 
     //debug
@@ -168,6 +169,7 @@ void GameSystemManager::TutorialOnlyUpdate(float elapsedTime)
         {
             tutrialIndex = 0;
             isTutorial = false;
+            isPoused = false;
         }
     }
     mouse.ClearButtonDown();

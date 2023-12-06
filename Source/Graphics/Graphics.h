@@ -62,6 +62,8 @@ public:
 
 	void Quit()const noexcept;
 
+	const bool GetIsFullScreen() { return isFullScreen; }
+
 private:
 	static Graphics*								instance;
 
@@ -81,6 +83,8 @@ private:
 
 	float	screenWidth;
 	float	screenHeight;
+
+	BOOL isFullScreen = FALSE;
 
 	std::mutex mutex;
 };
