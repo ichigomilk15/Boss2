@@ -234,7 +234,6 @@ void EnemyBoss1::UpdateState(float elapsedTime)
 		boss1Ses.panicSe.get()->Play(true);
 		if (bumpAttackDetail.stunTurn >= 0)
 		{
-			boss1Ses.angrySe.get()->Play(false);
 			isActEnd = true;
 			EffectManager::Instance().GetEffekseerManager()->SendTrigger(effects.dizzy->GetHandle(), 0);
 		}
@@ -247,6 +246,7 @@ void EnemyBoss1::UpdateState(float elapsedTime)
 			{
 				++actNo;
 				boss1Ses.panicSe.get()->Stop();
+				boss1Ses.angrySe.get()->Play(false);
 				state = State::Attack_Init;
 				break;
 			}

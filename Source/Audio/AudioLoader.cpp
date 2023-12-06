@@ -4,9 +4,9 @@
 const std::vector<AudioLoader::AUDIO_INFO> AudioLoader::audioInfo
 {
     // BGM
-    {AUDIO::BGM_GAME,       "Data/Audio/BGM/game.wav"   , 0.3f ,true},
-    {AUDIO::BGM_GAMEOVER,      "Data/Audio/BGM/gameover.wav"  , 0.3f  ,true},
-    {AUDIO::BGM_GAMECLEAR,      "Data/Audio/BGM/gameclear.wav"  , 0.3f  ,true},
+    {AUDIO::BGM_GAME,       "Data/Audio/BGM/game.wav"   , 0.2f ,true},
+    {AUDIO::BGM_GAMEOVER,      "Data/Audio/BGM/gameover.wav"  , 0.2f  ,true},
+    {AUDIO::BGM_GAMECLEAR,      "Data/Audio/BGM/gameclear.wav"  , 0.2f  ,true},
 
     // SE
     {AUDIO::SE_PLAYER_ATTACK,  "Data/Audio/SE/Player/attack.wav"   , 0.5f},

@@ -507,6 +507,7 @@ void Player::SetShieldAction()
 	{
 		int moveRange = Stage::Instance()->GetTargetPosCost(position, turnPosInit);
 		shieldGet += moveRange;
+		ShowDamageNumber(shieldGet, { 0.0f, 1.0f, 1.0f, 1.0f });
 	}
 	shield += shieldGet;
 }
