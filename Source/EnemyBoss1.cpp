@@ -458,11 +458,11 @@ State EnemyBoss1::AfterBumpAttack()
 void EnemyBoss1::InitStunDefence()
 {
 	float perc = (float)health / maxHealth * 100.0f;
-	if (perc >= 70.0f)
+	if (perc >= 80.0f)
 	{
 		bumpAttackDetail.stunDefence = 1;
 	}
-	else if (perc >= 30.0f)
+	else if (perc >= 40.0f)
 	{
 		bumpAttackDetail.stunDefence = 2;
 	}
