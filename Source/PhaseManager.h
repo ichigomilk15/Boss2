@@ -52,6 +52,7 @@ public:
 	const Phase GetFhase()const noexcept { 
 		return static_cast<Phase>(phase); }
 	const unsigned int& GetTrunCount()const noexcept { return turnCount; }
+	void SetTurnCount(const unsigned int turn) { turnCount = turn; }
 	const void StepupUseCardIndex() { ++useCardIndex; }
 	const unsigned int GetUseCardIndex()const noexcept { return useCardIndex; }
 #endif // 1

@@ -39,6 +39,7 @@ void SceneTitle::Update(float elapsedTime)
 	if (mouse.GetButtonDown()&Mouse::BTN_LEFT)
 	{
 		//SceneManager::Instance().ChangeScene(new SceneGame());
+		SaveData::Instance().ReSet();
 		SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame()));
 	}
 }

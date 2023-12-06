@@ -71,6 +71,8 @@ public://functions
 private:
 	void SearchSquare(const int x, const int y, const int cost, std::vector<DirectX::XMINT2>& squaresChecked, const std::vector<Square::Type>& typesExclusion = {Square::Type::MAX});
 
+public:
+	static constexpr unsigned int STAGE_LEVEL_MAX = 4;
 private://static members
 	static constexpr int ADD_CARD_NUM = 3;
 private://members

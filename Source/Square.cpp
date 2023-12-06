@@ -76,10 +76,15 @@ void Square::Render(ID3D11DeviceContext* dc, Shader* shader)
 		}
 	}
 
-	DebugRenderer* dr = Graphics::Instance().GetDebugRenderer();
 	if (card != nullptr)
 	{
-		dr->DrawSphere(DirectX::XMFLOAT3(worldPos.x, worldPos.y + 0.5f, worldPos.z), .3f, DirectX::XMFLOAT4(.3f, 1.0f, .0f, 1.0f));
+		DirectX::XMVECTOR Old = DirectX::XMLoadFloat4(&rotate);
+		DirectX::XMVECTOR V = DirectX::XMQuaternionRotationRollPitchYaw(.0f, DirectX::XMConvertToRadians(180), .0f);
+		DirectX::XMStoreFloat4(&rotate, DirectX::XMVectorAdd(Old, V));
+		Transform = GetTransform();
+		DirectX::XMStoreFloat4x4(&transform, Transform);
+		DirectX::XMStoreFloat4(&rotate, Old);
+
 		Model* model = Stage::Instance()->cardModel[card->GetType()].get();
 		model->UpdateTransform(transform);
 		shader->Draw(dc, model);
@@ -156,7 +161,8 @@ void Square::UpdateDirty()
 
 const DirectX::XMMATRIX Square::GetTransform() const
 {
-	return DirectX::XMMatrixScaling(scale.x, scale.y, scale.z) *
+	return 
 		DirectX::XMMatrixRotationQuaternion(DirectX::XMLoadFloat4(&rotate)) *
+		DirectX::XMMatrixScaling(scale.x, scale.y, scale.z) *
 		DirectX::XMMatrixTranslation(worldPos.x, worldPos.y, worldPos.z);
 }
