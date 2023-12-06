@@ -614,12 +614,41 @@ void Player::UpdateViewEnemyDetail()
 							Stage::Instance()->GetSquare(sqPos.x, sqPos.y)->InputDrawType(Square::DrawType::NormalAttackView);
 						}
 					}
+					return;
 				}
 			}
-			/*for (auto& sq : Stage::Instance()->)
-			{
 
-			}*/
+			for (int y = 0; y < Common::SQUARE_NUM_Y; y++)
+			{
+				for (int x = 0; x < Common::SQUARE_NUM_X; x++)
+				{
+					auto sq = Stage::Instance()->GetSquare(x, y);
+					auto findChara = sq->GetCharacter();
+					if (!findChara) continue;
+
+					if (sq->Raycast(startMousePos, endMousePos, hit))
+					{
+						auto e = dynamic_cast<Enemy*>(const_cast<Character*>(findChara));
+						if (e)
+						{
+							lookAtEnemyDetail.isLookAtEnemyDetail = true;
+							lookAtEnemyDetail.target = e;
+							/*auto atkPos = Stage::Instance()->GetSquaresEdgeAdjacent(e->GetPosition().x, e->GetPosition().y, e->GetAttackRange());*/
+							for (auto& ePos : e->GetSquaresPosition())
+							{
+								auto atkPos = Stage::Instance()->GetSquaresEdgeAdjacent(ePos.x, ePos.y, e->GetAttackRange());
+
+								for (auto& sq : atkPos)
+								{
+									auto sqPos = sq->GetPos();
+									Stage::Instance()->GetSquare(sqPos.x, sqPos.y)->InputDrawType(Square::DrawType::NormalAttackView);
+								}
+							}
+							return;
+						}
+					}
+				}
+			}
 		}
 	}
 }
