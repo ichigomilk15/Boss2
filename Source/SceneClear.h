@@ -22,6 +22,5 @@ public:
 	void Render()override;
 
 private:
-	UI GoTitle;
 	std::unique_ptr<Sprite> back;
 };

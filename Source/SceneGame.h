@@ -12,7 +12,7 @@
 class SaveData
 {
 public:
-	SaveData& Instance() { static SaveData instance; return instance; }
+	static SaveData& Instance() { static SaveData instance; return instance; }
 private:
 	SaveData() = default;
 	~SaveData() = default;
@@ -25,7 +25,8 @@ public:
 public:
 	int StageLevel = 0;
 	int playerHp = -1;
-	int PhaseTurn = -1;
+	std::pair<int,int> playerpos{-1,-1};
+	int PhaseTurn = 0;
 };
 
 // ƒQ[ƒ€ƒV[ƒ“

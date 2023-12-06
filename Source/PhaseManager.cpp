@@ -7,6 +7,10 @@
 #include "EnemyMinion1.h"
 #include "EnemyBoss1.h"
 #include "Stage.h"
+#include "SceneManager.h"
+#include "SceneGameOver.h"
+#include "SceneClear.h"
+#include "SceneGame.h"
 
 #ifdef _DEBUG
 #include "Graphics/ImGuiRenderer.h"
@@ -47,10 +51,25 @@ void PhaseManager::Update(float elapsedTime)
 		//PlayerManager::Instance().GetFirstPlayer()->SetPositionWorld(Common::PlayerPosInit);
 
 		//ステージのレベルを参照してenemyをセットする
-		Stage::Instance()->StageLevelStepUp();
-		StageInit(Stage::Instance()->GetStageLevel());
+
+		unsigned int stageLevel = Stage::Instance()->GetStageLevel();
+		if(stageLevel<=0)
+			stageLevel = Stage::Instance()->StageLevelStepUp();
+
+		if (stageLevel > Stage::STAGE_LEVEL_MAX)
+		{
+			SceneManager::Instance().ChangeScene(new SceneClear);
+			return;
+		}
+		StageInit(stageLevel);
 		Stage::Instance()->ResetAllSquare();
 
+
+		if (!SaveData::Instance().Save())
+		{
+			//セーブに失敗したら
+			int a = 0;
+		}
 
 		NextPhase();//次のフェーズへ
 	}
@@ -136,6 +155,9 @@ void PhaseManager::Update(float elapsedTime)
 		//enemyが全員死んでいたらフェーズをphase_nextstage_init　に変更
 		if (IsSlowNextPhase(EnemyManager::Instance().GetIsAllDead()))
 		{
+			auto player = PlayerManager::Instance().GetFirstPlayer();
+			player->SetState(State::Act_Finish_Init);
+			CardManager::Instance().SetCardsClear();
 			ChangePhase(Phase::Phase_NextStage_Init);
 		}
 
@@ -180,6 +202,15 @@ void PhaseManager::Update(float elapsedTime)
 		{
 			NextPhase();
 		}
+
+		//ゲームオーバー判定
+		bool isGameOver = true;
+		for (auto& player : *PlayerManager::Instance().GetPlayerVector())
+		{
+			if (player->GetHealth() > 0) { isGameOver = false; break; }
+		}
+		if (isGameOver)
+			SceneManager::Instance().ChangeScene(new SceneGameOver);
 	}
 	break;
 	//***********************************************************************************
@@ -283,7 +314,12 @@ void PhaseManager::SetGameStart()
 {
 	//playerの配置
 	Player* player = PlayerManager::Instance().GetFirstPlayer();
-	player->SetPositionWorld(Common::PlayerPosInit);
+	DirectX::XMINT2 pos = { SaveData::Instance().playerpos.first,SaveData::Instance().playerpos.second };
+	if (Stage::Instance()->IsInArea(pos.x, pos.y))
+		player->SetPositionWorld(pos);
+	else
+		player->SetPositionWorld(Common::PlayerPosInit);
+
 	player->SetTargetMovePosition({ -1, -1 });
 	player->SetState(State::Idle_Init);
 
@@ -310,7 +346,7 @@ const bool PhaseManager::IsQuickNextPhase(const bool flag)
 
 void PhaseManager::StageInit(const int level)
 {
-	switch (level)
+	switch (level+1)//todo : debug 
 	{
 	case 1:
 	{
@@ -333,7 +369,7 @@ void PhaseManager::StageInit(const int level)
 		//enemyの配置
 		EnemyMinion1* enemy = new EnemyMinion1(PlayerManager::Instance().GetFirstPlayer());
 		EnemyManager::Instance().Register(enemy);
-		enemy->SetPositionWorld({ 6, 6 });
+		enemy->SetPositionWorld({ 5, 5 });
 		enemy->SetTargetMovePosition({ -1, -1 });
 		enemy->SetState(State::Idle_Init);
 		enemy->SetAttackRange(1);
@@ -346,7 +382,7 @@ void PhaseManager::StageInit(const int level)
 		//enemyの配置
 		EnemyMinion1* enemy = new EnemyMinion1(PlayerManager::Instance().GetFirstPlayer());
 		EnemyManager::Instance().Register(enemy);
-		enemy->SetPositionWorld({ 1, 1 });
+		enemy->SetPositionWorld({ 1, 5 });
 		enemy->SetTargetMovePosition({ -1, -1 });
 		enemy->SetState(State::Idle_Init);
 		enemy->SetAttackRange(1);
@@ -355,7 +391,7 @@ void PhaseManager::StageInit(const int level)
 
 		EnemyMinion1* enemy2 = new EnemyMinion1(PlayerManager::Instance().GetFirstPlayer());
 		EnemyManager::Instance().Register(enemy2);
-		enemy2->SetPositionWorld({ 6, 6 });
+		enemy2->SetPositionWorld({ 5, 1 });
 		enemy2->SetTargetMovePosition({ -1, -1 });
 		enemy2->SetState(State::Idle_Init);
 		enemy2->SetAttackRange(2);
