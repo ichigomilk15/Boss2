@@ -74,6 +74,9 @@ void SceneGame::Initialize()
 
 	// BGMÄ¶
 	//gameSe->Play(true);
+
+	SaveData::Instance().Load();
+	GameSystemManager::Instance().CollTutorial();
 }
 
 // I—¹‰»
@@ -236,6 +239,10 @@ void SceneGame::DrawDebugGUI()
 	ImGui::SetNextWindowSize(ImVec2(300, 300), ImGuiCond_FirstUseEver);
 	if (ImGui::Begin("GameScene", nullptr, ImGuiWindowFlags_::ImGuiWindowFlags_None))
 	{
+		if (ImGui::Button("saveData"))
+		{
+			SaveData::Instance().Save();
+		}
 	}
 	ImGui::End();
 }
@@ -325,16 +332,20 @@ void SceneGame::SetGlobalDirection()
 
 const bool SaveData::Save()
 {
-	bool ok = false;
+	bool ok = true;
+	ReSet();
 
 	this->StageLevel = Stage::Instance()->GetStageLevel();
 	this->PhaseTurn = PhaseManager::Instance().GetTrunCount();
 	if (auto player = PlayerManager::Instance().GetFirstPlayer())
 	{
 		playerHp = player->GetHealth();
-		ok = true;
+		playerpos = { player->GetPosition().x,player->GetPosition().y };
 	}
-	else playerHp = -1;
+	else
+	{
+		ok = false;
+	}
 
 
 	return ok;
@@ -345,14 +356,24 @@ const bool SaveData::ReSet()
 	bool ok;
 	ok = true;
 
-	this->StageLevel = 0;
+	this->StageLevel = 1;
 	this->PhaseTurn = 0;
 	this->playerHp = -1;
+	this->playerpos = { -1,-1 };
 	return ok;
 }
 
 const bool SaveData::Load()
 {
+	bool ok = true;
+	Stage::Instance()->SetStageLevel(this->StageLevel-1);
+	PhaseManager::Instance().SetTurnCount(this->PhaseTurn);
+	if (auto player = PlayerManager::Instance().GetFirstPlayer())
+	{
+		player->SetHealth((this->playerHp > 0 ? this->playerHp : player->GetMaxHealth()));
+		if (this->playerpos.first < 0 || this->playerpos.second < 0) { ok = false; }
+		else player->SetTurnPosInit({ playerpos.first,playerpos.second });
+	}
 
-	return false;
+	return ok;
 }

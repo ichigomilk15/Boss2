@@ -413,7 +413,7 @@ void Stage::ReFleshCard()
 			cardnum++;
 		}
 	}
-	if (cardnum < 1)
+	if (cardnum <= 1)
 	{
 		for (size_t i = 0; i < ADD_CARD_NUM; i++)
 		{

@@ -42,7 +42,7 @@ void DamageEffector::Render(ID3D11DeviceContext* dc) const
 
 	for (auto& data : datas)
 	{
-		NumberSprite::Instance().NumberOut(std::to_string(data.damage).c_str(), dc, data.pos, normalSize * data.scale, data.color);
+		NumberSprite::Instance().NumberOut(std::to_string(data.damage).c_str(), dc, data.pos - (normalSize*(data.scale*0.5f)), normalSize * data.scale, data.color);
 	}
 }
 

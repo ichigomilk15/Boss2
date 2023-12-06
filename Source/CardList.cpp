@@ -237,26 +237,30 @@ CardManager::CardManager() :
 			CardComboDatas[typeSpecial][typeDebuff] = Data;
 		}
 
-		//コンボ無しの登録
-		{
-			CardComboNoUseing data;
-			data.type = Card::Type::NONE;
-			//コンボ無し
-			auto Data = std::make_shared<CardComboNoUseing>(data);
-			Data->infomation = std::make_shared<Sprite>("./Data/Sprite/CardCombos/_infomation.png");
-			CardComboDatas[typeNone][typeNone] = Data;
-			CardComboDatas[typeNone][typeSpecial] = Data;
-			CardComboDatas[typeAttack][typeSpecial] = Data;
-			CardComboDatas[typeMove][typeSpecial] = Data;
-			CardComboDatas[typeDefence][typeSpecial] = Data;
-			CardComboDatas[typeDebuff][typeSpecial] = Data;
-			CardComboDatas[typeAttack][typeNone] = Data;
-			CardComboDatas[typeMove][typeNone] = Data;
-			CardComboDatas[typeDefence][typeNone] = Data;
-			CardComboDatas[typeDebuff][typeNone] = Data;
-			CardComboDatas[typeSpecial][typeNone] = Data;
-			CardComboDatas[typeSpecial][typeSpecial] = Data;
-		}
+	//コンボ無しの登録
+	{
+		CardComboNoUseing data;
+		data.type = Card::Type::NONE;
+		//コンボ無し
+		auto Data = std::make_shared<CardComboNoUseing>(data);
+		Data->infomation = std::make_shared<Sprite>("./Data/Sprite/CardCombos/_infomation.png");
+		CardComboDatas[typeNone][typeNone] = Data;
+		CardComboDatas[typeAttack][typeNone] = Data;
+		CardComboDatas[typeMove][typeNone] = Data;
+		CardComboDatas[typeDefence][typeNone] = Data;
+		CardComboDatas[typeDebuff][typeNone] = Data;
+		CardComboDatas[typeSpecial][typeNone] = Data;
+
+		data.type = Card::Type::SPECIAL;
+		Data = std::make_shared<CardComboNoUseing>(data);
+		Data->infomation = std::make_shared<Sprite>("./Data/Sprite/CardCombos/buff.png");
+		CardComboDatas[typeNone][typeSpecial] = Data;
+		CardComboDatas[typeAttack][typeSpecial] = Data;
+		CardComboDatas[typeMove][typeSpecial] = Data;
+		CardComboDatas[typeDefence][typeSpecial] = Data;
+		CardComboDatas[typeDebuff][typeSpecial] = Data;
+		CardComboDatas[typeSpecial][typeSpecial] = Data;
+	}
 	}
 
 	//カードの次のコンボの表示の
@@ -649,6 +653,14 @@ const bool CardManager::IsSetCardsEmpty() const noexcept
 	return true;
 }
 
+void CardManager::SetCardsClear() noexcept
+{
+	for (auto& card : SetCards)
+	{
+		card.reset();
+	}
+}
+
 void CardManager::ALLClear()
 {
 	this->cards.clear();
@@ -667,7 +679,8 @@ void CardManager::ALLClear()
 
 void CardManager::Replenish()
 {
-	while (cards.size() < (CARD_MAX + haveSpecial) % std::numeric_limits<unsigned int>::max())
+	const unsigned int max = (CARD_MAX + haveSpecial) % std::numeric_limits<unsigned int>::max();
+	while (cards.size() < max)
 	{
 		if (!reservedCards.empty())//引くカードが確定しているならば
 		{
@@ -676,16 +689,32 @@ void CardManager::Replenish()
 		}
 		else//引く予定のカードがないならば
 		{
-			//確率を設定
-			const std::pair<Card::Type, unsigned int> param[] =
+			//持っているカードのカウント
+			int moveNum = 0;
+			for (auto& card : cards)
 			{
-				{Card::Type::ATTACK,110},
-				{Card::Type::MOVE,100},
-				{Card::Type::DEFENCE,100},
-			};
-			size_t paramSize = std::size(param);
-			std::shared_ptr<Card> draw = DrawCard(param, paramSize);
-			AddCard(draw);
+				if (card->GetType() == Card::Type::MOVE)moveNum++;
+			}
+
+			//移動が1枚もなかったら
+			if (cards.size() == (max-1)&&moveNum<1)
+			{
+				std::shared_ptr<Card> draw = std::make_shared<Card>(DirectX::XMFLOAT2{ .0f,.0f }, CardManager::CARD_SIZE, Card::Type::MOVE);
+				AddCard(draw);
+			}
+			else
+			{
+				//確率を設定
+				const std::pair<Card::Type, unsigned int> param[] =
+				{
+					{Card::Type::ATTACK,110},
+					{Card::Type::MOVE,110},
+					{Card::Type::DEFENCE,100},
+				};
+				size_t paramSize = std::size(param);
+				std::shared_ptr<Card> draw = DrawCard(param, paramSize);
+				AddCard(draw);
+			}
 		}
 	}
 }

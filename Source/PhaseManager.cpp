@@ -1,3 +1,5 @@
+
+#define NOMINMAX
 #include "PhaseManager.h"
 
 #include "Input/Input.h"
@@ -7,10 +9,16 @@
 #include "EnemyMinion1.h"
 #include "EnemyBoss1.h"
 #include "Stage.h"
+#include "SceneManager.h"
+#include "SceneGameOver.h"
+#include "SceneClear.h"
+#include "SceneGame.h"
+#include "DamageEffector.h"
 
 #ifdef _DEBUG
 #include "Graphics/ImGuiRenderer.h"
 #endif // _DEBUG
+#undef NOMINMAX
 
 PhaseManager::PhaseManager()
 {
@@ -44,13 +52,26 @@ void PhaseManager::Update(float elapsedTime)
 	//***********************************************************************************
 	case PhaseManager::Phase::Phase_NextStage_Init:
 	{
+		const DirectX::XMFLOAT2 ScreenSize = Graphics::Instance().GetScreenSize();
 		//PlayerManager::Instance().GetFirstPlayer()->SetPositionWorld(Common::PlayerPosInit);
 
+
+		unsigned int stageLevel = Stage::Instance()->StageLevelStepUp();
+		if (stageLevel > Stage::STAGE_LEVEL_MAX)
+		{
+			SceneManager::Instance().ChangeScene(new SceneClear);
+			return;
+		}
 		//ステージのレベルを参照してenemyをセットする
-		Stage::Instance()->StageLevelStepUp();
-		StageInit(Stage::Instance()->GetStageLevel());
+		StageInit(stageLevel);
 		Stage::Instance()->ResetAllSquare();
 
+
+		if (!SaveData::Instance().Save())
+		{
+			//セーブに失敗したら
+			int a = 0;
+		}		
 
 		NextPhase();//次のフェーズへ
 	}
@@ -136,7 +157,9 @@ void PhaseManager::Update(float elapsedTime)
 		//enemyが全員死んでいたらフェーズをphase_nextstage_init　に変更
 		if (IsSlowNextPhase(EnemyManager::Instance().GetIsAllDead()))
 		{
-			PlayerManager::Instance().GetFirstPlayer()->SetState(State::Act_Finish_Init);
+			auto player = PlayerManager::Instance().GetFirstPlayer();
+			player->SetState(State::Act_Finish_Init);
+			CardManager::Instance().SetCardsClear();
 			ChangePhase(Phase::Phase_NextStage_Init);
 		}
 
@@ -181,6 +204,15 @@ void PhaseManager::Update(float elapsedTime)
 		{
 			NextPhase();
 		}
+
+		//ゲームオーバー判定
+		bool isGameOver = true;
+		for (auto& player : *PlayerManager::Instance().GetPlayerVector())
+		{
+			if (player->GetHealth() > 0) { isGameOver = false; break; }
+		}
+		if (isGameOver)
+			SceneManager::Instance().ChangeScene(new SceneGameOver);
 	}
 	break;
 	//***********************************************************************************
@@ -284,7 +316,12 @@ void PhaseManager::SetGameStart()
 {
 	//playerの配置
 	Player* player = PlayerManager::Instance().GetFirstPlayer();
-	player->SetPositionWorld(Common::PlayerPosInit);
+	DirectX::XMINT2 pos = { SaveData::Instance().playerpos.first,SaveData::Instance().playerpos.second };
+	if (Stage::Instance()->IsInArea(pos.x, pos.y))
+		player->SetPositionWorld(pos);
+	else
+		player->SetPositionWorld(Common::PlayerPosInit);
+
 	player->SetTargetMovePosition({ -1, -1 });
 	player->SetState(State::Idle_Init);
 
@@ -315,19 +352,21 @@ void PhaseManager::StageInit(const int level)
 	{
 	case 1:
 	{
-		PlayerManager::Instance().GetFirstPlayer()->SetPositionWorld(Common::PlayerPosInit);
-		//enemyの配置
-		EnemyMinion1* enemy = new EnemyMinion1(PlayerManager::Instance().GetFirstPlayer());
-		EnemyManager::Instance().Register(enemy);
-		enemy->SetPositionWorld({ 1, 1 });
-		enemy->SetTargetMovePosition({ -1, -1 });
-		enemy->SetState(State::Idle_Init);
-		enemy->SetAttackRange(1);
-		enemy->SetHealth(30);
-		enemy->SetMaxHealth(30);
-		enemy->SetDirection(CommonClass::DirectionFace::Left);
-		Stage::Instance()->GetSquare(0, 0)->SetCard(std::make_shared<Card>(DirectX::XMFLOAT2{ .0f,.0f }, CardManager::CARD_SIZE, Card::Type::SPECIAL));
-	}
+	//case 4:
+	//{
+	//	//PlayerManager::Instance().GetFirstPlayer()->SetPositionWorld(Common::PlayerPosInit);
+	//	////enemyの配置
+	//	//EnemyMinion1* enemy = new EnemyMinion1(PlayerManager::Instance().GetFirstPlayer());
+	//	//EnemyManager::Instance().Register(enemy);
+	//	//enemy->SetPositionWorld({ 1, 1 });
+	//	//enemy->SetTargetMovePosition({ -1, -1 });
+	//	//enemy->SetState(State::Idle_Init);
+	//	//enemy->SetAttackRange(1);
+	//	//enemy->SetHealth(30);
+	//	//enemy->SetMaxHealth(30);
+	//	//enemy->SetDirection(CommonClass::DirectionFace::Left);
+	//	//Stage::Instance()->GetSquare(0, 0)->SetCard(std::make_shared<Card>(DirectX::XMFLOAT2{ .0f,.0f }, CardManager::CARD_SIZE, Card::Type::SPECIAL));
+	//}
 	break;
 	case 2:
 	{
@@ -337,7 +376,7 @@ void PhaseManager::StageInit(const int level)
 		//enemyの配置
 		EnemyMinion1* enemy = new EnemyMinion1(PlayerManager::Instance().GetFirstPlayer());
 		EnemyManager::Instance().Register(enemy);
-		enemy->SetPositionWorld({ 6, 6 });
+		enemy->SetPositionWorld({ 5, 5 });
 		enemy->SetTargetMovePosition({ -1, -1 });
 		enemy->SetState(State::Idle_Init);
 		enemy->SetAttackRange(1);
@@ -353,7 +392,7 @@ void PhaseManager::StageInit(const int level)
 		//enemyの配置
 		EnemyMinion1* enemy = new EnemyMinion1(PlayerManager::Instance().GetFirstPlayer());
 		EnemyManager::Instance().Register(enemy);
-		enemy->SetPositionWorld({ 1, 1 });
+		enemy->SetPositionWorld({ 1, 5 });
 		enemy->SetTargetMovePosition({ -1, -1 });
 		enemy->SetState(State::Idle_Init);
 		enemy->SetAttackRange(1);
@@ -362,7 +401,7 @@ void PhaseManager::StageInit(const int level)
 
 		EnemyMinion1* enemy2 = new EnemyMinion1(PlayerManager::Instance().GetFirstPlayer());
 		EnemyManager::Instance().Register(enemy2);
-		enemy2->SetPositionWorld({ 6, 6 });
+		enemy2->SetPositionWorld({ 5, 1 });
 		enemy2->SetTargetMovePosition({ -1, -1 });
 		enemy2->SetState(State::Idle_Init);
 		enemy2->SetAttackRange(2);

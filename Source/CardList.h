@@ -62,17 +62,20 @@ struct CardComboNoUseing final : public CardComboDataBase
 
 class CardManager final
 {
+public://singleton
+	static CardManager& Instance()noexcept { static CardManager instance; return instance; }
 private://constracter
 	CardManager();
 	~CardManager() = default;
 	CardManager(CardManager&) = delete;
 	CardManager operator=(CardManager&) = delete;
 public://functions
-	static CardManager& Instance()noexcept { static CardManager instance; return instance; }
 
 	void Update(float elapsedTime);
 	void Render(ID3D11DeviceContext* dc);
 	void DrawDebugGUI();
+
+	//当たっているカードを取得
 	std::shared_ptr<Card> HitCheck(const DirectX::XMFLOAT2& screenPos)const;
 	//ランダムでカードを生成*手持ちには追加されないのでAddCardなどを使用してください
 	std::shared_ptr<Card> DrawCard(const std::pair<Card::Type, unsigned int>* const pair, const size_t pairSize);
@@ -98,6 +101,8 @@ public://functions
 	//カード置き場にカードが残っているか動かを取得する
 	const bool IsSetCardsEmpty()const noexcept;
 
+	//セットカードをリセット
+	void SetCardsClear()noexcept;
 	//全てのカードを削除
 	void ALLClear();
 	//カードを上限まで補充する

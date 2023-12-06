@@ -1,5 +1,7 @@
 #define NOMINMAX
 #include "../ilib/BetterFunction.h"
+#include "Graphics/NumberSprite.h"
+
 #include "Character.h"
 #include "CustomMathf.h"
 #include "Stage.h"
@@ -344,6 +346,22 @@ void Character::Render2D(ID3D11DeviceContext* dc, const HitBox2D& box)
 
 	//キャラクターのアイコンを描画
 	icon->Render(dc, box.GetLeftTop(), iconSize, .0f, DirectX::XMFLOAT4{ 1.0f,1.0f,1.0f,1.0f });
+
+	const DirectX::XMFLOAT2 NumSize = { BoxSize.x * 0.3f,BoxSize.y * 0.6f };
+	//体力の数値を描画
+	{
+		std::string str;
+		str += std::to_string(health);
+		str += "/";
+		str += std::to_string(maxHealth);
+		NumberSprite::Instance().NumberOut(str.c_str(), dc, DirectX::XMFLOAT2{ BoxSize.x - NumSize.x,.0f }+leftTop, NumSize, {1.0f,1.0f,1.0f,1.0f});
+	}
+	//シールドの値を描画
+	if (shield > 0)
+	{
+		std::string str = "+" + std::to_string(shield);
+		NumberSprite::Instance().NumberOut(str.c_str(), dc, DirectX::XMFLOAT2{ BoxSize.x - NumSize.x * 2.0f,.0f } + leftTop, { NumSize.x*0.5f,NumSize.y }, { .0f,1.0f,1.0f,1.0f });
+	}
 
 	//HPバーの背景を描画
 	hpBar[0]->Render(dc, HpBarPos, HPBarSize, .0f, { 1.0f,1.0f,1.0f,1.0f });

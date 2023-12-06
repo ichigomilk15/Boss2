@@ -43,27 +43,39 @@ GameSystemManager::GameSystemManager()
     ExitPouseButton.SetHitBox(HitBox2D::CreateBoxFromCenter(pos, size));
     ExitPouseButton.AddComponent(new RenderComponent("./Data/Sprite/pouse/return.png"));
 
+    //チュートリアルボタン
     pos.y += size.y + offset;
     tutorialButton.SetHitBox(HitBox2D::CreateBoxFromCenter(pos, size));
     tutorialButton.AddComponent(new RenderComponent("./Data/Sprite/pouse/info.png"));
 
-
+    //ポーズ画面背景
     pos = { ScreenSize.x * 0.5f,ScreenSize.y * 0.5f };
     pouseBackGround.SetHitBox(HitBox2D::CreateBoxFromCenter(pos, ScreenSize));
     pouseBackGround.AddComponent(new RenderComponent("./Data/Sprite/pouse/back.png"));
     pouseBackGround.GetComponent<RenderComponent>()->SetColor(DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));
+
+    tutorialSprite.push_back(std::make_unique<Sprite>("./Data/Sprite/title_back.png"));//todo : チュートリアル画像差し替え
+    tutorialSprite.push_back(std::make_unique<Sprite>("./Data/Sprite/title_back.png"));
+    tutorialSprite.push_back(std::make_unique<Sprite>("./Data/Sprite/title_back.png"));
 }
 
 void GameSystemManager::Update(float elapsedTime)
 {
     Mouse& mouse = Input::Instance().GetMouse();
     GamePad& gamepad = Input::Instance().GetGamePad();
+
+    if (isTutorial)
+    {
+        TutorialOnlyUpdate(elapsedTime);
+        return;
+    }
+
     if (isPoused)
     {
         PousedOnlyUpdate(elapsedTime);
     }
 
-    if (gamepad.GetButtonDown()&GamePad::BTN_ESCAPE||mouse.GetButtonDown()&Mouse::BTN_LEFT&& pouseButton.GetHitBox().Hit(mouse.GetPosition()))
+    if (gamepad.GetButtonDown()&GamePad::BTN_ESCAPE||(mouse.GetButtonDown()&Mouse::BTN_LEFT&& pouseButton.GetHitBox().Hit(mouse.GetPosition())))
     {
         isPoused ^= true;
     }
@@ -78,15 +90,21 @@ void GameSystemManager::Render(ID3D11DeviceContext* dc)
 
 
     if (auto render = CardAllInfoButton.GetComponent<RenderComponent>())render->Render(dc);
+
     if (isPoused)
     {
         PousedOnlyRender(dc);
     }
+    else if (isTutorial)
+    {
+        TutorialOnlyRender(dc);
+    }
+
 
     if(auto render = pouseButton.GetComponent<RenderComponent>())render->Render(dc);
 
 
-    if (!isPoused&& CardAllInfoButton.GetHitBox().Hit(mouse.GetPosition()))
+    if (!(isPoused|isTutorial)&& CardAllInfoButton.GetHitBox().Hit(mouse.GetPosition()))
     {
         CardAllInfoButton.SearchChildFromName("allInfo")->Render<RenderComponent>(dc);
     }
@@ -95,16 +113,28 @@ void GameSystemManager::Render(ID3D11DeviceContext* dc)
 void GameSystemManager::PousedOnlyUpdate(float elapsedTime)
 {
     Mouse& mouse = Input::Instance().GetMouse();
+    if (isTutorial)
+    {
+        TutorialOnlyUpdate(elapsedTime);
+        return;
+    }
+
+    //タイトルへボタン
     if (mouse.GetButtonDown()&Mouse::BTN_LEFT&& GoTitleButton.GetHitBox().Hit(mouse.GetPosition()))
     {
         SceneManager::Instance().ChangeScene(new SceneTitle);
     }
 
+    //ポーズ戻るボタン
     if (mouse.GetButtonDown()&Mouse::BTN_LEFT&& ExitPouseButton.GetHitBox().Hit(mouse.GetPosition()))
     {
         this->isPoused = false;
     }
-
+    //チュートリアルボタン
+    if (mouse.GetButtonDown() & Mouse::BTN_LEFT && tutorialButton.GetHitBox().Hit(mouse.GetPosition()))
+    {
+        isTutorial = true;
+    }
 
     //debug
 #ifdef _DEBUG
@@ -123,6 +153,31 @@ void GameSystemManager::PousedOnlyRender(ID3D11DeviceContext* dc)
     if (auto render = GoTitleButton.GetComponent<RenderComponent>())render->Render(dc);
     if(auto render = ExitPouseButton.GetComponent<RenderComponent>())render->Render(dc);
     if (auto render = tutorialButton.GetComponent<RenderComponent>())render->Render(dc);
+
+    if (isTutorial)
+        TutorialOnlyRender(dc);
+}
+
+void GameSystemManager::TutorialOnlyUpdate(float elapsedTime)
+{
+    Mouse& mouse = Input::Instance().GetMouse();
+
+    if (mouse.GetButtonDown() & Mouse::BTN_LEFT)
+    {
+        if (++tutrialIndex >= std::size(tutorialSprite))
+        {
+            tutrialIndex = 0;
+            isTutorial = false;
+        }
+    }
+    mouse.ClearButtonDown();
+}
+
+void GameSystemManager::TutorialOnlyRender(ID3D11DeviceContext* dc)
+{
+    const DirectX::XMFLOAT2 ScreenSize = Graphics::Instance().GetScreenSize();
+    const DirectX::XMFLOAT2 size = {ScreenSize.x*0.9f,ScreenSize.y*0.9f};
+    tutorialSprite.at(tutrialIndex)->Render(dc, { ScreenSize.x * 0.05f,ScreenSize.y * 0.05f }, size, .0f, { 1.0f,1.0f,1.0f,1.0f });
 }
 
 

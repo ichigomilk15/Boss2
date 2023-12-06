@@ -365,11 +365,14 @@ void Player::UpdateMove(float elapsedTime)
 State Player::MovingEnd()
 {
 	std::shared_ptr<Square> square = Stage::Instance()->GetSquare(position.x, position.y);
-	Card* getCard = square->GetCard();
-	if (getCard && CardManager::Instance().GetHaveSpecial() < CardManager::SPECIAL_CARD_MAX)
+	if(Card* getCard = square->GetCard())
 	{
-		GetCard(getCard);
-		square->ResetCard();
+		if ((getCard->GetType() == Card::Type::SPECIAL && CardManager::Instance().GetHaveSpecial() < CardManager::SPECIAL_CARD_MAX) 
+			|| getCard->GetType() == Card::Type::DEBUFF)
+		{
+			square->ResetCard();
+			GetCard(getCard);
+		}
 	}
 
 	CardComboMove* moveDetail = dynamic_cast<CardComboMove*>(std::move(cardComboDataBase));
