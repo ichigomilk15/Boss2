@@ -50,21 +50,17 @@ void SceneGame::Initialize()
 		0.1f,
 		1000.0f
 	);
-	cameraController->setTarget({.0f,.0f,-7.f});
+	cameraController->setTarget({ .0f,.0f,-7.f });
 
 	Stage::Instance()->ResetAllSquare();
 	Stage::Instance()->ResetSquaresAccessible();
 
 	PhaseManager::Instance().Initialize();
 
-#if _DEBUG
-	/*AudioLoader::Load(AUDIO::BGM_GAME, gameSe);
-	AudioLoader::Load(AUDIO::BGM_GAMEOVER, gameOverSe);
-	AudioLoader::Load(AUDIO::BGM_GAMECLEAR, gameClearSe);*/
-#endif
+	AudioLoader::Load(AUDIO::BGM_GAME, gameSe);
 
 	// BGM再生
-	//gameSe->Play(true);
+	gameSe->Play(true);
 
 	SaveData::Instance().Load();
 	GameSystemManager::Instance().CollTutorial();
@@ -96,7 +92,7 @@ void SceneGame::Finalize()
 	EffectManager::Instance().GetEffekseerManager()->StopAllEffects();
 
 	// BGM停止
-	//gameSe->Stop();
+	gameSe->Stop();
 }
 
 // 更新処理
@@ -154,7 +150,7 @@ void SceneGame::Render()
 	ID3D11DepthStencilView* dsv = graphics.GetDepthStencilView();
 
 	// 画面クリア＆レンダーターゲット設定
-	FLOAT color[] = { 92.0f/255.0f,163/255.0f,188/255.0f };	// RGBA(0.0～1.0)
+	FLOAT color[] = { 92.0f / 255.0f,163 / 255.0f,188 / 255.0f };	// RGBA(0.0～1.0)
 	dc->ClearRenderTargetView(rtv, color);
 	dc->ClearDepthStencilView(dsv, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 	dc->OMSetRenderTargets(1, &rtv, dsv);
@@ -249,7 +245,7 @@ void SceneGame::DrawDebugGUI()
 	ImGui::End();
 }
 
-void SceneGame::RenderEnemyGauge(ID3D11DeviceContext* dc, 
+void SceneGame::RenderEnemyGauge(ID3D11DeviceContext* dc,
 	const DirectX::XMFLOAT4X4& view, const DirectX::XMFLOAT4X4& projection)
 {
 	//ビューポート
@@ -278,7 +274,7 @@ void SceneGame::RenderEnemyGauge(ID3D11DeviceContext* dc,
 		DirectX::XMVECTOR ScreenPosition = DirectX::XMLoadFloat3(&screenPosition);
 
 		DirectX::XMVECTOR StartRay2D = DirectX::XMVectorSet(
-			static_cast<float>(mouse.GetPositionX()), 
+			static_cast<float>(mouse.GetPositionX()),
 			static_cast<float>(mouse.GetPositionY()),
 			viewport.MinDepth, 0);
 		DirectX::XMVECTOR StartRayVec = DirectX::XMVector3Unproject(
@@ -368,7 +364,7 @@ const bool SaveData::ReSet()
 const bool SaveData::Load()
 {
 	bool ok = true;
-	Stage::Instance()->SetStageLevel(this->StageLevel-1);
+	Stage::Instance()->SetStageLevel(this->StageLevel - 1);
 	PhaseManager::Instance().SetTurnCount(this->PhaseTurn);
 	if (auto player = PlayerManager::Instance().GetFirstPlayer())
 	{

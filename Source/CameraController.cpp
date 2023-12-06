@@ -14,8 +14,8 @@
 
 void CameraController::Update(float elapsedTime)
 {
-#ifdef _DEBUG
 	UpdateCameraShake(elapsedTime);
+#ifdef _DEBUG
 	GamePad& gamePad = Input::Instance().GetGamePad();
 	float ax = gamePad.GetAxisRX();
 	float ay = gamePad.GetAxisRY();

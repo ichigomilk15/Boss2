@@ -156,8 +156,4 @@ private://members
 	std::unique_ptr<Sprite> SetCardSprites[2];
 	DirectX::XMFLOAT2 testdatas[2];
 
-	/*struct CardListSes
-	{
-		std::unique_ptr<AudioSource> cardSelectSe;
-	}cardListSes;*/
 };

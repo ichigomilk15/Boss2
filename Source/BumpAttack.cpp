@@ -4,6 +4,9 @@
 
 void BumpAttack::Update(float elapsedTime)
 {
+	if (!isAttackActivated)
+		return;
+
 	if (startAppearTimer > 0.0f)
 	{
 		startAppearTimer -= elapsedTime;

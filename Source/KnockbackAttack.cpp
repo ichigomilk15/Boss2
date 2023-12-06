@@ -4,6 +4,9 @@
 
 void KnockbackAttack::Update(float elapsedTime)
 {
+	if (!isAttackActivated)
+		return;
+
 	if (startAppearTimer > 0.0f)
 	{
 		startAppearTimer -= elapsedTime;
@@ -56,7 +59,7 @@ void KnockbackAttack::Update(float elapsedTime)
 					{
 						e.targetChara->SetTargetMovePosition(movePos);
 						e.targetChara->SetState(State::KnockedBack_Init);
-						CameraController::Instance().ShakeCamera(0.5f, 2);
+						CameraController::Instance().ShakeCamera(0.15f, 1);
 						break;
 					}
 				}

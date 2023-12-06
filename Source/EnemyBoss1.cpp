@@ -168,8 +168,9 @@ void EnemyBoss1::UpdateState(float elapsedTime)
 		actTimer = (bumpAttackDetail.stunTurn > 0) ? 0.0f : 1.0f;
 		boss1Ses.attackLineSe.get()->Play(false);
 		boss1Ses.bumpAtkSe.get()->Play(false);
-		AttackManager::Instance().Register(std::move(attack));
+		attack->ActivateAttack();
 		attack = nullptr;
+		//AttackManager::Instance().Register(std::move(attack));
 		state = State::Attacking;
 		[[fallthrough]];
 	case State::Attacking:
@@ -216,8 +217,9 @@ void EnemyBoss1::UpdateState(float elapsedTime)
 		{
 			boss1Ses.jumpAtkSe.get()->Play(false);
 			Stage::Instance()->ResetAllSquare();
-			AttackManager::Instance().Register(std::move(attack));
+			attack->ActivateAttack();
 			attack = nullptr;
+			//AttackManager::Instance().Register(std::move(attack));
 			CameraController::Instance().ShakeCamera(1.05f, 6);
 			Stage::Instance()->ResetAllSquareDrawType();
 			SetState(State::Attack_Init);
@@ -235,10 +237,8 @@ void EnemyBoss1::UpdateState(float elapsedTime)
 		if (bumpAttackDetail.stunTurn >= 0)
 		{
 			isActEnd = true;
-			EffectManager::Instance().GetEffekseerManager()->SendTrigger(effects.dizzy->GetHandle(),0);
+			EffectManager::Instance().GetEffekseerManager()->SendTrigger(effects.dizzy->GetHandle(), 0);
 		}
-
-
 		state = State::Stunned;
 		[[fallthrough]];
 	case State::Stunned:
@@ -249,6 +249,7 @@ void EnemyBoss1::UpdateState(float elapsedTime)
 				++actNo;
 				boss1Ses.panicSe.get()->Stop();
 				effects.dizzy->Stop(effects.dizzy->GetHandle());
+				boss1Ses.angrySe.get()->Play(false);
 				state = State::Attack_Init;
 				break;
 			}
@@ -371,8 +372,8 @@ void EnemyBoss1::InitializeAttack(float elapsedTime) //ƒoƒ“ƒvUŒ‚
 		{
 			posVec.emplace_back(sq->GetPos());
 		}
-		attack = new BumpAttack(this, bumpAttackDetail.attackPow, TargetAttackEnum::Target_Player, GetDirection(), posVec, 0.5f);
-		//AttackManager::Instance().Register(attack);
+		attack = new BumpAttack(this, bumpAttackDetail.attackPow, TargetAttackEnum::Target_Player, GetDirection(), posVec, 0.5f, false);
+		AttackManager::Instance().Register(attack);
 
 		for (auto& square : attackSq)
 		{
@@ -415,7 +416,8 @@ void EnemyBoss1::InitializeAttack(float elapsedTime) //ƒoƒ“ƒvUŒ‚
 			sq->InputDrawType(Square::DrawType::ChargeAttack);
 		}
 		//attack = new JumpAttack(this, jumpAttackDetail.attackPow, TargetAttackEnum::Target_Player, posVec);
-		attack = new JumpAttack(this, jumpAttackDetail.attackPowCenter, jumpAttackDetail.attackPowEdge, TargetAttackEnum::Target_Player, player->GetPosition(), posVec);
+		attack = new JumpAttack(this, jumpAttackDetail.attackPowCenter, jumpAttackDetail.attackPowEdge, TargetAttackEnum::Target_Player, player->GetPosition(), posVec, 0.0f, false);
+		AttackManager::Instance().Register(attack);
 		jumpAttackDetail.targetJumpMovePos = targetPos;
 		return;
 	}
@@ -459,20 +461,16 @@ State EnemyBoss1::AfterBumpAttack()
 void EnemyBoss1::InitStunDefence()
 {
 	float perc = (float)health / maxHealth * 100.0f;
-	if (perc >= 70.0f)
+	if (perc >= 80.0f)
 	{
 		bumpAttackDetail.stunDefence = 1;
 	}
-	else if (perc >= 30.0f)
+	else if (perc >= 40.0f)
 	{
-		if (bumpAttackDetail.stunDefence < 2)
-			boss1Ses.angrySe.get()->Play(false);
 		bumpAttackDetail.stunDefence = 2;
 	}
 	else
 	{
-		if (bumpAttackDetail.stunDefence < 3)
-			boss1Ses.angrySe.get()->Play(false);
 		bumpAttackDetail.stunDefence = 3;
 	}
 }

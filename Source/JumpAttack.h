@@ -5,9 +5,9 @@ class JumpAttack : public AttackParent
 {
 public:
     JumpAttack(Character* parent, const int damageCenter, const int damageEdge,
-        const TargetAttackEnum target, const DirectX::XMINT2 centerAttackPos, const std::vector<DirectX::XMINT2> targetAttackPos, const float damageTimer = 0.0f)
+        const TargetAttackEnum target, const DirectX::XMINT2 centerAttackPos, const std::vector<DirectX::XMINT2> targetAttackPos, const float damageTimer = 0.0f, const bool isActive = true)
         :
-        AttackParent(parent, damageCenter, target, targetAttackPos, damageTimer),
+        AttackParent(parent, damageCenter, target, targetAttackPos, damageTimer, isActive),
         boxHitRange(boxHitRange),
         damageCenter(damageCenter),
         damageEdge(damageEdge),

@@ -1,7 +1,7 @@
 
 #define NOMINMAX
 #include "PhaseManager.h"
-
+#include "Audio\AudioLoader.h"
 #include "Input/Input.h"
 #include "EnemyManager.h"
 #include "CardList.h"
@@ -31,6 +31,8 @@ PhaseManager::PhaseManager()
 	waveSprites[0] = std::make_unique<Sprite>("./Data/Sprite/WAVE_01.png");
 	waveSprites[1] = std::make_unique<Sprite>("./Data/Sprite/WAVE_02.png");
 	waveSprites[2] = std::make_unique<Sprite>("./Data/Sprite/WAVE_03.png");
+
+	InitializeAudio();
 }
 
 void PhaseManager::Initialize()
@@ -216,7 +218,7 @@ void PhaseManager::Update(float elapsedTime)
 		bool isGameOver = true;
 		for (auto& player : *PlayerManager::Instance().GetPlayerVector())
 		{
-			if (player->GetHealth() > 0) { isGameOver = false; break; }
+			if (player->GetHealth() > 0 /*|| player->GetPlayerDeadTime() > 0.000001f*/) { isGameOver = false; break; }
 		}
 		if (isGameOver)
 			SceneManager::Instance().ChangeScene(new SceneGameOver);
@@ -364,26 +366,26 @@ void PhaseManager::StageInit(const int level)
 {
 	switch (level)
 	{
-	case 0:
+	//case 1:
+	//{
+	//	PlayerManager::Instance().GetFirstPlayer()->SetPositionWorld(Common::PlayerPosInit);
+	//	//enemyの配置
+	//	EnemyMinion1* enemy = new EnemyMinion1(PlayerManager::Instance().GetFirstPlayer());
+	//	EnemyManager::Instance().Register(enemy);
+	//	enemy->SetPositionWorld({ 1, 1 });
+	//	enemy->SetTargetMovePosition({ -1, -1 });
+	//	enemy->SetState(State::Idle_Init);
+	//	enemy->SetAttackRange(1);
+	//	enemy->SetHealth(30);
+	//	enemy->SetMaxHealth(30);
+	//	enemy->SetDirection(CommonClass::DirectionFace::Left);
+	//	Stage::Instance()->GetSquare(0, 0)->SetCard(std::make_shared<Card>(DirectX::XMFLOAT2{ .0f,.0f }, CardManager::CARD_SIZE, Card::Type::SPECIAL));
+	//}
+	//break;
+	case 1:
 	{
-		PlayerManager::Instance().GetFirstPlayer()->SetPositionWorld(Common::PlayerPosInit);
-		//enemyの配置
-		EnemyMinion1* enemy = new EnemyMinion1(PlayerManager::Instance().GetFirstPlayer());
-		EnemyManager::Instance().Register(enemy);
-		enemy->SetPositionWorld({ 1, 1 });
-		enemy->SetTargetMovePosition({ -1, -1 });
-		enemy->SetState(State::Idle_Init);
-		enemy->SetAttackRange(1);
-		enemy->SetHealth(30);
-		enemy->SetMaxHealth(30);
-		enemy->SetDirection(CommonClass::DirectionFace::Left);
-		Stage::Instance()->GetSquare(0, 0)->SetCard(std::make_shared<Card>(DirectX::XMFLOAT2{ .0f,.0f }, CardManager::CARD_SIZE, Card::Type::SPECIAL));
-	}
-	break;
-	case 2:
-	{
-		PlayerManager::Instance().GetFirstPlayer()->SetTargetMovePosition(Common::PlayerPosInit);
-		PlayerManager::Instance().GetFirstPlayer()->SetPositionWorld(Common::PlayerPosInit);
+		PlayerManager::Instance().GetFirstPlayer()->SetTargetMovePosition({3,3});
+		PlayerManager::Instance().GetFirstPlayer()->SetPositionWorld({3,3});
 		Stage::Instance()->ResetAllSquare();
 		//enemyの配置
 		EnemyMinion1* enemy = new EnemyMinion1(PlayerManager::Instance().GetFirstPlayer());
@@ -396,7 +398,7 @@ void PhaseManager::StageInit(const int level)
 		enemy->SetMaxHealth(30);
 	}
 	break;
-	case 3:
+	case 2:
 	{
 		PlayerManager::Instance().GetFirstPlayer()->SetTargetMovePosition(Common::PlayerPosInit);
 		PlayerManager::Instance().GetFirstPlayer()->SetPositionWorld(Common::PlayerPosInit);
@@ -416,15 +418,15 @@ void PhaseManager::StageInit(const int level)
 		enemy2->SetPositionWorld({ 5, 1 });
 		enemy2->SetTargetMovePosition({ -1, -1 });
 		enemy2->SetState(State::Idle_Init);
-		enemy2->SetAttackRange(2);
-		enemy2->SetHealth(40);
-		enemy2->SetMaxHealth(40);
+		enemy2->SetAttackRange(1);
+		enemy2->SetHealth(30);
+		enemy2->SetMaxHealth(30);
 	}
 		break;
-	case 1:
+	case 3:
 	{
-		PlayerManager::Instance().GetFirstPlayer()->SetTargetMovePosition(Common::PlayerPosInit);
-		PlayerManager::Instance().GetFirstPlayer()->SetPositionWorld(Common::PlayerPosInit);
+		PlayerManager::Instance().GetFirstPlayer()->SetTargetMovePosition({1,3});
+		PlayerManager::Instance().GetFirstPlayer()->SetPositionWorld({1,3});
 		Stage::Instance()->ResetAllSquare();
 		auto player = PlayerManager::Instance().GetFirstPlayer();
 		EnemyBoss1* boss1 = new EnemyBoss1(player);
@@ -433,19 +435,24 @@ void PhaseManager::StageInit(const int level)
 		pos.x = (player->GetPosition().x > 4) ? 0 : 5;
 		pos.y = (player->GetPosition().y > 4) ? 0 : 5;
 		//boss1->SetPositionWorld(pos);
-		boss1->SetPositionWorld({4, 4});
+		boss1->SetPositionWorld({3,3 });
 		boss1->SetTargetMovePosition({ -1, -1 });
 		boss1->SetSize({ 2, 2 });
 		DirectX::XMFLOAT3 pivot = { Common::SquareWidth / 2, 1.0f, -Common::SquareHeight / 2 };
 		boss1->SetPivotAdjustPosWorld(pivot);
 		boss1->SetState(State::Attack_Init);
-		boss1->SetHealth(200);
-		boss1->SetMaxHealth(200);
+		boss1->SetHealth(150);
+		boss1->SetMaxHealth(150);
 		boss1->SetAttackRange(4);
 	}	
 		break;
 
 	}
 
+
 	EnemyManager::Instance().SetStartEnemyNum();
+}
+
+void PhaseManager::InitializeAudio()
+{
 }

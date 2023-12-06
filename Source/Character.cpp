@@ -19,11 +19,11 @@ Character::Character()
 
 Character::~Character()
 {
-	if (attack)
+	/*if (attack)
 	{
 		delete attack;
 		attack = nullptr;
-	}
+	}*/
 }
 
 void Character::UpdateTransform()
@@ -374,10 +374,10 @@ void Character::Render2D(ID3D11DeviceContext* dc, const HitBox2D& box)
 	}
 }
 
-void Character::ShowDamageNumber(const int damageNumber)
+void Character::ShowDamageNumber(const int damageNumber, const DirectX::XMFLOAT4& color)
 {
 	DamageEffector::EffectData data;
-	data.color = { 1.0f,.0f,.0f,1.0f };
+	data.color = color;
 	data.damage = damageNumber;
 	data.velocity = { 30.0f,-80.0f };
 	data.scale = 2.5f;

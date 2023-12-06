@@ -53,6 +53,11 @@ Player::~Player()
 
 void Player::Update(float elapsedTime)
 {
+	if (playerDeadTime > 0.0f)
+	{
+		playerDeadTime -= elapsedTime;
+		pivotAdjustPosWorld.y -= 0.01f;
+	}
 	//ステート更新処理
 	UpdateState(elapsedTime);
 
@@ -507,6 +512,7 @@ void Player::SetShieldAction()
 	{
 		int moveRange = Stage::Instance()->GetTargetPosCost(position, turnPosInit);
 		shieldGet += moveRange;
+		ShowDamageNumber(shieldGet, { 0.0f, 1.0f, 1.0f, 1.0f });
 	}
 	shield += shieldGet;
 }
@@ -595,6 +601,7 @@ void Player::OnDamaged()
 void Player::OnDead()
 {
 	playerSes.deadSe.get()->Play(false);
+	//playerDeadTime = 4.0f;
 }
 
 void Player::GetCard(Card* getCard)
@@ -603,6 +610,7 @@ void Player::GetCard(Card* getCard)
 	{
 	case Card::Type::SPECIAL:
 		CardManager::Instance().AddCardFront(std::make_shared<Card>(DirectX::XMFLOAT2{ .0f,.0f }, CardManager::CARD_SIZE, getCard->GetType()));
+		playerSes.buff.get()->Play(false);
 		break;
 	case Card::Type::DEBUFF:
 		CardManager::Instance().AddCardReserved(std::make_shared<Card>(DirectX::XMFLOAT2{ .0f,.0f }, CardManager::CARD_SIZE, Card::Type::DEBUFF));
@@ -694,4 +702,9 @@ void Player::InitializeAudio()
 	AudioLoader::Load(AUDIO::SE_PLAYER_DEAD, playerSes.deadSe);
 	AudioLoader::Load(AUDIO::SE_PLAYER_SHIELD, playerSes.shieldSe);
 	AudioLoader::Load(AUDIO::SE_PLAYER_MOVE, playerSes.moveSe);
+	AudioLoader::Load(AUDIO::SE_CARD_GETBUFF, playerSes.buff);
+
+	AudioLoader::Load(AUDIO::SE_CARD_DECIDE, cardSes.cardDecideSe);
+	AudioLoader::Load(AUDIO::SE_CARD_DRAW, cardSes.cardDraw);
+	AudioLoader::Load(AUDIO::SE_CARD_SET, cardSes.cardSet);
 }
