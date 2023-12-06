@@ -1,6 +1,7 @@
 #include "AttackParent.h"
 #include "PlayerManager.h"
 #include "EnemyManager.h"
+#include "Stage.h"
 #include <algorithm>
 
 AttackParent::AttackParent(Character* parent, const int damage, TargetAttackEnum target, const std::vector<DirectX::XMINT2> targetAttackPos, const float damageTimer) :
@@ -73,4 +74,16 @@ void AttackParent::Destroy()
 
 void AttackParent::Initialize()
 {
+}
+
+void AttackParent::AttackCard()
+{
+	for (auto& sqPos : targetAttackPos)
+	{
+		if (Card* spCard = Stage::Instance()->GetSquare(sqPos.x, sqPos.y)->GetCard())
+		{
+			spCard->SetType(Card::Type::DEBUFF);
+		}
+	}
+	isCardAttacked= true;
 }

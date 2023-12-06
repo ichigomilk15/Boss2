@@ -3,6 +3,7 @@
 #include "Character.h"
 #include "CustomMathf.h"
 #include "Stage.h"
+#include "EnemyManager.h"
 #undef NOMINMAX
 
 Character::Character()
@@ -157,6 +158,22 @@ bool Character::IsTargetMovePosValid(const DirectX::XMINT2& targetPos)
 			{
 				return false;
 			}
+
+			for (auto& e : EnemyManager::Instance().GetList())
+			{
+				if (!e->IsMoving()) continue;
+
+				for (int ey = e->GetTargetMovePosition().y; ey < e->GetTargetMovePosition().y + e->GetSize().y; ey++)
+				{
+					for (int ex = e->GetTargetMovePosition().x; ex < e->GetTargetMovePosition().x + e->GetSize().x; ex++)
+					{
+						if (ex == x && ey == y)
+						{
+							return false;
+						}
+					}
+				}
+			}
 		}
 	}
 	return true;
@@ -175,6 +192,38 @@ bool Character::IsTargetMoveAttackPosValid(const DirectX::XMINT2& targetPos)
 	return true;
 }
 
+bool Character::IsInTheSameRow(const Character& target)
+{
+	bool isSameRow = false;
+	for (int y = GetPosition().y; y < GetPosition().y + GetSize().y; y++)
+	{
+		for (int y2 = target.GetPosition().y; y2 < target.GetPosition().y + target.GetSize().y; y2++)
+		{
+			if (y == y2)
+			{
+				isSameRow = true;
+				break;
+			}
+		}
+	}
+	return isSameRow;
+}
+bool Character::IsInTheSameColumn(const Character& target)
+{
+	bool isSameColumn = false;
+	for (int x = GetPosition().x; x < GetPosition().x + GetSize().x; x++)
+	{
+		for (int x2 = target.GetPosition().x; x2 < target.GetPosition().x + target.GetSize().x; x2++)
+		{
+			if (x == x2)
+			{
+				isSameColumn = true;
+			}
+		}
+	}
+	return isSameColumn;
+}
+
 void Character::Heal(const int hp)
 {
 	this->health += hp;
@@ -191,6 +240,14 @@ int Character::GetWhichVerticalSide(const DirectX::XMINT2& pos)
 {
 	int pivotY = position.y + ((size.y + 1) / 2 - 1);
 	return pos.y - pivotY;
+}
+
+void Character::CancelChargeAttack()
+{
+	isAttackCharging = false;
+	Stage::Instance()->ResetAllSquareDrawType();
+	attack->Destroy();
+	attack = nullptr;
 }
 
 void Character::ResetStatus()
@@ -268,9 +325,9 @@ void Character::Render2D(ID3D11DeviceContext* dc, const HitBox2D& box)
 
 	const float min = std::min(BoxSize.x, BoxSize.y);//描画の辺の小さいほうをとる
 	const DirectX::XMFLOAT2 iconSize = { min,min };//正方形のサイズを作る
-	const DirectX::XMFLOAT2 HPBarSize = {BoxSize.x - iconSize.x,BoxSize.y * 0.4f};//HPバーのサイズを計算
-	const DirectX::XMFLOAT2 scale = hpBar[1]->GetTextureSize()/hpBar[0]->GetTextureSize();//HPバーの背景とのサイズ差を計算
-	const DirectX::XMFLOAT2 HpBarPos = { leftTop.x + iconSize.x,leftTop.y+BoxSize.y - HPBarSize.y };//HPバーの描画位置
+	const DirectX::XMFLOAT2 HPBarSize = { BoxSize.x - iconSize.x,BoxSize.y * 0.4f };//HPバーのサイズを計算
+	const DirectX::XMFLOAT2 scale = hpBar[1]->GetTextureSize() / hpBar[0]->GetTextureSize();//HPバーの背景とのサイズ差を計算
+	const DirectX::XMFLOAT2 HpBarPos = { leftTop.x + iconSize.x,leftTop.y + BoxSize.y - HPBarSize.y };//HPバーの描画位置
 	const DirectX::XMFLOAT2 zoomScale = HPBarSize / hpBar[0]->GetTextureSize();
 
 	//キャラクターのアイコンを描画
@@ -281,9 +338,9 @@ void Character::Render2D(ID3D11DeviceContext* dc, const HitBox2D& box)
 	for (size_t i = 1; i < std::size(hpBar); i++)
 	{
 		const DirectX::XMFLOAT2 sub = { hpBar[0]->GetTextureSize() - hpBar[1]->GetTextureSize() };
-		const DirectX::XMFLOAT2 pos = { HpBarPos+((sub*0.5f)*zoomScale)};
-		const DirectX::XMFLOAT2 size = { (HPBarSize.x*scale.x)*HpParsent[i],(HPBarSize.y*scale.y) };
-		hpBar[i]->Render(dc, pos, size , .0f, DirectX::XMFLOAT4{1.0f,1.0f,1.0f,1.0f});
+		const DirectX::XMFLOAT2 pos = { HpBarPos + ((sub * 0.5f) * zoomScale) };
+		const DirectX::XMFLOAT2 size = { (HPBarSize.x * scale.x) * HpParsent[i],(HPBarSize.y * scale.y) };
+		hpBar[i]->Render(dc, pos, size, .0f, DirectX::XMFLOAT4{ 1.0f,1.0f,1.0f,1.0f });
 	}
 }
 

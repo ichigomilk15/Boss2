@@ -1,5 +1,6 @@
 #include "BumpAttack.h"
 #include "Stage.h"
+#include "CameraController.h"
 
 void BumpAttack::Update(float elapsedTime)
 {
@@ -21,9 +22,14 @@ void BumpAttack::Update(float elapsedTime)
 				{
 					e.targetChara->ApplyDamage(damage);
 					e.targetChara->SetState(State::KnockedBack_Init);
+					CameraController::Instance().ShakeCamera(0.75f, 1);
 				}
 				e.isAttacked = true;
 			}
+		}
+		if (!isCardAttacked)
+		{
+			AttackCard();
 		}
 	}
 
@@ -49,7 +55,7 @@ void BumpAttack::Initialize()
 
 bool BumpAttack::SetTargetCharaBumpPos()
 {
-	const int bumpMoveTarget = 1;
+	int bumpMoveTarget = 1;
 	for (auto& e : targetAttack)
 	{
 		auto pos = e.targetChara->GetPosition();
@@ -65,42 +71,72 @@ bool BumpAttack::SetTargetCharaBumpPos()
 		if (!isTargetFound)
 			return false;
 
-		switch (direction)
+		for (; bumpMoveTarget < 5; ++bumpMoveTarget)
 		{
-		case CommonClass::DirectionFace::Back:
-		case CommonClass::DirectionFace::Front:
-			if (parent->GetWhichHorizontalSide({ pos.x, pos.y }) > 0)
+			switch (direction)
 			{
-				if (e.targetChara->IsTargetMovePosValid({ pos.x + bumpMoveTarget, pos.y }))
+			case CommonClass::DirectionFace::Back:
+			case CommonClass::DirectionFace::Front:
+			{
+				bool isMovedTarget = false;
+				if (parent->GetWhichHorizontalSide({ pos.x, pos.y }) > 0)
 				{
-					e.targetChara->SetTargetMovePosition({ pos.x + bumpMoveTarget, pos.y });
+					if (e.targetChara->IsTargetMovePosValid({ pos.x + bumpMoveTarget, pos.y }))
+					{
+						e.targetChara->SetTargetMovePosition({ pos.x + bumpMoveTarget, pos.y });
+						isMovedTarget = true;
+						bumpMoveTarget = 5;
+					}
 				}
-			}
-			else
-			{
-				if (e.targetChara->IsTargetMovePosValid({ pos.x - bumpMoveTarget, pos.y }))
+				if (!isMovedTarget)
 				{
-					e.targetChara->SetTargetMovePosition({ pos.x - bumpMoveTarget, pos.y });
+					if (e.targetChara->IsTargetMovePosValid({ pos.x - bumpMoveTarget, pos.y }))
+					{
+						e.targetChara->SetTargetMovePosition({ pos.x - bumpMoveTarget, pos.y });
+						isMovedTarget = true;
+						bumpMoveTarget = 5;
+					}
+					else if (e.targetChara->IsTargetMovePosValid({ pos.x + bumpMoveTarget, pos.y }))
+					{
+						e.targetChara->SetTargetMovePosition({ pos.x + bumpMoveTarget, pos.y });
+						isMovedTarget = true;
+						bumpMoveTarget = 5;
+					}
 				}
 			}
 			break;
-		case CommonClass::DirectionFace::Left:
-		case CommonClass::DirectionFace::Right:
-			if (parent->GetWhichVerticalSide({ pos.x, pos.y }) > 0)
+			case CommonClass::DirectionFace::Left:
+			case CommonClass::DirectionFace::Right:
 			{
-				if (e.targetChara->IsTargetMovePosValid({ pos.x, pos.y + bumpMoveTarget }))
+				bool isMovedTarget = false;
+				if (parent->GetWhichVerticalSide({ pos.x, pos.y }) > 0)
 				{
-					e.targetChara->SetTargetMovePosition({ pos.x, pos.y + bumpMoveTarget });
+					if (e.targetChara->IsTargetMovePosValid({ pos.x, pos.y + bumpMoveTarget }))
+					{
+						e.targetChara->SetTargetMovePosition({ pos.x, pos.y + bumpMoveTarget });
+						bumpMoveTarget = 5;
+						isMovedTarget = true;
+					}
 				}
-			}
-			else
-			{
-				if (e.targetChara->IsTargetMovePosValid({ pos.x, pos.y - bumpMoveTarget }))
+				if (!isMovedTarget)
 				{
-					e.targetChara->SetTargetMovePosition({ pos.x, pos.y - bumpMoveTarget });
+					if (e.targetChara->IsTargetMovePosValid({ pos.x, pos.y - bumpMoveTarget }))
+					{
+						e.targetChara->SetTargetMovePosition({ pos.x, pos.y - bumpMoveTarget });
+						isMovedTarget = true;
+						bumpMoveTarget = 5;
+					}
+					else if (e.targetChara->IsTargetMovePosValid({ pos.x, pos.y + bumpMoveTarget }))
+					{
+						e.targetChara->SetTargetMovePosition({ pos.x, pos.y + bumpMoveTarget });
+						bumpMoveTarget = 5;
+						isMovedTarget = true;
+					}
 				}
 			}
 			break;
+			}
+
 		}
 	}
 	return true;

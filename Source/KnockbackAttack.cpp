@@ -1,5 +1,6 @@
 #include "KnockbackAttack.h"
 #include "Stage.h"
+#include "CameraController.h"
 
 void KnockbackAttack::Update(float elapsedTime)
 {
@@ -15,7 +16,21 @@ void KnockbackAttack::Update(float elapsedTime)
 	{
 		for (auto& e : targetAttack)
 		{
-			if (!e.isAttacked)
+			if (e.isAttacked) continue;
+
+			bool isTarget = false;
+			for (auto& ePos : e.targetChara->GetSquaresPosition())
+			{
+				for (auto& targetPos : targetAttackPos)
+				{
+					if (ePos.x == targetPos.x && ePos.y == targetPos.y)
+					{
+						isTarget = true;
+					}
+				}
+			}
+
+			if ( isTarget)
 			{
 				e.targetChara->ApplyDamage(damage);
 				e.isAttacked = true;
@@ -25,13 +40,13 @@ void KnockbackAttack::Update(float elapsedTime)
 					switch (knockbackDir)
 					{
 					case CommonClass::Front:
-						movePos.y += cost;
+						movePos.y -= cost;
 						break;
 					case CommonClass::Back:
 						movePos.y += cost;
 						break;
 					case CommonClass::Left:
-						movePos.x += cost;
+						movePos.x -= cost;
 						break;
 					case CommonClass::Right:
 						movePos.x += cost;
@@ -41,9 +56,14 @@ void KnockbackAttack::Update(float elapsedTime)
 					{
 						e.targetChara->SetTargetMovePosition(movePos);
 						e.targetChara->SetState(State::KnockedBack_Init);
+						CameraController::Instance().ShakeCamera(1.0f, 2);
 						break;
 					}
 				}
+			}
+			else
+			{
+				e.isAttacked = true;
 			}
 		}
 	}

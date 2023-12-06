@@ -40,6 +40,8 @@ public: //function
 protected: //function
 	virtual void Initialize();
 
+	virtual void AttackCard();
+
 protected: //members
 
 	std::vector<DirectX::XMINT2>        targetAttackPos = {  };
@@ -48,6 +50,7 @@ protected: //members
 	float					damageTimer = 0.0f; //ダメージを与えるタイマー
 	float					lifeTimer = 0.0f; //廃棄するまでの期間
 	bool                    isDestroy = false;
+	bool					isCardAttacked = false; //マスにあるカードを攻撃したかの判定
 	Character* parent;
 
 	struct TargetAttack
