@@ -19,6 +19,7 @@ Stage::Stage() :
 	model(std::make_unique<Model>("./Data/Model/Stage/BackGround.mdl")),
 	squareBorder(std::make_shared<Model>("./Data/Model/Stage/SquareBorder.mdl")),
 	squareArea(std::make_shared<Model>("./Data/Model/Stage/SquareArea.mdl")),
+	rockModel(std::make_shared<Model>("./Data/Model/Stage/SquareBorder.mdl")),//todo : modelÇÃì«Ç›çûÇ›ïœçX
 	cardModel()
 {
 	cardModel[Card::Type::SPECIAL] = std::make_unique<Model>("./Data/Model/Stage/card_buff.mdl");
@@ -26,6 +27,12 @@ Stage::Stage() :
 	this->scale = { 3.0f,0.01f,3.0f };
 	this->position = { 0.0f, -1.0f, 0.0f };
 	random = std::uniform_int_distribution<unsigned int>(0u, Common::SQUARE_NUM_X - 1);
+	frand = std::uniform_real_distribution<float>(-DirectX::XM_PI, DirectX::XM_PI);
+
+	for (size_t i = 0,end = std::size(rockDatas); i < end; i++)
+	{
+		auto& data = rockDatas[i];
+	}
 }
 
 void Stage::ClearStage() noexcept
@@ -85,6 +92,18 @@ void Stage::Render(ID3D11DeviceContext* dc, Shader* shader)
 		{
 			x->Render(dc, shader);
 		}
+	}
+
+	for (auto& data : rockDatas)
+	{
+		DirectX::XMFLOAT4X4 transform;
+		DirectX::XMStoreFloat4x4(&transform,
+			DirectX::XMMatrixScaling(data.scale.x,data.scale.y,data.scale.z)*
+			DirectX::XMMatrixRotationRollPitchYaw(data.rotate.x,data.rotate.y,data.rotate.z)*
+			DirectX::XMMatrixTranslation(data.pos.x,data.pos.y,data.pos.z)
+		);
+		rockModel->UpdateTransform(transform);
+		shader->Draw(dc, model.get());
 	}
 
 	shader->Draw(dc, model.get());

@@ -30,6 +30,11 @@ private:
 		std::unique_ptr<AudioSource> deathSe;
 		std::unique_ptr<AudioSource> walkSe;
 	}minion1Ses;
+
+	struct 
+	{
+		std::unique_ptr<Effect> vortex;
+	}effects;
 };
 
 

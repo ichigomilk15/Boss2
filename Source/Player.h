@@ -99,4 +99,10 @@ private:
 	}cardSes;
 
 	bool playerDeadTime = 0.0f;
+
+	struct 
+	{
+		std::unique_ptr<Effect> attack;
+		std::unique_ptr<Effect> damage;
+	}effects;
 };

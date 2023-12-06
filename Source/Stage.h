@@ -83,10 +83,19 @@ private://members
 	std::map<Card::Type,std::unique_ptr<Model>> cardModel;
 	std::shared_ptr<Model> squareBorder;
 	std::shared_ptr<Model> squareArea;
+	std::shared_ptr<Model> rockModel;
+
+	struct 
+	{
+		DirectX::XMFLOAT3 pos;
+		DirectX::XMFLOAT3 rotate;
+		DirectX::XMFLOAT3 scale;
+	}rockDatas[(Common::SQUARE_NUM_X - 1) * 2 + (Common::SQUARE_NUM_Y - 1) * 2];
 
 	DirectX::XMFLOAT3 position{};
 	DirectX::XMFLOAT3 scale{};
 	DirectX::XMFLOAT4 rotate{};
 
 	std::uniform_int_distribution<unsigned int> random;
+	std::uniform_real_distribution<float> frand;
 };

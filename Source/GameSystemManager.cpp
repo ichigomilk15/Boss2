@@ -54,9 +54,9 @@ GameSystemManager::GameSystemManager()
     pouseBackGround.AddComponent(new RenderComponent("./Data/Sprite/pouse/back.png"));
     pouseBackGround.GetComponent<RenderComponent>()->SetColor(DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));
 
-    tutorialSprite.push_back(std::make_unique<Sprite>("./Data/Sprite/title_back.png"));//todo : チュートリアル画像差し替え
-    tutorialSprite.push_back(std::make_unique<Sprite>("./Data/Sprite/title_back.png"));
-    tutorialSprite.push_back(std::make_unique<Sprite>("./Data/Sprite/title_back.png"));
+    tutorialSprite.push_back(std::make_unique<Sprite>("./Data/Sprite/tutorial1.png"));
+    tutorialSprite.push_back(std::make_unique<Sprite>("./Data/Sprite/tutorial2.png"));
+    //tutorialSprite.push_back(std::make_unique<Sprite>("./Data/Sprite/title_back.png"));//todo : チュートリアル画像差し替え
 }
 
 void GameSystemManager::Update(float elapsedTime)
