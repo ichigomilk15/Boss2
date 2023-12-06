@@ -363,6 +363,7 @@ void EnemyBoss1::InitializeAttack(float elapsedTime) //ƒoƒ“ƒvUŒ‚
 			//todo: stunˆ—‚±‚±‚Åì¬
 			targetPos.x = std::clamp(targetPos.x, 0, abs((int)Common::SQUARE_NUM_X - size.x));
 			targetPos.y = std::clamp(targetPos.y, 0, abs((int)Common::SQUARE_NUM_Y - size.y));
+
 			bumpAttackDetail.stunTurn = 1;
 		}
 		//targetMovePos = targetPos;
@@ -410,10 +411,36 @@ State EnemyBoss1::AfterBumpAttack()
 	if (bumpAttackDetail.stunTurn > 0)
 	{
 		CameraController::Instance().ShakeCamera(1.25f, 8);
-		return State::Stunned_Init;
+		--bumpAttackDetail.stunDefence;
+		if (bumpAttackDetail.stunDefence > 0)
+		{
+			return State::Attack_Init;
+		}
+		else
+		{
+			InitStunDefence();
+			return State::Stunned_Init;
+		}
 	}
 	else
 	{
 		return State::Attack_Init;
+	}
+}
+
+void EnemyBoss1::InitStunDefence()
+{
+	float perc = (float)health / maxHealth * 100.0f;
+	if (perc >= 70.0f)
+	{
+		bumpAttackDetail.stunDefence = 1;
+	}
+	else if (perc >= 30.0f)
+	{
+		bumpAttackDetail.stunDefence = 2;
+	}
+	else
+	{
+		bumpAttackDetail.stunDefence = 3;
 	}
 }

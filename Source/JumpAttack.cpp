@@ -35,6 +35,11 @@ void JumpAttack::Update(float elapsedTime)
 				e.isAttacked = true;
 			}
 		}
+
+		if (!isCardAttacked)
+		{
+			AttackCard();
+		}
 	}
 
 	// õ–½ˆ—
