@@ -49,7 +49,6 @@ void Enemy::ResetStatus()
 {
 	Character::ResetStatus();
 	actNo = 0;
-	isActEnd = false;
 }
 
 bool Enemy::ChooseTargetMove(float elapsedTime)
@@ -159,7 +158,7 @@ void Enemy::InitializeAttack(float elapsedTime)
 	case CommonClass::DirectionFace::Back:
 		for (auto& pos : GetSquaresPositionX(position.y + size.y - 1))
 		{
-			for (auto& sq : Stage::Instance()->GetSquaresByDirection(pos.x, pos.y, attackRange, this->GetDirection()))
+			for (auto& sq : Stage::Instance()->GetSquaresByDirection(pos.x, pos.y, attackRange, CommonClass::DirectionFace::Back))
 			{
 				attackSq.emplace_back(sq);
 			}
@@ -168,7 +167,7 @@ void Enemy::InitializeAttack(float elapsedTime)
 	case CommonClass::DirectionFace::Front:
 		for (auto& pos : GetSquaresPositionX(position.y))
 		{
-			for (auto& sq : Stage::Instance()->GetSquaresByDirection(pos.x, pos.y, attackRange, this->GetDirection()))
+			for (auto& sq : Stage::Instance()->GetSquaresByDirection(pos.x, pos.y, attackRange, CommonClass::DirectionFace::Front))
 			{
 				attackSq.emplace_back(sq);
 			}
@@ -177,23 +176,21 @@ void Enemy::InitializeAttack(float elapsedTime)
 	case CommonClass::DirectionFace::Left:
 		for (auto& pos : GetSquaresPositionY(position.x))
 		{
-			for (auto& sq : Stage::Instance()->GetSquaresByDirection(pos.x, pos.y, attackRange, this->GetDirection()))
+			for (auto& sq : Stage::Instance()->GetSquaresByDirection(pos.x, pos.y, attackRange, CommonClass::DirectionFace::Left))
 			{
 				attackSq.emplace_back(sq);
 			}
 		}
 		break;
 	case CommonClass::DirectionFace::Right:
+	default:
 		for (auto& pos : GetSquaresPositionY(position.x + size.x - 1))
 		{
-			for (auto& sq : Stage::Instance()->GetSquaresByDirection(pos.x, pos.y, attackRange, this->GetDirection()))
+			for (auto& sq : Stage::Instance()->GetSquaresByDirection(pos.x, pos.y, attackRange, CommonClass::DirectionFace::Right))
 			{
 				attackSq.emplace_back(sq);
 			}
 		}
-		break;
-	default:
-		return;
 		break;
 	}
 	std::vector<DirectX::XMINT2> posVec;
@@ -228,7 +225,11 @@ State Enemy::ChooseAct(float elapsedTime)
 			cost = (cost > tempCost) ? tempCost : cost;
 		}
 	}
-	if (cost <= attackRange)
+	auto test = IsInTheSameRow(*player);
+	auto test2 = IsInTheSameColumn(*player);
+
+	if (cost <= attackRange &&
+		(IsInTheSameRow(*player) || IsInTheSameColumn(*player)))
 	{
 		InitializeAttack(elapsedTime);
 		return State::Attack_Init;

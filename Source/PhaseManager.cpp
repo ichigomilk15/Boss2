@@ -310,57 +310,57 @@ void PhaseManager::StageInit(const int level)
 {
 	switch (level)
 	{
-	//case 1:
-	//{
-	//	PlayerManager::Instance().GetFirstPlayer()->SetPositionWorld(Common::PlayerPosInit);
-	//	//enemyの配置
-	//	EnemyMinion1* enemy = new EnemyMinion1(PlayerManager::Instance().GetFirstPlayer());
-	//	EnemyManager::Instance().Register(enemy);
-	//	enemy->SetPositionWorld({ 1, 1 });
-	//	enemy->SetTargetMovePosition({ -1, -1 });
-	//	enemy->SetState(State::Idle_Init);
-	//	enemy->SetAttackRange(1);
-	//	enemy->SetHealth(30);
-	//	enemy->SetMaxHealth(30);
+	case 4:
+	{
+		PlayerManager::Instance().GetFirstPlayer()->SetPositionWorld(Common::PlayerPosInit);
+		//enemyの配置
+		EnemyMinion1* enemy = new EnemyMinion1(PlayerManager::Instance().GetFirstPlayer());
+		EnemyManager::Instance().Register(enemy);
+		enemy->SetPositionWorld({ 1, 1 });
+		enemy->SetTargetMovePosition({ -1, -1 });
+		enemy->SetState(State::Idle_Init);
+		enemy->SetAttackRange(1);
+		enemy->SetHealth(30);
+		enemy->SetMaxHealth(30);
+		enemy->SetDirection(CommonClass::DirectionFace::Left);
+		Stage::Instance()->GetSquare(0, 0)->SetCard(std::make_shared<Card>(DirectX::XMFLOAT2{ .0f,.0f }, CardManager::CARD_SIZE, Card::Type::SPECIAL));
+	}
+	break;
+	case 2:
+	{
+		//enemyの配置
+		EnemyMinion1* enemy = new EnemyMinion1(PlayerManager::Instance().GetFirstPlayer());
+		EnemyManager::Instance().Register(enemy);
+		enemy->SetPositionWorld({ 6, 6 });
+		enemy->SetTargetMovePosition({ -1, -1 });
+		enemy->SetState(State::Idle_Init);
+		enemy->SetAttackRange(1);
+		enemy->SetHealth(30);
+		enemy->SetMaxHealth(30);
+	}
+	break;
+	case 3:
+	{
+		//enemyの配置
+		EnemyMinion1* enemy = new EnemyMinion1(PlayerManager::Instance().GetFirstPlayer());
+		EnemyManager::Instance().Register(enemy);
+		enemy->SetPositionWorld({ 1, 1 });
+		enemy->SetTargetMovePosition({ -1, -1 });
+		enemy->SetState(State::Idle_Init);
+		enemy->SetAttackRange(1);
+		enemy->SetHealth(30);
+		enemy->SetMaxHealth(30);
 
-	//	Stage::Instance()->GetSquare(0, 0)->SetCard(std::make_shared<Card>(DirectX::XMFLOAT2{ .0f,.0f }, CardManager::CARD_SIZE, Card::Type::SPECIAL));
-	//}
-	//break;
-	//case 2:
-	//{
-	//	//enemyの配置
-	//	EnemyMinion1* enemy = new EnemyMinion1(PlayerManager::Instance().GetFirstPlayer());
-	//	EnemyManager::Instance().Register(enemy);
-	//	enemy->SetPositionWorld({ 6, 6 });
-	//	enemy->SetTargetMovePosition({ -1, -1 });
-	//	enemy->SetState(State::Idle_Init);
-	//	enemy->SetAttackRange(1);
-	//	enemy->SetHealth(30);
-	//	enemy->SetMaxHealth(30);
-	//}
-	//break;
-	//case 3:
-	//{
-	//	//enemyの配置
-	//	EnemyMinion1* enemy = new EnemyMinion1(PlayerManager::Instance().GetFirstPlayer());
-	//	EnemyManager::Instance().Register(enemy);
-	//	enemy->SetPositionWorld({ 1, 1 });
-	//	enemy->SetTargetMovePosition({ -1, -1 });
-	//	enemy->SetState(State::Idle_Init);
-	//	enemy->SetAttackRange(1);
-	//	enemy->SetHealth(30);
-	//	enemy->SetMaxHealth(30);
-
-	//	EnemyMinion1* enemy2 = new EnemyMinion1(PlayerManager::Instance().GetFirstPlayer());
-	//	EnemyManager::Instance().Register(enemy2);
-	//	enemy2->SetPositionWorld({ 6, 6 });
-	//	enemy2->SetTargetMovePosition({ -1, -1 });
-	//	enemy2->SetState(State::Idle_Init);
-	//	enemy2->SetAttackRange(2);
-	//	enemy2->SetHealth(40);
-	//	enemy2->SetMaxHealth(40);
-	//}
-	//	break;
+		EnemyMinion1* enemy2 = new EnemyMinion1(PlayerManager::Instance().GetFirstPlayer());
+		EnemyManager::Instance().Register(enemy2);
+		enemy2->SetPositionWorld({ 6, 6 });
+		enemy2->SetTargetMovePosition({ -1, -1 });
+		enemy2->SetState(State::Idle_Init);
+		enemy2->SetAttackRange(2);
+		enemy2->SetHealth(40);
+		enemy2->SetMaxHealth(40);
+	}
+		break;
 	case 1:
 	{
 		auto player = PlayerManager::Instance().GetFirstPlayer();
@@ -370,7 +370,7 @@ void PhaseManager::StageInit(const int level)
 		pos.x = (player->GetPosition().x > 4) ? 0 : 5;
 		pos.y = (player->GetPosition().y > 4) ? 0 : 5;
 		//boss1->SetPositionWorld(pos);
-		boss1->SetPositionWorld({3, 4});
+		boss1->SetPositionWorld({1, 1});
 		//boss1->SetPositionWorld({2, 6});
 		boss1->SetTargetMovePosition({ -1, -1 });
 		boss1->SetSize({ 2, 2 });

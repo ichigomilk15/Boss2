@@ -1,5 +1,6 @@
 #include "JumpAttack.h"
 #include "Stage.h"
+#include "CameraController.h"
 
 void JumpAttack::Update(float elapsedTime)
 {
@@ -29,6 +30,7 @@ void JumpAttack::Update(float elapsedTime)
 						e.targetChara->ApplyDamage(damageEdge);
 					}
 					e.targetChara->SetState(State::KnockedBack_Init);
+					CameraController::Instance().ShakeCamera(1.05f, 6);
 				}
 				e.isAttacked = true;
 			}

@@ -73,6 +73,9 @@ public:
 	bool IsTargetMovePosValid(const DirectX::XMINT2& targetPos);
 	bool IsTargetMoveAttackPosValid(const DirectX::XMINT2& targetPos);
 
+	bool IsInTheSameRow(const Character& target);
+	bool IsInTheSameColumn(const Character& target);
+
 	//回復
 	void Heal(const int hp);
 
@@ -81,9 +84,12 @@ public:
 	//キャラクターのサイズによって指定位置が上下かの判定
 	int GetWhichVerticalSide(const DirectX::XMINT2& pos);
 
+	void CancelChargeAttack();
+
 	//位置取得
 	const DirectX::XMFLOAT3& GetPositionWorld() const { return positionWorld; }
 	const DirectX::XMINT2& GetPosition() const { return position; }
+	const DirectX::XMINT2& GetTargetMovePosition() const { return targetMovePos; }
 
 	//位置設定
 	void SetPositionWorld(const DirectX::XMINT2& position);
@@ -212,6 +218,7 @@ protected:
 	//int attackAdjacentRange = 0;
 
 	AttackParent* attack = nullptr;
+	bool isAttackCharging = false; //1ターン以上かかる攻撃の準備の状態
 	int attackChargeTurn = 0;
 
 	bool isGround = true;
