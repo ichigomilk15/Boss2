@@ -314,6 +314,9 @@ const int Stage::IsAdjacent(const Character* chara1, const Character* chara2) co
 
 int Stage::GetTargetPosCost(const DirectX::XMINT2& posInit, const DirectX::XMINT2& posTarget)
 {
+	if (posInit.x == posTarget.x && posInit.y == posTarget.y)
+		return 0;
+
 	int cost = 1;
 
 	/*struct CheckSquare

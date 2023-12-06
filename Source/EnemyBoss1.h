@@ -25,17 +25,21 @@ private:
 	//バンプ攻撃後の処理
 	State AfterBumpAttack();
 
+	void InitStunDefence();
+
 private:
 	struct BumpAttackDetail
 	{
 		DirectX::XMINT2 targetChargingMovePos = { -1, -1 };
 		int attackPow = 0;
 		int stunTurn = -1;	//攻撃後壁にぶつかったらスタンターン量を決める
+		int stunDefence = 1;
 	} bumpAttackDetail;
 	struct JumpAttackDetail
 	{
 		DirectX::XMINT2 targetJumpMovePos = { -1, -1 };
-		int attackPow = 30;
+		int attackPowCenter = 25;
+		int attackPowEdge = 15;
 	} jumpAttackDetail;
 };
 

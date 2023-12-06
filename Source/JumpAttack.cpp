@@ -20,12 +20,25 @@ void JumpAttack::Update(float elapsedTime)
 			{
 				if (SetTargetCharaKnockedPos())
 				{
-					e.targetChara->ApplyDamage(damage);
+					int range = Stage::Instance()->GetTargetPosCost(e.targetChara->GetPosition(), centerAttackPos);
+					if (range == 0)
+					{
+						e.targetChara->ApplyDamage(damageCenter);
+					}
+					else
+					{
+						e.targetChara->ApplyDamage(damageEdge);
+					}
 					e.targetChara->SetState(State::KnockedBack_Init);
 					CameraController::Instance().ShakeCamera(1.05f, 6);
 				}
 				e.isAttacked = true;
 			}
+		}
+
+		if (!isCardAttacked)
+		{
+			AttackCard();
 		}
 	}
 

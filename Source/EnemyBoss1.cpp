@@ -363,6 +363,7 @@ void EnemyBoss1::InitializeAttack(float elapsedTime) //バンプ攻撃
 			//todo: stun処理ここで作成
 			targetPos.x = std::clamp(targetPos.x, 0, abs((int)Common::SQUARE_NUM_X - size.x));
 			targetPos.y = std::clamp(targetPos.y, 0, abs((int)Common::SQUARE_NUM_Y - size.y));
+
 			bumpAttackDetail.stunTurn = 1;
 		}
 		//targetMovePos = targetPos;
@@ -371,7 +372,8 @@ void EnemyBoss1::InitializeAttack(float elapsedTime) //バンプ攻撃
 	}
 	else //ジャンプ攻撃
 	{
-		jumpAttackDetail.attackPow = 30;
+		jumpAttackDetail.attackPowCenter = 25;
+		jumpAttackDetail.attackPowEdge = 15;
 		std::vector<DirectX::XMINT2> posVec;
 		targetPos = player->GetPosition();
 		if (!this->IsTargetMoveAttackPosValid(targetPos))
@@ -389,7 +391,8 @@ void EnemyBoss1::InitializeAttack(float elapsedTime) //バンプ攻撃
 			sq->SetType(Square::Type::AttackArea);
 			sq->SetDrawType(Square::DrawType::ChargeAttack);
 		}
-		attack = new JumpAttack(this, jumpAttackDetail.attackPow, TargetAttackEnum::Target_Player, posVec);
+		//attack = new JumpAttack(this, jumpAttackDetail.attackPow, TargetAttackEnum::Target_Player, posVec);
+		attack = new JumpAttack(this, jumpAttackDetail.attackPowCenter, jumpAttackDetail.attackPowEdge, TargetAttackEnum::Target_Player, player->GetPosition(), posVec);
 		jumpAttackDetail.targetJumpMovePos = targetPos;
 		return;
 	}
@@ -408,10 +411,36 @@ State EnemyBoss1::AfterBumpAttack()
 	if (bumpAttackDetail.stunTurn > 0)
 	{
 		CameraController::Instance().ShakeCamera(1.25f, 8);
-		return State::Stunned_Init;
+		--bumpAttackDetail.stunDefence;
+		if (bumpAttackDetail.stunDefence > 0)
+		{
+			return State::Attack_Init;
+		}
+		else
+		{
+			InitStunDefence();
+			return State::Stunned_Init;
+		}
 	}
 	else
 	{
 		return State::Attack_Init;
+	}
+}
+
+void EnemyBoss1::InitStunDefence()
+{
+	float perc = (float)health / maxHealth * 100.0f;
+	if (perc >= 70.0f)
+	{
+		bumpAttackDetail.stunDefence = 1;
+	}
+	else if (perc >= 30.0f)
+	{
+		bumpAttackDetail.stunDefence = 2;
+	}
+	else
+	{
+		bumpAttackDetail.stunDefence = 3;
 	}
 }

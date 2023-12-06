@@ -22,10 +22,14 @@ void BumpAttack::Update(float elapsedTime)
 				{
 					e.targetChara->ApplyDamage(damage);
 					e.targetChara->SetState(State::KnockedBack_Init);
-					CameraController::Instance().ShakeCamera(0.75f, 4);
+					CameraController::Instance().ShakeCamera(0.75f, 1);
 				}
 				e.isAttacked = true;
 			}
+		}
+		if (!isCardAttacked)
+		{
+			AttackCard();
 		}
 	}
 
