@@ -274,6 +274,12 @@
     <ClInclude Include="External\ilib\BetterFunction.h">
       <Filter>External\ilib</Filter>
     </ClInclude>
+    <ClInclude Include="Source\SceneClear.h">
+      <Filter>Source\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SceneGameOver.h">
+      <Filter>Source\Scenes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="External\imgui\imgui.cpp">
@@ -458,6 +464,12 @@
     </ClCompile>
     <ClCompile Include="Source\JumpAttack.cpp">
       <Filter>Source\Attacks</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\SceneClear.cpp">
+      <Filter>Source\Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\SceneGameOver.cpp">
+      <Filter>Source\Scenes</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

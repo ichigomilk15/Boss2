@@ -46,7 +46,7 @@ public://functions
     const bool IsMoving()const noexcept;
 
     const Type& GetType()const noexcept { return type; }
-    void SetType(const Type type)noexcept { this->type = type; }
+    void SetType(const Type type);
     const DirectX::XMFLOAT2& GetPosition()const noexcept { return pos; }
     void SetPosition(const DirectX::XMFLOAT2& pos)noexcept { targetPos = pos; }
     void SetRawPosition(const DirectX::XMFLOAT2& pos)noexcept { this->pos = pos; }//‘¦ŽžˆÚ“®‚·‚é‚Æ‚«ˆÈŠOŽg—p‚µ‚È‚¢‚Å‰º‚³‚¢

@@ -110,6 +110,7 @@ public://functions
 	void SetIsMoveable(const bool flag)noexcept { isMoveable = flag; }
 	const std::shared_ptr<Card> GetSetCards(int index) const noexcept { index %= SET_CARD_MAX; return SetCards[index]; }
 	void ResetPrevType()noexcept { PrevUseCardType = Card::Type::NONE; }
+	const unsigned int GetHaveSpecial()const noexcept { return haveSpecial; }
 #endif // 1
 	//Getter&Setter*********************************************************************************************
 

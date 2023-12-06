@@ -3,8 +3,12 @@
 #include "Input/Input.h"
 #include "SceneManager.h"
 #include "SceneTitle.h"
-
 #include "GameSystemManager.h"
+
+#ifdef _DEBUG
+#include "SceneClear.h"
+#include "SceneGameOver.h"
+#endif // _DEBUG
 
 GameSystemManager::GameSystemManager()
 {
@@ -63,6 +67,9 @@ void GameSystemManager::Update(float elapsedTime)
     {
         isPoused ^= true;
     }
+
+
+
 }
 
 void GameSystemManager::Render(ID3D11DeviceContext* dc)
@@ -97,6 +104,15 @@ void GameSystemManager::PousedOnlyUpdate(float elapsedTime)
     {
         this->isPoused = false;
     }
+
+
+    //debug
+#ifdef _DEBUG
+    if (mouse.GetPositionX() < .0f)
+        SceneManager::Instance().ChangeScene(new SceneClear);
+    if (mouse.GetPositionY() < .0f)
+        SceneManager::Instance().ChangeScene(new SceneGameOver);
+#endif // _DEBUG
 }
 
 void GameSystemManager::PousedOnlyRender(ID3D11DeviceContext* dc)

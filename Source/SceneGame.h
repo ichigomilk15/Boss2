@@ -9,6 +9,25 @@
 
 //void DrawDebugGUI(Player* player, CameraController* cameraController);
 
+class SaveData
+{
+public:
+	SaveData& Instance() { static SaveData instance; return instance; }
+private:
+	SaveData() = default;
+	~SaveData() = default;
+
+public:
+	const bool Save();
+	const bool ReSet();
+	const bool Load();
+
+public:
+	int StageLevel = 0;
+	int playerHp = -1;
+	int PhaseTurn = -1;
+};
+
 // ƒQ[ƒ€ƒV[ƒ“
 class SceneGame : public Scene
 {

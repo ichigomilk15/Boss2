@@ -87,9 +87,9 @@ void SceneGame::Finalize()
 // 更新処理
 void SceneGame::Update(float elapsedTime)
 {
-#if _DEBUG
 	//カメラコントローラー更新処理
 	cameraController->Update(elapsedTime);
+#if _DEBUG
 	GamePad& gamePad = Input::Instance().GetGamePad();
 	if (gamePad.GetButtonDown() & gamePad.BTN_A)
 	{
@@ -106,6 +106,7 @@ void SceneGame::Update(float elapsedTime)
 		e->AddImpulse({ 0.0f, -1.8f, 0.0f });
 	}
 #endif // _DEBUG
+	//ポーズ時の処理
 	if (GameSystemManager::Instance().GetIsPoused())
 	{
 		GameSystemManager::Instance().Update(elapsedTime);
@@ -183,9 +184,6 @@ void SceneGame::Render()
 
 	//2D表示
 	{
-
-
-		//PlayerManager::Instance().GetFirstPlayer()->Render2D(rc, dc);
 
 		CardManager::Instance().Render(dc);
 		PhaseManager::Instance().Render(dc);
@@ -306,4 +304,42 @@ void SceneGame::SetGlobalDirection()
 	CommonClass::directionMaps.insert({ (int)CommonClass::DirectionFace::BackLeft, DirectX::XMFLOAT3(0.0f, DirectX::XMConvertToRadians(225), 0.0f) });
 	CommonClass::directionMaps.insert({ (int)CommonClass::DirectionFace::Left, DirectX::XMFLOAT3(0.0f, DirectX::XMConvertToRadians(270), 0.0f) });
 	CommonClass::directionMaps.insert({ (int)CommonClass::DirectionFace::FrontLeft, DirectX::XMFLOAT3(0.0f, DirectX::XMConvertToRadians(315), 0.0f) });
+}
+
+//********************************************************************************************************
+// SaveData Class
+//********************************************************************************************************
+
+const bool SaveData::Save()
+{
+	bool ok = false;
+
+	this->StageLevel = Stage::Instance()->GetStageLevel();
+	this->PhaseTurn = PhaseManager::Instance().GetTrunCount();
+	if (auto player = PlayerManager::Instance().GetFirstPlayer())
+	{
+		playerHp = player->GetHealth();
+		ok = true;
+	}
+	else playerHp = -1;
+
+
+	return ok;
+}
+
+const bool SaveData::ReSet()
+{
+	bool ok;
+	ok = true;
+
+	this->StageLevel = 0;
+	this->PhaseTurn = 0;
+	this->playerHp = -1;
+	return ok;
+}
+
+const bool SaveData::Load()
+{
+
+	return false;
 }

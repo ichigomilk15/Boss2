@@ -105,3 +105,9 @@ const bool Card::IsMoving() const noexcept
 {
     return (pos.x != targetPos.x || pos.y != targetPos.y);
 }
+
+void Card::SetType(const Type type)
+{
+    this->type = type;
+    this->sprite = std::make_unique<Sprite>(spriteName[static_cast<int>(type)]);
+}
