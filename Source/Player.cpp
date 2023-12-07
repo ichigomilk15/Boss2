@@ -53,11 +53,6 @@ Player::~Player()
 
 void Player::Update(float elapsedTime)
 {
-	if (playerDeadTime > 0.0f)
-	{
-		playerDeadTime -= elapsedTime;
-		pivotAdjustPosWorld.y -= 0.01f;
-	}
 	//ステート更新処理
 	UpdateState(elapsedTime);
 

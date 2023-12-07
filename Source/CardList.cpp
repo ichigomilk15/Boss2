@@ -17,7 +17,6 @@ CardManager::CardManager() :
 	HandsCardSprite("./Data/Sprite/HandsBackGround.png"),
 	cardInfoBack("./Data/Sprite/card_info_back.png")
 {
-
 	SetCardSprites[0] = std::make_unique<Sprite>("./Data/Sprite/SetCardBack.png");
 	SetCardSprites[1] = std::make_unique<Sprite>("./Data/Sprite/SetCardFront.png");
 
@@ -454,12 +453,10 @@ void CardManager::Render(ID3D11DeviceContext* dc)
 				dc, renderpos, renderSize, .0f, color);
 	}
 
-	//renderpos = { ScreenSize.x * 0.1f, ScreenSize.y * 0.2f };
-	//renderpos = { testdatas[1]};
-	renderpos = { 85.f,50.f };//todo ichigomilk: screensizeに合わせるように
-	//renderSize = { ScreenSize.x * 0.2f, ScreenSize.y * 0.8f };
-	//renderSize = { testdatas[0] };
-	renderSize = { 185.f,590.f };//todo ihigomilk: screensizeに合わせるように
+	renderpos = { ScreenSize.x*0.076f,ScreenSize.y*0.075f };//todo ichigomilk: screensizeに合わせるように
+	//renderpos = { ScreenSize.x*testdatas[0].x,ScreenSize.y*testdatas[0].y };//todo ichigomilk: screensizeに合わせるように
+	renderSize = { ScreenSize.x*0.141f,ScreenSize.y*0.828f};//todo ihigomilk: screensizeに合わせるように
+	//renderSize = { ScreenSize.x*testdatas[1].x,ScreenSize.y*testdatas[1].y};//todo ihigomilk: screensizeに合わせるように
 
 	//セットカードの描画裏側
 	SetCardSprites[0]->Render(dc, renderpos, renderSize, .0f, color);
@@ -518,8 +515,8 @@ void CardManager::DrawDebugGUI()
 			AddCardReserved(std::make_shared<Card>(DirectX::XMFLOAT2{ .0f,.0f }, CARD_SIZE, Card::Type::DEBUFF));
 		}
 
-		if (ImGui::SliderFloat2("renderpos", &testdatas[1].x, .0f, 500.0f)) {};
-		if (ImGui::SliderFloat2("rendersize", &testdatas[0].x, .0f, 1000.0f)) {};
+		if (ImGui::SliderFloat2("renderpos", &testdatas[0].x, .0f,1.0f)) {};
+		if (ImGui::SliderFloat2("rendersize", &testdatas[1].x, .0f, 1.0f)) {};
 	}
 	ImGui::End();
 }

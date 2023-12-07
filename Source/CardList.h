@@ -132,9 +132,9 @@ private://functions
 public://static memberes
 	static constexpr unsigned int CARD_MAX = 5u;
 	static constexpr unsigned int SPECIAL_CARD_MAX = 1u;
-	static constexpr DirectX::XMFLOAT2 CARD_SIZE = DirectX::XMFLOAT2{ 90.0f,140.0f };
+	static constexpr DirectX::XMFLOAT2 CARD_SIZE = DirectX::XMFLOAT2{ 90.0f*1.7f,140.0f*1.5f };//todo : スクリーンサイズを参照すること
 	static constexpr DirectX::XMFLOAT2 CARD_SPAWM_POS = DirectX::XMFLOAT2{ .0f,.0f };
-	static constexpr float CARD_DISTANCE = 20.0f;
+	static constexpr float CARD_DISTANCE = 20.0f * 1.5f;
 	static constexpr unsigned int SET_CARD_MAX = 3u;
 
 private://members
