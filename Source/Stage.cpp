@@ -444,8 +444,7 @@ void Stage::ReFleshCard()
 			}
 			else
 			{
-				//todo : カード位置変更
-				square->SetCard(std::make_shared<Card>(DirectX::XMFLOAT2{ .0f,.0f, }, CardManager::CARD_SIZE, Card::Type::SPECIAL));
+				square->SetCard(std::make_shared<Card>(CardManager::Instance().GetCardSpawnPos(), CardManager::CARD_SIZE, Card::Type::SPECIAL));
 			}
 
 		}

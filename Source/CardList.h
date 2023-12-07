@@ -4,6 +4,7 @@
 #include <stack>
 #include <map>
 #include "Audio\AudioSource.h"
+#include "UI.h"
 #include "Card.h"
 #include "Character.h"
 
@@ -117,6 +118,8 @@ public://functions
 	const std::shared_ptr<Card> GetSetCards(int index) const noexcept { index %= SET_CARD_MAX; return SetCards[index]; }
 	void ResetPrevType()noexcept { PrevUseCardType = Card::Type::NONE; }
 	const unsigned int GetHaveSpecial()const noexcept { return haveSpecial; }
+
+	const DirectX::XMFLOAT2& GetCardSpawnPos()const noexcept { return cardStack.GetHitBox().GetLeftTop(); }
 #endif // 1
 	//Getter&Setter*********************************************************************************************
 
@@ -133,7 +136,6 @@ public://static memberes
 	static constexpr unsigned int CARD_MAX = 5u;
 	static constexpr unsigned int SPECIAL_CARD_MAX = 1u;
 	static constexpr DirectX::XMFLOAT2 CARD_SIZE = DirectX::XMFLOAT2{ 90.0f*1.7f,140.0f*1.5f };//todo : スクリーンサイズを参照すること
-	static constexpr DirectX::XMFLOAT2 CARD_SPAWM_POS = DirectX::XMFLOAT2{ .0f,.0f };
 	static constexpr float CARD_DISTANCE = 20.0f * 1.5f;
 	static constexpr unsigned int SET_CARD_MAX = 3u;
 
@@ -156,4 +158,5 @@ private://members
 	std::unique_ptr<Sprite> SetCardSprites[2];
 	DirectX::XMFLOAT2 testdatas[2];
 
+	UI cardStack;
 };

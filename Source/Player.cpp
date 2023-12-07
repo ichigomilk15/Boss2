@@ -604,11 +604,11 @@ void Player::GetCard(Card* getCard)
 	switch (getCard->GetType())
 	{
 	case Card::Type::SPECIAL:
-		CardManager::Instance().AddCardFront(std::make_shared<Card>(DirectX::XMFLOAT2{ .0f,.0f }, CardManager::CARD_SIZE, getCard->GetType()));
+		CardManager::Instance().AddCardFront(std::make_shared<Card>(CardManager::Instance().GetCardSpawnPos(), CardManager::CARD_SIZE, getCard->GetType()));
 		playerSes.buff.get()->Play(false);
 		break;
 	case Card::Type::DEBUFF:
-		CardManager::Instance().AddCardReserved(std::make_shared<Card>(DirectX::XMFLOAT2{ .0f,.0f }, CardManager::CARD_SIZE, Card::Type::DEBUFF));
+		CardManager::Instance().AddCardReserved(std::make_shared<Card>(CardManager::Instance().GetCardSpawnPos(), CardManager::CARD_SIZE, Card::Type::DEBUFF));
 		break;
 	}
 }

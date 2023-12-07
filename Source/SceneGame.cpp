@@ -204,7 +204,7 @@ void SceneGame::Render()
 		//‘Ì—Íƒo[•`‰æ
 		{
 			Player* pl = PlayerManager::Instance().GetFirstPlayer();
-			pl->Render2D(dc, HitBox2D::CreateBoxFromTopLeft(DirectX::XMFLOAT2{ .0f,.0f, }, DirectX::XMFLOAT2{ 200.0f,50.0f }));
+			pl->Render2D(dc, HitBox2D::CreateBoxFromTopLeft(DirectX::XMFLOAT2{ .0f,.0f, }, DirectX::XMFLOAT2{ ScreenSize.x*0.2f,ScreenSize.y*0.1f }));
 
 			EnemyManager::Instance().Render2D(dc);
 		}
