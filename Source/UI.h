@@ -89,8 +89,6 @@ private://members
 // Components
 //**********************************************************************************************
 
-
-
 class RenderComponent : public Component
 {
 public://constractor

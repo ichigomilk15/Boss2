@@ -178,8 +178,9 @@ void GameSystemManager::TutorialOnlyUpdate(float elapsedTime)
 void GameSystemManager::TutorialOnlyRender(ID3D11DeviceContext* dc)
 {
     const DirectX::XMFLOAT2 ScreenSize = Graphics::Instance().GetScreenSize();
-    const DirectX::XMFLOAT2 size = {ScreenSize.x*0.9f,ScreenSize.y*0.9f};
-    tutorialSprite.at(tutrialIndex)->Render(dc, { ScreenSize.x * 0.05f,ScreenSize.y * 0.05f }, size, .0f, { 1.0f,1.0f,1.0f,1.0f });
+    const DirectX::XMFLOAT2 size = {ScreenSize.x,ScreenSize.y};
+    HitBox2D box = HitBox2D::CreateBoxFromCenter({ ScreenSize.x * 0.5f,ScreenSize.y * 0.5f }, { ScreenSize.x,ScreenSize.y });
+    tutorialSprite.at(tutrialIndex)->Render(dc, box.GetLeftTop(), box.GetBoxSize(), .0f, { 1.0f,1.0f,1.0f,1.0f });
 }
 
 
