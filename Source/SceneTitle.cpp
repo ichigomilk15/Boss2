@@ -20,6 +20,7 @@ void SceneTitle::Initialize()
 
 	// BGM再生
 	gameOverSe->Play(true);
+	mask = new Sprite("Data/Sprite/title_back.png");
 }
 
 void SceneTitle::Finalize()
@@ -40,6 +41,11 @@ void SceneTitle::Finalize()
 		delete pressClick;
 		pressClick = nullptr;
 	}
+	if (mask != nullptr)
+	{
+		delete mask;
+		mask = nullptr;
+	}
 	gameOverSe->Stop();
 }
 
@@ -54,12 +60,26 @@ void SceneTitle::Update(float elapsedTime)
 		Graphics::Instance().Quit();
 	}
 
-	//なにかボタンを押したらローディングシーンを挟んでゲームシーン切り替え
-	if (mouse.GetButtonDown()&Mouse::BTN_LEFT)
+	if (timer <= .0f)
 	{
-		//SceneManager::Instance().ChangeScene(new SceneGame());
-		SaveData::Instance().ReSet();
-		SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame()));
+
+
+		//なにかボタンを押したらローディングシーンを挟んでゲームシーン切り替え
+		if (mouse.GetButtonDown() & Mouse::BTN_LEFT)
+		{
+
+			startTimer = timer = 2.0f;
+			SaveData::Instance().ReSet();
+		}
+	}
+
+	if (timer > .0f)
+	{
+		timer -= elapsedTime;
+		if (timer < .0f)
+		{
+			SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame()));
+		}
 	}
 }
 
@@ -89,16 +109,25 @@ void SceneTitle::Render()
 			0,
 			1, 1, 1, 1);
 
-		HitBox2D box = HitBox2D::CreateBoxFromCenter({ screenWidth * 0.7f,screenHeight * 0.3f }, { screenWidth * 0.6f,screenHeight * 0.6f });
+		//HitBox2D box = HitBox2D::CreateBoxFromCenter({ screenWidth * 0.7f,screenHeight * 0.3f }, { screenWidth * 0.6f,screenHeight * 0.6f });
 		title->Render(dc,
-			screenWidth*0.3f,screenHeight*.0f,
-			screenWidth*0.6f,screenHeight*0.6f,
-			.0f,.0f,
-			title->GetTextureWidthf(),title->GetTextureHeightf(),
+			screenWidth*0.3f,screenHeight*.0f,screenWidth*0.6f,screenHeight*0.6f,
+			.0f,.0f,title->GetTextureWidthf(),title->GetTextureHeightf(),
 			.0f,
 			1.0f,1.0f,1.0f,1.0f);
 
-		box = HitBox2D::CreateBoxFromCenter({ screenWidth * 0.5f,screenHeight * 0.9f }, { screenWidth * 0.5f,screenHeight * 0.1f });
+		HitBox2D box = HitBox2D::CreateBoxFromCenter({ screenWidth * 0.5f,screenHeight * 0.9f }, { screenWidth * 0.5f,screenHeight * 0.1f });
 		pressClick->Render(dc, box.GetLeftTop(), box.GetBoxSize(), .0f, DirectX::XMFLOAT4{ 1.0f,1.0f,1.0f,1.0f });
+
+		if (timer!=.0f)
+		{
+
+			mask->Render(dc,
+				.0f, .0f, screenWidth, screenHeight,
+				.0f, .0f, mask->GetTextureWidthf(), mask->GetTextureHeightf(),
+				.0f,
+				1.0f, 1.0f, 1.0f,(startTimer- timer)/startTimer
+			);
+		}
 	}
 }

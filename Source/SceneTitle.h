@@ -26,4 +26,8 @@ private:
 	Sprite* back = nullptr;
 	Sprite* title = nullptr;
 	Sprite* pressClick = nullptr;
+	Sprite* mask = nullptr;
+
+	float startTimer;
+	float timer;
 };

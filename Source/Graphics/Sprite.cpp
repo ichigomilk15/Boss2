@@ -345,6 +345,7 @@ DirectX::XMFLOAT2 Sprite::Render(ID3D11DeviceContext *immediate_context,
 		immediate_context->RSSetState(rasterizerState.Get());
 		const float blend_factor[4] = { 1.0f,1.0f ,1.0f ,1.0f };
 		immediate_context->OMSetBlendState(blendState.Get(), blend_factor, 0xFFFFFFFF);
+		immediate_context->OMSetDepthStencilState(depthStencilState.Get(), 0);
 
 		immediate_context->VSSetShader(vertexShader.Get(), nullptr, 0);
 		immediate_context->PSSetShader(pixelShader.Get(), nullptr, 0);

@@ -3,13 +3,15 @@
 
 #include "Graphics/Graphics.h"
 #include "Input/Input.h"
-#include "SceneGame.h"
 #include "Framework.h"
 #include "EffectManager.h"
 #include "SceneManager.h"
 #include "SceneTitle.h"
+#include "SceneLoading.h"
 
-//static SceneGame sceneGame;
+#ifdef _DEBUG
+#include "SceneGame.h"
+#endif // _DEBUG
 
 // êÇíºìØä˙ä‘äuê›íË
 static const int syncInterval = 1;
@@ -29,7 +31,7 @@ Framework::Framework(HWND hWnd)
 	SceneManager::Instance().ChangeScene(new SceneTitle);
 	//SceneManager::Instance().ChangeScene(new SceneGame);
 #else
-	SceneManager::Instance().ChangeScene(new SceneTitle);
+	SceneManager::Instance().ChangeScene((new SceneTitle));
 #endif
 }
 
