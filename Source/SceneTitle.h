@@ -23,7 +23,7 @@ public:
 	void Render() override;
 
 private:
-	Sprite* sprite = nullptr;
-	std::unique_ptr<Sprite> title;
-	std::unique_ptr<Sprite> pressClick;
+	Sprite* back = nullptr;
+	Sprite* title = nullptr;
+	Sprite* pressClick = nullptr;
 };

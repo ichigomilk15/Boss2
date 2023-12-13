@@ -507,8 +507,13 @@ void Player::SetShieldAction()
 	{
 		int moveRange = Stage::Instance()->GetTargetPosCost(position, turnPosInit);
 		shieldGet += moveRange;
-		ShowDamageNumber(shieldGet, { 0.0f, 1.0f, 1.0f, 1.0f });
 	}
+	if(defenceDetail->getShield)
+		ShowDamageNumber(shieldGet, { 0.0f, 1.0f, 1.0f, 1.0f });
+	if (defenceDetail->GetBlock)
+		ShowDamageNumber(defenceDetail->GetBlock, { .5f,.5f,1.0f,1.0f });
+	//if (defenceDetail->heal)
+	//	ShowDamageNumber(defenceDetail->heal, { .5f,1.0f,0.5f,1.0f });
 	shield += shieldGet;
 }
 
@@ -604,11 +609,11 @@ void Player::GetCard(Card* getCard)
 	switch (getCard->GetType())
 	{
 	case Card::Type::SPECIAL:
-		CardManager::Instance().AddCardFront(std::make_shared<Card>(DirectX::XMFLOAT2{ .0f,.0f }, CardManager::CARD_SIZE, getCard->GetType()));
+		CardManager::Instance().AddCardFront(std::make_shared<Card>(CardManager::Instance().GetCardSpawnPos(), CardManager::CARD_SIZE, getCard->GetType()));
 		playerSes.buff.get()->Play(false);
 		break;
 	case Card::Type::DEBUFF:
-		CardManager::Instance().AddCardReserved(std::make_shared<Card>(DirectX::XMFLOAT2{ .0f,.0f }, CardManager::CARD_SIZE, Card::Type::DEBUFF));
+		CardManager::Instance().AddCardReserved(std::make_shared<Card>(CardManager::Instance().GetCardSpawnPos(), CardManager::CARD_SIZE, Card::Type::DEBUFF));
 		break;
 	}
 }

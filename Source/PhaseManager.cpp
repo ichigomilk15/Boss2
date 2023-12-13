@@ -23,7 +23,7 @@
 PhaseManager::PhaseManager()
 {
 	const DirectX::XMFLOAT2& screenSize = Graphics::Instance().GetScreenSize();
-	okButtonCollision = HitBox2D(DirectX::XMFLOAT2(screenSize.x * 0.8f, screenSize.y * 0.85f),
+	okButtonCollision = HitBox2D(DirectX::XMFLOAT2(screenSize.x * 0.1f, screenSize.y * 0.87f),
 		DirectX::XMFLOAT2(screenSize.x * 0.1f, screenSize.y * 0.1f));
 	okButton = std::make_unique<Sprite>("./Data/Sprite/OK.png");
 	phaseTimer = NEXT_PHASE_WAIT_TIMER;
@@ -379,7 +379,7 @@ void PhaseManager::StageInit(const int level)
 	//	enemy->SetHealth(30);
 	//	enemy->SetMaxHealth(30);
 	//	enemy->SetDirection(CommonClass::DirectionFace::Left);
-	//	Stage::Instance()->GetSquare(0, 0)->SetCard(std::make_shared<Card>(DirectX::XMFLOAT2{ .0f,.0f }, CardManager::CARD_SIZE, Card::Type::SPECIAL));
+	//	Stage::Instance()->GetSquare(0, 0)->SetCard(std::make_shared<Card>(CardManager::Instance().GetCardSpwnPos(), CardManager::CARD_SIZE, Card::Type::SPECIAL));
 	//}
 	//break;
 	case 1:

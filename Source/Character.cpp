@@ -367,6 +367,7 @@ void Character::Render2D(ID3D11DeviceContext* dc, const HitBox2D& box)
 	hpBar[0]->Render(dc, HpBarPos, HPBarSize, .0f, { 1.0f,1.0f,1.0f,1.0f });
 	for (size_t i = 1; i < std::size(hpBar); i++)
 	{
+		if (HpParsent[i] <= .0f)continue;
 		const DirectX::XMFLOAT2 sub = { hpBar[0]->GetTextureSize() - hpBar[1]->GetTextureSize() };
 		const DirectX::XMFLOAT2 pos = { HpBarPos + ((sub * 0.5f) * zoomScale) };
 		const DirectX::XMFLOAT2 size = { (HPBarSize.x * scale.x) * HpParsent[i],(HPBarSize.y * scale.y) };

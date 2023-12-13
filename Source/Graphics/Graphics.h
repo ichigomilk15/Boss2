@@ -52,8 +52,10 @@ public:
 	// ラインレンダラ取得
 	LineRenderer* GetLineRenderer() const { return lineRenderer.get(); }
 
+#ifdef _DEBUG
 	// ImGuiレンダラ取得
 	ImGuiRenderer* GetImGuiRenderer() const { return imguiRenderer.get(); }
+#endif // _DEBUG
 
 	//ミューテックス取得
 	std::mutex& GetMutex() { return mutex; }
@@ -79,7 +81,9 @@ private:
 	std::unique_ptr<Shader>							shader;
 	std::unique_ptr<DebugRenderer>					debugRenderer;
 	std::unique_ptr<LineRenderer>					lineRenderer;
+#ifdef _DEBUG
 	std::unique_ptr<ImGuiRenderer>					imguiRenderer;
+#endif // _DEBUG
 
 	float	screenWidth;
 	float	screenHeight;

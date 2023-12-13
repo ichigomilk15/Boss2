@@ -17,6 +17,14 @@ CardManager::CardManager() :
 	HandsCardSprite("./Data/Sprite/HandsBackGround.png"),
 	cardInfoBack("./Data/Sprite/card_info_back.png")
 {
+
+	const DirectX::XMFLOAT2 ScreenSize = Graphics::Instance().GetScreenSize();
+
+	//山札設定
+	cardStack.SetHitBox(HitBox2D::CreateBoxFromTopLeft({ ScreenSize.x * 0.9f,ScreenSize.y - CARD_SIZE.y }, CARD_SIZE));
+	cardStack.AddComponent(new RenderComponent("./Data/Sprite/Back.png"));
+
+
 	SetCardSprites[0] = std::make_unique<Sprite>("./Data/Sprite/SetCardBack.png");
 	SetCardSprites[1] = std::make_unique<Sprite>("./Data/Sprite/SetCardFront.png");
 
@@ -453,9 +461,9 @@ void CardManager::Render(ID3D11DeviceContext* dc)
 				dc, renderpos, renderSize, .0f, color);
 	}
 
-	renderpos = { ScreenSize.x*0.076f,ScreenSize.y*0.075f };//todo ichigomilk: screensizeに合わせるように
+	renderpos = { ScreenSize.x*0.076f,ScreenSize.y*0.075f };
 	//renderpos = { ScreenSize.x*testdatas[0].x,ScreenSize.y*testdatas[0].y };//todo ichigomilk: screensizeに合わせるように
-	renderSize = { ScreenSize.x*0.141f,ScreenSize.y*0.828f};//todo ihigomilk: screensizeに合わせるように
+	renderSize = { ScreenSize.x*0.141f,ScreenSize.y*0.828f};
 	//renderSize = { ScreenSize.x*testdatas[1].x,ScreenSize.y*testdatas[1].y};//todo ihigomilk: screensizeに合わせるように
 
 	//セットカードの描画裏側
@@ -475,6 +483,7 @@ void CardManager::Render(ID3D11DeviceContext* dc)
 	//セットカードの描画表側
 	SetCardSprites[1]->Render(dc, renderpos, renderSize, .0f, color);
 
+	cardStack.Render<RenderComponent>(dc);
 
 }
 
@@ -508,11 +517,11 @@ void CardManager::DrawDebugGUI()
 		}
 		if (ImGui::Button("DrawSpecial"))
 		{
-			AddCardFront(std::make_shared<Card>(DirectX::XMFLOAT2{ .0f,.0f }, CARD_SIZE, Card::Type::SPECIAL));
+			AddCardFront(std::make_shared<Card>(CardManager::Instance().GetCardSpawnPos(), CARD_SIZE, Card::Type::SPECIAL));
 		}
 		if (ImGui::Button("GetDebuff"))
 		{
-			AddCardReserved(std::make_shared<Card>(DirectX::XMFLOAT2{ .0f,.0f }, CARD_SIZE, Card::Type::DEBUFF));
+			AddCardReserved(std::make_shared<Card>(CardManager::Instance().GetCardSpawnPos(), CARD_SIZE, Card::Type::DEBUFF));
 		}
 
 		if (ImGui::SliderFloat2("renderpos", &testdatas[0].x, .0f,1.0f)) {};
@@ -547,10 +556,10 @@ std::shared_ptr<Card> CardManager::DrawCard(const std::pair<Card::Type, unsigned
 	for (size_t i = 0; i < pairSize; i++)
 	{
 		result -= pair[i].second;
-		if (result <= 0)return std::make_shared<Card>(CARD_SPAWM_POS, CARD_SIZE, pair[i].first);
+		if (result <= 0)return std::make_shared<Card>(CardManager::Instance().GetCardSpawnPos(), CARD_SIZE, pair[i].first);
 	}
 
-	return std::make_shared<Card>(CARD_SPAWM_POS, CARD_SIZE, pair[pairSize - 1].first);
+	return std::make_shared<Card>(CardManager::Instance().GetCardSpawnPos(), CARD_SIZE, pair[pairSize - 1].first);
 }
 
 void CardManager::AddCard(std::shared_ptr<Card>& card)
@@ -696,7 +705,7 @@ void CardManager::Replenish()
 			//移動が1枚もなかったら
 			if (cards.size() == (max-1)&&moveNum<1)
 			{
-				std::shared_ptr<Card> draw = std::make_shared<Card>(DirectX::XMFLOAT2{ .0f,.0f }, CardManager::CARD_SIZE, Card::Type::MOVE);
+				std::shared_ptr<Card> draw = std::make_shared<Card>(CardManager::Instance().GetCardSpawnPos(), CardManager::CARD_SIZE, Card::Type::MOVE);
 				AddCard(draw);
 			}
 			else
