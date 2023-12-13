@@ -37,6 +37,9 @@ private:
 	//オーディオの初期化
 	void InitializeAudio();
 
+	void MakeHalfTransparent() override;
+	void MakeFullTransparent() override;
+
 private:
 	struct BumpAttackDetail
 	{

@@ -3,6 +3,8 @@
 #include "Stage.h"
 #include "AttackManager.h"
 #include "NormalAttack.h"
+#include "Player.h"
+#include "PhaseManager.h"
 
 void Enemy::Update(float elapsedTime)
 {
@@ -27,6 +29,15 @@ void Enemy::Update(float elapsedTime)
 
 void Enemy::Render(ID3D11DeviceContext* dc, Shader* shader)
 {
+	//上2マスにプレイヤーがいたら半透明化にする
+	if (IsConcealPlayer())
+	{
+		MakeHalfTransparent();
+	}
+	else
+	{
+		MakeFullTransparent();
+	}
 	shader->Draw(dc, model.get());
 }
 
@@ -248,4 +259,41 @@ State Enemy::ChooseAct(float elapsedTime)
 	}*/
 
 	return State::Move_Init;
+}
+
+void Enemy::MakeHalfTransparent()
+{
+	model->ChangeMaterialColor(0, { 1.0f, 1.0f, 1.0f, 0.5f });
+}
+void Enemy::MakeFullTransparent()
+{
+	model->ChangeMaterialColor(0, { 1.0f, 1.0f, 1.0f, 1.0f });
+}
+
+bool Enemy::IsConcealPlayer()
+{
+	if (enemyType != ENEMY_TYPE::BOSS1) return false;
+
+	for (auto& sq : GetSquaresPositionX(GetPosition().y))
+	{
+		//上1マスにプレイヤーがいた判定
+		if (Stage::Instance()->IsInArea(sq.x, sq.y - 1))
+		{
+			auto chara = Stage::Instance()->GetSquare(sq.x, sq.y - 1)->GetCharacter();
+			if (chara && PhaseManager::Instance().GetFhase() <= PhaseManager::Phase::Phase_PlayerAct)
+			{
+				return true;
+			}
+		}
+		//上2マスにプレイヤーがいた判定
+		if (Stage::Instance()->IsInArea(sq.x, sq.y - 2))
+		{
+			auto chara = Stage::Instance()->GetSquare(sq.x, sq.y - 2)->GetCharacter();
+			if (chara && PhaseManager::Instance().GetFhase() <= PhaseManager::Phase::Phase_PlayerAct)
+			{
+				return true;
+			}
+		}
+	}
+	return false;
 }
