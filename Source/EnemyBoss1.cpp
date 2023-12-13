@@ -107,7 +107,7 @@ void EnemyBoss1::UpdateState(float elapsedTime)
 		break;
 
 	case State::AttackCharge_Init:
-		this->model->PlayAnimation(ANIMATION_BOSS::BossDrop, true);
+		this->model->PlayAnimation(ANIMATION_BOSS::BossIdle, true);
 		Stage::Instance()->ResetAllSquare();
 		--attackChargeTurn;
 		state = State::AttackCharge;
