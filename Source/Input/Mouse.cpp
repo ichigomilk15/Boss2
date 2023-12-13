@@ -24,13 +24,14 @@ void Mouse::Update()
 	// スイッチ情報
 	MouseButton newButtonState = 0;
 
-	for (int i = 0; i < ARRAYSIZE(KeyMap); ++i)
-	{
-		if (::GetAsyncKeyState(KeyMap[i]) & 0x8000)
+	if(Graphics::Instance().GetHWnd()== GetFocus())
+		for (int i = 0; i < ARRAYSIZE(KeyMap); ++i)
 		{
-			newButtonState |= (1 << i);
+			if (::GetAsyncKeyState(KeyMap[i]) & 0x8000)
+			{
+				newButtonState |= (1 << i);
+			}
 		}
-	}
 
 	// ホイール
 	wheel[1] = wheel[0];

@@ -1,5 +1,7 @@
+#include <memory>
+
 #include "Input\Input.h"
-#include <Graphics\Graphics.h>
+#include "Graphics\Graphics.h"
 #include "SceneTitle.h"
 #include "SceneGame.h"
 #include "SceneManager.h"
@@ -10,9 +12,9 @@
 void SceneTitle::Initialize()
 {
 	//スプライト初期化
-	sprite = new Sprite("Data/Sprite/title_back.png");
-	title = std::make_unique<Sprite>("./Data/Sprite/SceneBack/title.png");
-	pressClick = std::make_unique<Sprite>("./Data/Sprite/SceneBack/press_click.png");
+	back = new Sprite("Data/Sprite/title_back.png");
+	title =  new Sprite("./Data/Sprite/SceneBack/title.png");
+	pressClick = new Sprite("./Data/Sprite/SceneBack/press_click.png");
 
 	AudioLoader::Load(AUDIO::BGM_GAMEOVER, gameOverSe);
 
@@ -23,10 +25,20 @@ void SceneTitle::Initialize()
 void SceneTitle::Finalize()
 {
 	//スプライト終了化
-	if (sprite != nullptr)
+	if (back != nullptr)
 	{
-		delete sprite;
-		sprite = nullptr;
+		delete back;
+		back = nullptr;
+	}
+	if (title != nullptr)
+	{
+		delete title;
+		title = nullptr;
+	}
+	if (pressClick != nullptr)
+	{
+		delete pressClick;
+		pressClick = nullptr;
 	}
 	gameOverSe->Stop();
 }
@@ -68,17 +80,23 @@ void SceneTitle::Render()
 	{
 		float screenWidth = static_cast<float>(graphics.GetScreenWidth());
 		float screenHeight = static_cast<float>(graphics.GetScreenHeight());
-		float textureWidth = static_cast<float>(sprite->GetTextureWidth());
-		float textureHeight = static_cast<float>(sprite->GetTextureHeight());
+		float textureWidth = static_cast<float>(back->GetTextureWidth());
+		float textureHeight = static_cast<float>(back->GetTextureHeight());
 		//タイトルスプライト描画
-		sprite->Render(dc,
+		back->Render(dc,
 			0, 0, screenWidth, screenHeight,
 			0, 0, textureWidth, textureHeight,
 			0,
 			1, 1, 1, 1);
 
 		HitBox2D box = HitBox2D::CreateBoxFromCenter({ screenWidth * 0.7f,screenHeight * 0.3f }, { screenWidth * 0.6f,screenHeight * 0.6f });
-		title->Render(dc, box.GetLeftTop(), box.GetBoxSize(), .0f, DirectX::XMFLOAT4{ 1.0f,1.0f,1.0f,1.0f });
+		title->Render(dc,
+			screenWidth*0.3f,screenHeight*.0f,
+			screenWidth*0.6f,screenHeight*0.6f,
+			.0f,.0f,
+			title->GetTextureWidthf(),title->GetTextureHeightf(),
+			.0f,
+			1.0f,1.0f,1.0f,1.0f);
 
 		box = HitBox2D::CreateBoxFromCenter({ screenWidth * 0.5f,screenHeight * 0.9f }, { screenWidth * 0.5f,screenHeight * 0.1f });
 		pressClick->Render(dc, box.GetLeftTop(), box.GetBoxSize(), .0f, DirectX::XMFLOAT4{ 1.0f,1.0f,1.0f,1.0f });

@@ -26,8 +26,8 @@ Framework::Framework(HWND hWnd)
 	//シーン初期化
 	//sceneGame.Initialize();
 #if _DEBUG
-	//SceneManager::Instance().ChangeScene(new SceneTitle);
-	SceneManager::Instance().ChangeScene(new SceneGame);
+	SceneManager::Instance().ChangeScene(new SceneTitle);
+	//SceneManager::Instance().ChangeScene(new SceneGame);
 #else
 	SceneManager::Instance().ChangeScene(new SceneTitle);
 #endif
@@ -62,8 +62,10 @@ void Framework::Render(float elapsedTime/*Elapsed seconds from last frame*/)
 
 	ID3D11DeviceContext* dc = graphics.GetDeviceContext();
 
+#ifdef _DEBUG
 	// IMGUIフレーム開始処理
 	graphics.GetImGuiRenderer()->NewFrame();
+#endif // _DEBUG
 
 	// シーン描画処理
 	SceneManager::Instance().Render();
@@ -71,8 +73,10 @@ void Framework::Render(float elapsedTime/*Elapsed seconds from last frame*/)
 	// IMGUIデモウインドウ描画（IMGUI機能テスト用）
 	//ImGui::ShowDemoWindow();
 
+#ifdef _DEBUG
 	// IMGUI描画
 	graphics.GetImGuiRenderer()->Render(dc);
+#endif // _DEBUG
 
 	// バックバッファに描画した画を画面に表示する。
 	graphics.GetSwapChain()->Present(syncInterval, 0);
@@ -138,8 +142,10 @@ int Framework::Run()
 // メッセージハンドラ
 LRESULT CALLBACK Framework::HandleMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
+#ifdef _DEBUG
 	if (Graphics::Instance().GetImGuiRenderer()->HandleMessage(hWnd, msg, wParam, lParam))
 		return true;
+#endif // _DEBUG
 
 	switch (msg)
 	{
