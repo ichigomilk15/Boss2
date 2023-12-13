@@ -62,6 +62,12 @@ protected:
 	//セットカードによるアクションを決める更新処理
 	virtual State ChooseAct(float elapsedTime);
 
+	virtual void MakeHalfTransparent();
+	virtual void MakeFullTransparent();
+
+private:
+	bool IsConcealPlayer();
+
 protected:
 	//std::unique_ptr<Model> model;
 

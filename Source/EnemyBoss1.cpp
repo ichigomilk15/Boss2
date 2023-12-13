@@ -500,3 +500,15 @@ void EnemyBoss1::InitializeAudio()
 	AudioLoader::Load(AUDIO::SE_BOSS1_WALLHIT, boss1Ses.wallHitSe);
 
 }
+
+void EnemyBoss1::MakeHalfTransparent()
+{
+	model->ChangeMaterialColor(0, { 1.0f, 1.0f, 1.0f, 0.5f });
+	model->ChangeMaterialColor(1, { 1.0f, 1.0f, 1.0f, 0.5f });
+}
+
+void EnemyBoss1::MakeFullTransparent()
+{
+	model->ChangeMaterialColor(0, { 1.0f, 1.0f, 1.0f, 1.0f });
+	model->ChangeMaterialColor(1, { 1.0f, 1.0f, 1.0f, 1.0f });
+}
