@@ -10,7 +10,8 @@ enum ANIMATION_BOSS
 	BossSpin,
 	BossJump,
 	BossDrop,
-	BossDamage
+	BossDamage,
+	BossDeath,
 };
 
 // ’¼üˆÚ“®‚Ì“G(‰¼)

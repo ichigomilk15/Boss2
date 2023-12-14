@@ -145,9 +145,9 @@ Graphics::Graphics(HWND hWnd) :hwnd(hWnd)
 #endif // _DEBUG
 	}
 
-	swapchain->SetFullscreenState(TRUE, nullptr);
+	//swapchain->SetFullscreenState(TRUE, nullptr);
 
-	swapchain->GetFullscreenState(&isFullScreen, nullptr);
+	//swapchain->GetFullscreenState(&isFullScreen, nullptr);
 }
 
 // デストラクタ

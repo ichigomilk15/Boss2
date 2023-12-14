@@ -8,6 +8,8 @@
 
 void Enemy::Update(float elapsedTime)
 {
+	UpdateDeath(elapsedTime);
+
 	// 速力処理更新
 	UpdateVelocity(elapsedTime);
 
@@ -16,11 +18,6 @@ void Enemy::Update(float elapsedTime)
 
 	//オブジェクト行列を更新
 	UpdateTransform();
-
-#if _DEBUG
-	//攻撃範囲を表示
-
-#endif
 
 	this->model->UpdateAnimation(elapsedTime);
 	//モデル行列更新
@@ -48,12 +45,15 @@ void Enemy::DrawDebugGUI()
 
 void Enemy::Destroy()
 {
+	destroyedStatus.isDestroyed = true;
 	EnemyManager::Instance().Remove(this);
 }
 
 void Enemy::OnDead()
 {
-	Destroy();
+	//Destroy();
+	destroyedStatus.destroyedTime = 2.0f;
+	state = State::Death_Init;
 }
 
 void Enemy::ResetStatus()
@@ -268,6 +268,18 @@ void Enemy::MakeHalfTransparent()
 void Enemy::MakeFullTransparent()
 {
 	model->ChangeMaterialColor(0, { 1.0f, 1.0f, 1.0f, 1.0f });
+}
+
+void Enemy::UpdateDeath(float elapsedTime)
+{
+	if (!GetIsDead())
+		return;
+
+	destroyedStatus.destroyedTime -= elapsedTime;
+	if (destroyedStatus.destroyedTime <= 0.0f)
+	{
+		Destroy();
+	}
 }
 
 bool Enemy::IsConcealPlayer()

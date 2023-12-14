@@ -23,7 +23,7 @@ public:
 	const bool Load();
 
 public:
-	int StageLevel = 1;
+	int StageLevel = 3;
 	int playerHp = -1;
 	std::pair<int,int> playerpos{-1,-1};
 	int PhaseTurn = 0;

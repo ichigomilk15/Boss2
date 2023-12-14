@@ -53,6 +53,9 @@ Player::~Player()
 
 void Player::Update(float elapsedTime)
 {
+	//死亡処理
+	UpdateDeath(elapsedTime);
+
 	//ステート更新処理
 	UpdateState(elapsedTime);
 
@@ -305,6 +308,14 @@ void Player::UpdateState(float elapsedTime)
 			SetState(State::Idle_Init);
 			break;
 		}
+		break;
+
+	case State::Death_Init:
+		model->PlayAnimation(Animation::Death, false);
+		state = State::Death;
+		[[fallthrough]];
+	case State::Death:
+
 		break;
 
 	case State::Act_Finish_Init:
@@ -601,6 +612,8 @@ void Player::OnDamaged()
 void Player::OnDead()
 {
 	playerSes.deadSe.get()->Play(false);
+	state = State::Death_Init;
+	destroyedStatus.destroyedTime = 3.0f;
 	//playerDeadTime = 4.0f;
 }
 
@@ -707,4 +720,16 @@ void Player::InitializeAudio()
 	AudioLoader::Load(AUDIO::SE_CARD_DECIDE, cardSes.cardDecideSe);
 	AudioLoader::Load(AUDIO::SE_CARD_DRAW, cardSes.cardDraw);
 	AudioLoader::Load(AUDIO::SE_CARD_SET, cardSes.cardSet);
+}
+
+void Player::UpdateDeath(float elapsedTime)
+{
+	if (!GetIsDead())
+		return;
+
+	destroyedStatus.destroyedTime -= elapsedTime;
+	if (destroyedStatus.destroyedTime <= 0.0f)
+	{
+		destroyedStatus.isDestroyed = true;
+	}
 }

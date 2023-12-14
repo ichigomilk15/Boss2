@@ -64,6 +64,7 @@ public:
 
     const bool GetIsAllActEnd() const;
     const bool GetIsAllDead() const;
+    const bool GetIsAllDestroyed() const;
 
 
     void SetStartEnemyNum()noexcept { startEnemyNum = static_cast<int>(enemies.size()); }

@@ -287,6 +287,14 @@ void EnemyBoss1::UpdateState(float elapsedTime)
 		}
 		break;
 
+	case State::Death_Init:
+		model->PlayAnimation(ANIMATION_BOSS::BossDeath, false);
+		state = State::Death;
+		[[fallthrough]];
+	case State::Death:
+
+		break;
+
 	case State::Act_Finish_Init:
 		actTimer = 1.0f;
 		isActEnd = true;
@@ -484,7 +492,8 @@ void EnemyBoss1::OnDamaged()
 void EnemyBoss1::OnDead()
 {
 	boss1Ses.deathSe.get()->Play(false);
-	Enemy::OnDead();
+	destroyedStatus.destroyedTime = 3.0f;
+	state = State::Death_Init;
 }
 
 void EnemyBoss1::InitializeAudio()

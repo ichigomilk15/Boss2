@@ -1,5 +1,6 @@
 #include "EnemyManager.h"
 #include "PhaseManager.h"
+#include "PlayerManager.h"
 
 int EnemyManager::enemyTurnIndex = -1;
 
@@ -128,6 +129,16 @@ const bool EnemyManager::GetIsAllDead() const
 {
 	for (auto& enemy : enemies)
 	{
+		if (!enemy->GetIsDead())
+			return false;
+	}
+	return true;
+}
+
+const bool EnemyManager::GetIsAllDestroyed() const
+{
+	for (auto& enemy : enemies)
+	{
 		if (!enemy->GetIsDestroyed())
 			return false;
 	}
@@ -136,8 +147,11 @@ const bool EnemyManager::GetIsAllDead() const
 
 void EnemyManager::UpdateEnemiesTurn(float elapsedTime)
 {
-	if (PhaseManager::Instance().GetFhase() != PhaseManager::Phase::Phase_EnemyAct)
+	if (PhaseManager::Instance().GetFhase() != PhaseManager::Phase::Phase_EnemyAct || PlayerManager::Instance().GetFirstPlayer()->GetIsDead())
 		return;
+
+	if (enemyTurnIndex == 1)
+		int a = 1;
 
 	if (enemyTurnIndex < 0)
 	{

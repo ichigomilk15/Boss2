@@ -13,6 +13,7 @@ enum Animation
 	Run,
 	Attack,
 	Damage,
+	Death,
 };
 
 enum class State
@@ -47,6 +48,8 @@ enum class State
 	KnockedBack,
 	Stunned_Init, //スタンされる状態
 	Stunned,
+	Death_Init, //死亡状態
+	Death,
 	Act_Finish_Init, //全てのアクションが終わった処理
 	Act_Finish,
 	Max,
@@ -171,10 +174,16 @@ public:
 
 	const Sprite* GetIcon()const noexcept { return icon.get(); }
 
-	void ShowDamageNumber(const int damageNumber, const DirectX::XMFLOAT4& color = {1.0f, 0.0f, 0.0f, 1.0f});
+	void ShowDamageNumber(const int damageNumber, const DirectX::XMFLOAT4& color = { 1.0f, 0.0f, 0.0f, 1.0f });
 
 	//レイキャスト用
 	bool RayCast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end, HitResult& hit);
+
+	bool GetIsDestroyed() { 
+		return destroyedStatus.isDestroyed; }
+
+	//死亡判定
+	virtual bool GetIsDead();
 
 #endif // 1
 	//Getter&Setter*****************************************************
@@ -190,6 +199,8 @@ protected:
 	virtual void OnDead() {};
 	//ステート更新処理
 	virtual void UpdateState(float elapsedTime) {};
+	//死亡処理
+	virtual void UpdateDeath(float elapsedTime) {};
 protected:
 	DirectX::XMFLOAT3 positionWorld = { 0, 0, 0 };
 	DirectX::XMFLOAT3 pivotAdjustPosWorld = { 0, 0, 0 };
@@ -234,6 +245,14 @@ protected:
 	std::unique_ptr<Sprite> icon;
 
 	std::unique_ptr<Model> model;
+
+protected:
+	struct DestroyedStatus
+	{
+		std::unique_ptr<Effect> destroyedEffect;
+		float destroyedTime = 0.0f;
+		bool isDestroyed = false;
+	} destroyedStatus;//死亡時使用データ
 
 private:
 	std::unique_ptr<Sprite> hpBar[3];

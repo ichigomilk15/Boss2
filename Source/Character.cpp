@@ -158,6 +158,11 @@ void Character::UpdateVelocity(float elapsedTime)
 	}
 }
 
+bool Character::GetIsDead()
+{
+	return (health <= 0);
+}
+
 bool Character::IsTargetMovePosValid(const DirectX::XMINT2& targetPos)
 {
 	for (int y = targetPos.y; y < targetPos.y + size.y; ++y)

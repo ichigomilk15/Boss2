@@ -65,6 +65,8 @@ protected:
 	virtual void MakeHalfTransparent();
 	virtual void MakeFullTransparent();
 
+	void UpdateDeath(float elapsedTime) override;
+
 private:
 	bool IsConcealPlayer();
 
@@ -78,12 +80,6 @@ protected:
 	int attackRange = 2;
 	float hpBarUseScale = 0.5f;//HPバーの使用率
 
-	struct DestroyedStatus
-	{
-		std::unique_ptr<Effect> destroyedEffect;
-		float destroyedTime = 0.0f;
-		bool isDestroyed = false;
-	} destroyedStatus;//死亡時使用データ
 protected:
 	Character* player;
 };
