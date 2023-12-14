@@ -26,7 +26,8 @@ Player::Player() :Character()
 	scale.x = scale.y = scale.z = 0.1f;
 
 	//effectÇΩÇøÇÃê›íË
-	buffEffect = std::make_unique<Effect>("./Data/Effect/vortex.efk");
+	buffEffect = std::make_unique<Effect>("./Data/Effect/powerup.efk");
+	debuffEffect = std::make_unique<Effect>("./Data/Effect/powerdown.efk");
 	shieldEffect = std::make_unique<Effect>("./Data/Effect/sheild.efk");
 	effects.attack = std::make_unique<Effect>("./Data/Effect/attack.efk");
 	effects.damage = std::make_unique<Effect>("./Data/Effect/damage.efk");
@@ -254,7 +255,7 @@ void Player::UpdateState(float elapsedTime)
 		Stage::Instance()->ResetAllSquare();
 		state = State::Special;
 		cardComboDataBase = nullptr;
-		buffEffect->Play(positionWorld, 0.5f);//effectçƒê∂
+		buffEffect->Play(positionWorld, 1.0f);//effectçƒê∂
 		[[fallthrough]];
 	case State::Special:
 		actTimer -= elapsedTime;
@@ -268,6 +269,7 @@ void Player::UpdateState(float elapsedTime)
 	case State::Debuff_Init:
 		actTimer = 0.5f;
 		Stage::Instance()->ResetAllSquare();
+		debuffEffect->Play(positionWorld, 1.0f);
 		state = State::Debuff;
 		SetDebuffAction();
 		[[fallthrough]];
