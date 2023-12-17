@@ -28,7 +28,7 @@ public:
 	virtual void Update(float elapsedTime);
 
 	//描画処理
-	virtual void Render(ID3D11DeviceContext* dc, Shader* shader);
+	virtual void Render(ID3D11DeviceContext* dc, Shader* shader, RenderContext& rc);
 
 	//デバッグ用GUI描画
 	void DrawDebugGUI();
@@ -79,6 +79,8 @@ protected:
 
 	int attackRange = 2;
 	float hpBarUseScale = 0.5f;//HPバーの使用率
+
+	float deathMaskTimer = 1.0f;
 
 protected:
 	Character* player;

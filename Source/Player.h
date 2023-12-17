@@ -18,7 +18,7 @@ public:
 	~Player() override;
 
 	void Update(float elapsedTime);
-	void Render(ID3D11DeviceContext* dc, Shader* shader);
+	void Render(ID3D11DeviceContext* dc, Shader* shader, RenderContext& rc);
 	//void Render2D(RenderContext& rc,ID3D11DeviceContext* dc);//2DŠÖŒW‚Ì•`‰æ
 	void DrawDebugGUI();
 

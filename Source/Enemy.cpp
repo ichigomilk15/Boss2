@@ -24,10 +24,10 @@ void Enemy::Update(float elapsedTime)
 	model->UpdateTransform(transform);
 }
 
-void Enemy::Render(ID3D11DeviceContext* dc, Shader* shader)
+void Enemy::Render(ID3D11DeviceContext* dc, Shader* shader, RenderContext& rc)
 {
 	//上2マスにプレイヤーがいたら半透明化にする
-	if (IsConcealPlayer())
+	if (IsConcealPlayer() && !GetIsDead())
 	{
 		MakeHalfTransparent();
 	}
@@ -35,7 +35,12 @@ void Enemy::Render(ID3D11DeviceContext* dc, Shader* shader)
 	{
 		MakeFullTransparent();
 	}
-	shader->Draw(dc, model.get());
+
+	rc.maskData.maskTexture = maskShaderDetails.maskTexture->GetShaderResourceView().Get();
+	rc.maskData.dissolveThreshold = maskShaderDetails.dissolveThreshold;
+	rc.maskData.edgeColor = maskShaderDetails.edgeColor;
+	rc.maskData.edgeThreshold = maskShaderDetails.edgeThreshold;
+	shader->Draw(dc, model.get(), rc);
 }
 
 void Enemy::DrawDebugGUI()
@@ -276,6 +281,8 @@ void Enemy::UpdateDeath(float elapsedTime)
 		return;
 
 	destroyedStatus.destroyedTime -= elapsedTime;
+	maskShaderDetails.dissolveThreshold = max(0.0f, maskShaderDetails.dissolveThreshold - (elapsedTime / deathMaskTimer));
+
 	if (destroyedStatus.destroyedTime <= 0.0f)
 	{
 		Destroy();

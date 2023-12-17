@@ -405,7 +405,6 @@ void PhaseManager::StageInit(const int level)
 		enemy->SetTargetMovePosition({ -1, -1 });
 		enemy->SetState(State::Idle_Init);
 		enemy->SetAttackRange(1);
-		//enemy->SetHealth(30);
 		enemy->SetHealth(30);
 		enemy->SetMaxHealth(30);
 	}
@@ -453,7 +452,7 @@ void PhaseManager::StageInit(const int level)
 		DirectX::XMFLOAT3 pivot = { Common::SquareWidth / 2, 1.0f, -Common::SquareHeight / 2 };
 		boss1->SetPivotAdjustPosWorld(pivot);
 		boss1->SetState(State::Attack_Init);
-		boss1->SetHealth(1);
+		boss1->SetHealth(150);
 		boss1->SetMaxHealth(150);
 		boss1->SetAttackRange(4);
 	}

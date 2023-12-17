@@ -166,14 +166,18 @@ void SceneGame::Render()
 
 	// 3Dモデル描画
 	{
-		Shader* shader = graphics.GetShader();
+		Shader* shader = graphics.GetShader(Shader3D::Lambert);
 		shader->Begin(dc, rc);
 		//ステージ描画
 		Stage::Instance()->Render(dc, shader);
-		PlayerManager::Instance().Render(dc, shader, rc);
-		EnemyManager::Instance().Render(dc, shader);
 		AttackManager::Instance().Render(dc, shader);
 
+		shader->End(dc);
+
+		shader = graphics.GetShader(Shader3D::LambertMask);
+		shader->Begin(dc, rc);
+		PlayerManager::Instance().Render(dc, shader, rc);
+		EnemyManager::Instance().Render(dc, shader, rc);
 		shader->End(dc);
 	}
 
@@ -204,7 +208,7 @@ void SceneGame::Render()
 		//体力バー描画
 		{
 			Player* pl = PlayerManager::Instance().GetFirstPlayer();
-			pl->Render2D(dc, HitBox2D::CreateBoxFromTopLeft(DirectX::XMFLOAT2{ .0f,.0f, }, DirectX::XMFLOAT2{ ScreenSize.x*0.2f,ScreenSize.y*0.1f }));
+			pl->Render2D(dc, HitBox2D::CreateBoxFromTopLeft(DirectX::XMFLOAT2{ .0f,.0f, }, DirectX::XMFLOAT2{ ScreenSize.x * 0.2f,ScreenSize.y * 0.1f }));
 
 			EnemyManager::Instance().Render2D(dc);
 		}

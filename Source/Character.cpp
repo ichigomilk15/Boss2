@@ -15,6 +15,11 @@ Character::Character()
 	hpBar[0] = std::make_unique<Sprite>("./Data/Sprite/life_waku.png");
 	hpBar[1] = std::make_unique<Sprite>("./Data/Sprite/life_1.png");
 	hpBar[2] = std::make_unique<Sprite>("./Data/Sprite/life_2.png");
+
+	maskShaderDetails.maskTexture = std::make_unique<Texture>("Data/Textures/dissolve_animation.png");
+	maskShaderDetails.dissolveThreshold = 1.0f;
+	maskShaderDetails.edgeThreshold = 0.3f;
+	maskShaderDetails.edgeColor = { 1.0f, 0.0f, 0.0f, 1.0f };
 }
 
 Character::~Character()

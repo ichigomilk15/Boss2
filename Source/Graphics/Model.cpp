@@ -67,6 +67,7 @@ void Model::UpdateTransform(const DirectX::XMFLOAT4X4& transform)
 
 void Model::UpdateAnimation(float elapsedTime)
 {
+	const float animRate = elapsedTime * animationSpeedRate;
 	//再生中でないなら処理しない
 	if (!IsPlayAnimation()) return;
 
@@ -74,13 +75,14 @@ void Model::UpdateAnimation(float elapsedTime)
 	float blendRate = 1.0f;
 	if (animationBlendTime < animationBlendSeconds)
 	{
-		animationBlendTime += elapsedTime;
+		animationBlendTime += animRate;
 		if (animationBlendTime >= animationBlendSeconds)
 		{
 			animationBlendTime = animationBlendSeconds;
 		}
 		blendRate = animationBlendTime / animationBlendSeconds;
-		blendRate *= blendRate;
+		blendRate *= (blendRate);
+		blendRate /= animationSpeedRate;
 	}
 
 	//指定のアニメーションを取得
@@ -159,7 +161,7 @@ void Model::UpdateAnimation(float elapsedTime)
 	}
 
 	//時間経過
-	currentAnimationSeconds += elapsedTime;
+	currentAnimationSeconds += animRate;
 
 	//再生時間が終端時間を超えたら
 	if (currentAnimationSeconds >= animation.secondsLength)
@@ -177,7 +179,7 @@ void Model::UpdateAnimation(float elapsedTime)
 	}
 }
 
-void Model::PlayAnimation(int index, bool loop, float blendSeconds)
+void Model::PlayAnimation(int index, bool loop, float blendSeconds, float speedRate)
 {
 	currentAnimationIndex = index;
 	currentAnimationSeconds = 0.0f;
@@ -185,6 +187,7 @@ void Model::PlayAnimation(int index, bool loop, float blendSeconds)
 	animationEndFlag = false;
 	animationBlendTime = 0.0f;
 	animationBlendSeconds = blendSeconds;
+	animationSpeedRate = speedRate;
 }
 
 bool Model::IsPlayAnimation() const

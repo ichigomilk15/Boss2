@@ -9,6 +9,13 @@
 #include "Graphics/LineRenderer.h"
 #include "Graphics/ImGuiRenderer.h"
 
+enum Shader3D
+{
+	Lambert,
+	LambertMask,
+	Max
+};
+
 // グラフィックス
 class Graphics
 {
@@ -35,7 +42,7 @@ public:
 	ID3D11DepthStencilView* GetDepthStencilView() const { return depthStencilView.Get(); }
 
 	// シェーダー取得
-	Shader* GetShader() const { return shader.get(); }
+	Shader* GetShader(int shaderId) const { return shaders[shaderId].get(); }
 
 	// スクリーン幅取得
 	float GetScreenWidth() const { return screenWidth; }
@@ -78,7 +85,7 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11Texture2D>			depthStencilBuffer;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilView>	depthStencilView;
 
-	std::unique_ptr<Shader>							shader;
+	std::unique_ptr<Shader>							shaders[Shader3D::Max];
 	std::unique_ptr<DebugRenderer>					debugRenderer;
 	std::unique_ptr<LineRenderer>					lineRenderer;
 #ifdef _DEBUG

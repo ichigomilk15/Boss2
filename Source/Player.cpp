@@ -22,6 +22,9 @@ Player::Player() :Character()
 	this->model = std::make_unique<Model>("Data/Model/Player/Player.mdl");
 	icon = std::make_unique<Sprite>("./Data/Sprite/icon_player.png");
 
+	//マスクシェーダー色
+	maskShaderDetails.edgeColor = { 0.0f, 0.0f, 1.0f, 1.0f };
+
 	//モデルが大きいのでスケーリング
 	scale.x = scale.y = scale.z = 0.1f;
 
@@ -72,9 +75,13 @@ void Player::Update(float elapsedTime)
 	model->UpdateTransform(transform);
 }
 
-void Player::Render(ID3D11DeviceContext* dc, Shader* shader)
+void Player::Render(ID3D11DeviceContext* dc, Shader* shader, RenderContext& rc)
 {
-	shader->Draw(dc, model.get());
+	rc.maskData.maskTexture = maskShaderDetails.maskTexture->GetShaderResourceView().Get();
+	rc.maskData.dissolveThreshold = maskShaderDetails.dissolveThreshold;
+	rc.maskData.edgeColor = maskShaderDetails.edgeColor;
+	rc.maskData.edgeThreshold = maskShaderDetails.edgeThreshold;
+	shader->Draw(dc, model.get(), rc);
 }
 
 //void Player::Render2D(RenderContext& rc, ID3D11DeviceContext* dc)
@@ -129,6 +136,9 @@ void Player::DrawDebugGUI()
 			ImGui::InputInt("Shield", &shield, 0);
 			ImGui::InputInt("Block", &block, 0);
 			ImGui::InputInt("HP", &health, 0);
+
+			//Mask Shader
+			ImGui::DragFloat("Dissolve Value", &maskShaderDetails.dissolveThreshold, 0.01f, 0.0f, 1.0f);
 		}
 	}
 	ImGui::End();
@@ -730,6 +740,8 @@ void Player::UpdateDeath(float elapsedTime)
 		return;
 
 	destroyedStatus.destroyedTime -= elapsedTime;
+	 maskShaderDetails.dissolveThreshold = max(0.0f, maskShaderDetails.dissolveThreshold - (elapsedTime / 2.0f));
+
 	if (destroyedStatus.destroyedTime <= 0.0f)
 	{
 		destroyedStatus.isDestroyed = true;

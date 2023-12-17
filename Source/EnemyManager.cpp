@@ -31,11 +31,11 @@ void EnemyManager::Update(float elapsedTime, Character* player)
 	this->removes.clear();
 }
 
-void EnemyManager::Render(ID3D11DeviceContext* context, Shader* shader)
+void EnemyManager::Render(ID3D11DeviceContext* context, Shader* shader, RenderContext& rc)
 {
 	for (auto&& enemy : enemies)
 	{
-		enemy->Render(context, shader);
+		enemy->Render(context, shader, rc);
 	}
 }
 

@@ -24,7 +24,7 @@ public:
     void Update(float elapsedTime, Character* player);
 
     //•`‰æˆ—
-    void Render(ID3D11DeviceContext* context, Shader* shader);
+    void Render(ID3D11DeviceContext* context, Shader* shader, RenderContext& rc);
     void Render2D(ID3D11DeviceContext* dc);
 
     //ƒGƒlƒ~[“o˜^

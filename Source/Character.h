@@ -1,5 +1,6 @@
 #pragma once
 #include <DirectXMath.h>
+#include "Graphics/Texture.h"
 #include "Graphics/Sprite.h"
 #include "HitCollisions.h"
 
@@ -179,8 +180,9 @@ public:
 	//レイキャスト用
 	bool RayCast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end, HitResult& hit);
 
-	bool GetIsDestroyed() { 
-		return destroyedStatus.isDestroyed; }
+	bool GetIsDestroyed() {
+		return destroyedStatus.isDestroyed;
+	}
 
 	//死亡判定
 	virtual bool GetIsDead();
@@ -253,6 +255,14 @@ protected:
 		float destroyedTime = 0.0f;
 		bool isDestroyed = false;
 	} destroyedStatus;//死亡時使用データ
+
+	struct MaskShaderDetails
+	{
+		std::unique_ptr<Texture>	maskTexture;
+		float						dissolveThreshold = 1.0f;
+		float						edgeThreshold = 0.3f;						//縁の閾値
+		DirectX::XMFLOAT4			edgeColor = { 1.0f, 0.0f, 0.0f, 1.0f };		//縁の色
+	} maskShaderDetails;
 
 private:
 	std::unique_ptr<Sprite> hpBar[3];
