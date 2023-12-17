@@ -8,6 +8,7 @@
 #include "EnemyManager.h"
 #include "DamageEffector.h"
 #include "Camera.h"
+#include "CameraController.h"
 #undef NOMINMAX
 
 Character::Character()
@@ -286,6 +287,13 @@ bool Character::ApplyDamage(int damage)
 	if (damage <= 0) return false;
 	//Ž€–S‚µ‚Ä‚¢‚éê‡‚ÍŒ’Nó‘Ô‚ð•ÏX‚µ‚È‚¢
 	if (health <= 0) return false;
+
+	//ƒXƒ^ƒ“ó‘Ô‚È‚çƒ_ƒ[ƒW2”{
+	if (state == State::Stunned)
+		damage *= 2;
+
+	if (damage >= 10 && !CameraController::Instance().IsCameraShaking())
+		CameraController::Instance().ShakeCamera(0.25f, 1);
 
 	damage -= block;
 	/*if (damage <= 0)

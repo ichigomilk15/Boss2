@@ -26,6 +26,8 @@ public:
 	//Camera Shakeˆ—
 	void ShakeCamera(const float timer, const int level = 3);
 
+	bool IsCameraShaking() { return cameraShakeDetail.isShaking; }
+
 private:
 	void UpdateCameraShake(float elapsedTime);
 private:
