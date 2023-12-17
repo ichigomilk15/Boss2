@@ -252,6 +252,7 @@ void Character::Heal(const int hp)
 {
 	this->health += hp;
 	this->health = std::min(health, maxHealth);
+	ShowDamageNumber(hp, { .1f,1.0f,.1f,1.0f }, CommonClass::Left);
 }
 
 int Character::GetWhichHorizontalSide(const DirectX::XMINT2& pos)
@@ -319,7 +320,7 @@ bool Character::ApplyDamage(int damage)
 	//ダメージ通知
 	else
 	{
-		ShowDamageNumber(damage);
+		ShowDamageNumber(damage, {1.0f, 0.0f, 0.0f, 1.0f}, CommonClass::Front);
 		OnDamaged();
 	}
 
@@ -372,13 +373,13 @@ void Character::Render2D(ID3D11DeviceContext* dc, const HitBox2D& box)
 		str += std::to_string(health);
 		str += "/";
 		str += std::to_string(maxHealth);
-		NumberSprite::Instance().NumberOut(str.c_str(), dc, DirectX::XMFLOAT2{ BoxSize.x - NumSize.x,.0f }+leftTop, NumSize, {1.0f,1.0f,1.0f,1.0f});
+		NumberSprite::Instance().NumberOut(str.c_str(), dc, DirectX::XMFLOAT2{ BoxSize.x - NumSize.x,.0f } + leftTop, NumSize, { 1.0f,1.0f,1.0f,1.0f });
 	}
 	//シールドの値を描画
 	if (shield > 0)
 	{
 		std::string str = "+" + std::to_string(shield);
-		NumberSprite::Instance().NumberOut(str.c_str(), dc, DirectX::XMFLOAT2{ BoxSize.x - NumSize.x * 2.0f,.0f } + leftTop, { NumSize.x*0.5f,NumSize.y }, { .0f,1.0f,1.0f,1.0f });
+		NumberSprite::Instance().NumberOut(str.c_str(), dc, DirectX::XMFLOAT2{ BoxSize.x - NumSize.x * 2.0f,.0f } + leftTop, { NumSize.x * 0.5f,NumSize.y }, { .0f,1.0f,1.0f,1.0f });
 	}
 
 	//HPバーの背景を描画
@@ -393,12 +394,11 @@ void Character::Render2D(ID3D11DeviceContext* dc, const HitBox2D& box)
 	}
 }
 
-void Character::ShowDamageNumber(const int damageNumber, const DirectX::XMFLOAT4& color)
+void Character::ShowDamageNumber(const int damageNumber, const DirectX::XMFLOAT4& color, int direction)
 {
 	DamageEffector::EffectData data;
 	data.color = color;
 	data.damage = damageNumber;
-	data.velocity = { 30.0f,-80.0f };
 	data.scale = 2.5f;
 	data.timer = 1.0f;
 
@@ -434,6 +434,35 @@ void Character::ShowDamageNumber(const int damageNumber, const DirectX::XMFLOAT4
 	DirectX::XMStoreFloat3(&screenPos, ScreenPosition);
 
 	data.pos = { screenPos.x, screenPos.y };
+
+	//方向
+	const int offset = 40.0f;
+	switch (direction)
+	{
+	case CommonClass::FrontLeft:
+	case CommonClass::Left:
+		data.velocity = { -30.0f,-80.0f };
+		data.pos.x -= offset;
+		break;
+
+	case CommonClass::FrontRight:
+	case CommonClass::Right:
+		data.velocity = { 30.0f,-80.0f };
+		data.pos.x += offset;
+		break;
+
+	case CommonClass::Back:
+		data.velocity = { 0.0f, 80.0f };
+		data.pos.y += offset;
+		break;
+	case CommonClass::Front:
+	default:
+		data.velocity = { 0.0f, -80.0f };
+		data.pos.y -= offset;
+		break;
+	}
+
+
 	DamageEffector::Instance().Register(data);
 }
 

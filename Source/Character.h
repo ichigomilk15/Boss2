@@ -175,7 +175,7 @@ public:
 
 	const Sprite* GetIcon()const noexcept { return icon.get(); }
 
-	void ShowDamageNumber(const int damageNumber, const DirectX::XMFLOAT4& color = { 1.0f, 0.0f, 0.0f, 1.0f });
+	void ShowDamageNumber(const int damageNumber, const DirectX::XMFLOAT4& color = { 1.0f, 0.0f, 0.0f, 1.0f }, int direction = CommonClass::Right);
 
 	//レイキャスト用
 	bool RayCast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end, HitResult& hit);

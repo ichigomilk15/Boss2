@@ -531,10 +531,10 @@ void Player::SetShieldAction()
 		int moveRange = Stage::Instance()->GetTargetPosCost(position, turnPosInit);
 		shieldGet += moveRange;
 	}
-	if(defenceDetail->getShield)
-		ShowDamageNumber(shieldGet, { 0.0f, 1.0f, 1.0f, 1.0f });
-	if (defenceDetail->GetBlock)
-		ShowDamageNumber(defenceDetail->GetBlock, { .5f,.5f,1.0f,1.0f });
+	if(defenceDetail->getShield > 0)
+		ShowDamageNumber(shieldGet, { 0.0f, 1.0f, 1.0f, 1.0f }, CommonClass::Right);
+	if (defenceDetail->GetBlock > 0)
+		ShowDamageNumber(defenceDetail->GetBlock, { .5f,.5f,1.0f,1.0f }, CommonClass::Left);
 	//if (defenceDetail->heal)
 	//	ShowDamageNumber(defenceDetail->heal, { .5f,1.0f,0.5f,1.0f });
 	shield += shieldGet;
