@@ -16,6 +16,14 @@ UI::~UI()
     {
         delete component;
     }
+    components.clear();
+
+    for (auto& behavior : behaviors)
+    {
+        delete behavior;
+    }
+    behaviors.clear();
+
 }
 
 UI* UI::AddChild(std::unique_ptr<UI> child)
@@ -40,6 +48,14 @@ void UI::ChildsRender(ID3D11DeviceContext* dc)
     for (auto& child : childs)
     {
         child->ChildsRender(dc);
+    }
+}
+
+void UI::Update(float elapsedTime)
+{
+    for (auto& behavior : behaviors)
+    {
+        behavior->Update(elapsedTime);
     }
 }
 

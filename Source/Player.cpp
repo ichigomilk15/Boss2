@@ -53,6 +53,7 @@ Player::~Player()
 
 void Player::Update(float elapsedTime)
 {
+	Character::Update(elapsedTime);
 	//ステート更新処理
 	UpdateState(elapsedTime);
 
@@ -72,31 +73,6 @@ void Player::Render(ID3D11DeviceContext* dc, Shader* shader)
 {
 	shader->Draw(dc, model.get());
 }
-
-//void Player::Render2D(RenderContext& rc, ID3D11DeviceContext* dc)
-//{
-//	Graphics& graphics = Graphics::Instance();
-//	D3D11_VIEWPORT viewPort;
-//	unsigned int viewNum = 1;
-//	dc->RSGetViewports(&viewNum, &viewPort);
-//
-//	DirectX::XMMATRIX View = DirectX::XMLoadFloat4x4(&rc.view);
-//	DirectX::XMMATRIX Projection = DirectX::XMLoadFloat4x4(&rc.projection);
-//
-//	DirectX::XMVECTOR WorldPos = DirectX::XMVectorSet(positionWorld.x, positionWorld.y + height, positionWorld.z, .0f);
-//	DirectX::XMVECTOR ScreenPos = DirectX::XMVector3Project(WorldPos, viewPort.TopLeftX, viewPort.TopLeftY,
-//		viewPort.Width, viewPort.Height, viewPort.MinDepth, viewPort.MaxDepth, Projection, View, DirectX::XMMatrixIdentity());
-//
-//	DirectX::XMFLOAT2 screenPos;
-//	DirectX::XMStoreFloat2(&screenPos, ScreenPos);
-//	DirectX::XMFLOAT2 size = { 60.0f,30.0f };
-//	std::string str;
-//	str = std::to_string(health);
-//	//str += "/";
-//	//str += std::to_string(maxHealth);
-//	HitBox2D box = HitBox2D::CreateBoxFromCenter(screenPos, size);
-//	NumberSprite::Instance().NumberOut(str.c_str(), dc, box.GetLeftTop(), box.GetBoxSize(), DirectX::XMFLOAT4{ 1.0f,1.0f,1.0f,1.0f });
-//}
 
 void Player::DrawDebugGUI()
 {
@@ -509,9 +485,9 @@ void Player::SetShieldAction()
 		shieldGet += moveRange;
 	}
 	if(defenceDetail->getShield)
-		ShowDamageNumber(shieldGet, { 0.0f, 1.0f, 1.0f, 1.0f });
+		ShowDamageNumber(shieldGet,true , { 0.0f, 1.0f, 1.0f, 1.0f });
 	if (defenceDetail->GetBlock)
-		ShowDamageNumber(defenceDetail->GetBlock, { .5f,.5f,1.0f,1.0f });
+		ShowDamageNumber(defenceDetail->GetBlock,true , { .5f,.5f,1.0f,1.0f });
 	//if (defenceDetail->heal)
 	//	ShowDamageNumber(defenceDetail->heal, { .5f,1.0f,0.5f,1.0f });
 	shield += shieldGet;

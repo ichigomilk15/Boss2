@@ -18,14 +18,29 @@ protected:
 public:
 	virtual ~Component() {};
 
+
 protected:
 	class UI* parent = nullptr;
 };
 template<class T>
 concept is_base_of_component = requires {std::is_base_of_v<Component, T>; };
-
 template<class T>
 concept is_have_Render = requires(T t,ID3D11DeviceContext* dc) {is_base_of_component<T>; t.Render(dc); };
+
+class Behavior
+{
+	friend class UI;
+protected:
+	Behavior() = delete;
+public:
+	virtual ~Behavior() = default;
+
+	virtual void Update(float elapsedTime) {};
+private:
+	class UI* parent = nullptr;
+};
+template<class T>
+concept is_base_of_Behavior = requires(T) { std::is_base_of_v<T, Behavior>; };
 
 //‰¼UI
 class UI
@@ -48,6 +63,16 @@ public://functions
 		return nullptr;
 	}
 
+	template<is_base_of_Behavior T>
+	T* GetBehavior()
+	{
+		for (auto& behavior : behaviors)
+		{
+			if (typeid(*behavior) == typeid(T))return dynamic_cast<T*>(behavior);
+		}
+		return nullptr;
+	}
+
 	template<is_base_of_component T>
 	void AddComponent(T* component)
 	{
@@ -55,10 +80,19 @@ public://functions
 		components.emplace_back(component);
 	}
 
+	template<is_base_of_Behavior T>
+	void AddBehavior(T* behavior)
+	{
+		behavior->parent = this;
+		behaviors.emplace_back(behavior);
+	}
+
 	UI* AddChild(std::unique_ptr<UI> child);
 	UI* SearchChildFromName(const std::string& name)noexcept;
 
 	void ChildsRender(ID3D11DeviceContext* dc);
+
+	void Update(float elapsedTime);
 
 	template<is_have_Render T>
 	void Render(ID3D11DeviceContext* dc)
@@ -79,6 +113,7 @@ private://functions
 
 private://members
 	std::vector<Component*>	components;
+	std::vector<Behavior*>	behaviors;
 	std::vector<std::unique_ptr<UI>> childs;
 	HitBox2D collision;
 	std::string name;//ui‚ðŽ¯•Ê‚·‚é—p‚Ì–¼‘O
@@ -105,3 +140,15 @@ private:
 	DirectX::XMFLOAT4 color;
 };
 
+
+//**********************************************************************************************
+// Behaviors
+//**********************************************************************************************
+
+class WaveChange : public Behavior
+{
+public:
+	WaveChange();
+	~WaveChange();
+	void Update(float elapsedTime)override;
+};

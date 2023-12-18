@@ -3,6 +3,7 @@
 #include <memory>
 #include "Audio\AudioSource.h"
 #include "Graphics/Sprite.h"
+#include "UI.h"
 #include "HitCollisions.h"
 #include "Stage.h"
 
@@ -47,6 +48,7 @@ public:
 	void ResetTurn(); //ターンのリセット
 	void Reset(); //ゲームのリセット
 	void Render(ID3D11DeviceContext* dc);
+	void RenderWaveChange(ID3D11DeviceContext* dc)const;
 	void DrawDebugGUI();
 
 	//Getter&Setter*****************************************************************************
@@ -74,6 +76,8 @@ private:
 	void StageInit(const int level);
 
 	void InitializeAudio();
+
+	void StartWaveChange(float startTime = .0f);
 public:
 	static constexpr float NEXT_PHASE_WAIT_TIMER = 1.0f;
 private:
@@ -87,6 +91,17 @@ private:
 	HitBox2D okButtonCollision;
 	std::unique_ptr<Sprite> okButton;
 
-
-	
+	struct 
+	{
+		const float TIMER_MAX = 2.0f;
+		int DepthNum = 5;
+		std::unique_ptr<Sprite> sprite;
+		float offsetY = .0f;
+		float timer = 0.f;
+		float scale = .0f;
+		DirectX::XMFLOAT2 topPos = {};
+		bool isChangeOk = true;
+		bool isLoadOk;
+		bool oldIsLoadOk;
+	}waveChangeData;
 };

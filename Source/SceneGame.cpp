@@ -208,6 +208,9 @@ void SceneGame::Render()
 
 			EnemyManager::Instance().Render2D(dc);
 		}
+
+		PhaseManager::Instance().RenderWaveChange(dc);
+
 		GameSystemManager::Instance().Render(dc);//ˆê”ÔÅŒã‚É•`‰æ‚·‚é‚±‚Æ
 	}
 	// 2DƒfƒoƒbƒOGUI•`‰æ
@@ -354,7 +357,7 @@ const bool SaveData::ReSet()
 	bool ok;
 	ok = true;
 
-	this->StageLevel = 1;
+	this->StageLevel = 3;
 	this->PhaseTurn = 0;
 	this->playerHp = -1;
 	this->playerpos = { -1,-1 };

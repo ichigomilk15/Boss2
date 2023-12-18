@@ -26,6 +26,11 @@ Character::~Character()
 	}*/
 }
 
+void Character::Update(float elapsedTime)
+{
+	hpBarData.timer = std::max(.0f, hpBarData.timer - elapsedTime);
+}
+
 void Character::UpdateTransform()
 {
 	SetAngle(CommonClass::directionMaps.find(direction)->second);
@@ -286,12 +291,19 @@ bool Character::ApplyDamage(int damage)
 		int tempDamage = (shield >= damage) ? damage : shield;
 		shield -= tempDamage;
 		damage -= tempDamage;
-		/*if (damage <= 0)
-			return false;*/
+
+		tempDamage *= -1;
+		ShowDamageNumber(tempDamage, true, { .0f,1.0f,1.0f,1.0f });
 	}
 
 	//ダメージ処理
+	hpBarData.oldHp = health;
 	health -= damage;
+	hpBarData.shake = std::clamp(damage / static_cast<float>(maxHealth), .1f, .3f) * 20.0f;
+	hpBarData.timer = 1.0f;
+
+	//ダメージを出力
+	ShowDamageNumber(damage,false);
 
 	//死亡通知
 	if (health <= 0)
@@ -301,7 +313,6 @@ bool Character::ApplyDamage(int damage)
 	//ダメージ通知
 	else
 	{
-		ShowDamageNumber(damage);
 		OnDamaged();
 	}
 
@@ -328,11 +339,16 @@ void Character::AddImpulse(const DirectX::XMFLOAT3& impulse)
 	velocity.z += impulse.z;
 }
 
-void Character::Render2D(ID3D11DeviceContext* dc, const HitBox2D& box)
+void Character::Render2D(ID3D11DeviceContext* dc, const HitBox2D& box)const
 {
 	using namespace DirectX::ope;
-	const DirectX::XMFLOAT2& leftTop = box.GetLeftTop();
-	const DirectX::XMFLOAT2& BoxSize = box.GetBoxSize();
+	std::uniform_real_distribution<float> random(-hpBarData.shake,hpBarData.shake);
+	const DirectX::XMFLOAT2& pos = box.GetLeftTop();
+	HitBox2D tempBox = hpBarData.timer > .0f?
+		HitBox2D::CreateBoxFromTopLeft({ pos.x+random(CommonClass::random),pos.y+random(CommonClass::random) }, box.GetBoxSize()):
+		box;
+	const DirectX::XMFLOAT2& leftTop = tempBox.GetLeftTop();
+	const DirectX::XMFLOAT2& BoxSize = tempBox.GetBoxSize();
 	const DirectX::XMFLOAT2 ScreenSize = Graphics::Instance().GetScreenSize();
 	const float HpParsent[] = { 1.0f,health / (float)maxHealth,shield / (float)maxHealth };
 
@@ -345,7 +361,7 @@ void Character::Render2D(ID3D11DeviceContext* dc, const HitBox2D& box)
 	const DirectX::XMFLOAT2 zoomScale = HPBarSize / hpBar[0]->GetTextureSize();
 
 	//キャラクターのアイコンを描画
-	icon->Render(dc, box.GetLeftTop(), iconSize, .0f, DirectX::XMFLOAT4{ 1.0f,1.0f,1.0f,1.0f });
+	icon->Render(dc,leftTop, iconSize, .0f, DirectX::XMFLOAT4{ 1.0f,1.0f,1.0f,1.0f });
 
 	const DirectX::XMFLOAT2 NumSize = { BoxSize.x * 0.3f,BoxSize.y * 0.6f };
 	//体力の数値を描画
@@ -375,7 +391,7 @@ void Character::Render2D(ID3D11DeviceContext* dc, const HitBox2D& box)
 	}
 }
 
-void Character::ShowDamageNumber(const int damageNumber, const DirectX::XMFLOAT4& color)
+void Character::ShowDamageNumber(const int damageNumber, bool isDrawSymbol, const DirectX::XMFLOAT4& color)
 {
 	DamageEffector::EffectData data;
 	data.color = color;
@@ -383,6 +399,7 @@ void Character::ShowDamageNumber(const int damageNumber, const DirectX::XMFLOAT4
 	data.velocity = { 30.0f,-80.0f };
 	data.scale = 2.5f;
 	data.timer = 1.0f;
+	data.isDrawSymbol = isDrawSymbol;
 
 	//ビューポート
 	D3D11_VIEWPORT viewport;

@@ -77,7 +77,7 @@ public:
 private://static members
 	static constexpr int ADD_CARD_NUM = 3;
 private://members
-	unsigned int stageLevel = 0u;
+	unsigned int stageLevel = 2u;
 	std::shared_ptr<Square> squares[Common::SQUARE_NUM_Y][Common::SQUARE_NUM_X];
 	std::unique_ptr<Model> model;
 	std::map<Card::Type,std::unique_ptr<Model>> cardModel;

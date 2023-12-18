@@ -335,6 +335,34 @@ void CardManager::Update(float elapsedTime)
 		card->Update(elapsedTime);
 	}
 
+	//何も持って無くてカードを右クリックしたら
+	if (haveCard.expired())
+	{
+		auto card = HitCheck(mouse.GetPosition());
+		if (card&&mouse.GetButtonDown()&Mouse::BTN_RIGHT)//マウスがカードの上にあるかつ左クリックしたら
+		{
+			if (std::find(cards.begin(), cards.end(), card) != cards.end())//手札の中にカードがあれば
+			{
+				//セットの空いている1番上に入れていく
+				for (auto& set : SetCards)
+				{
+					if (set == nullptr)
+					{
+						QuickEraseItem(card);
+						set = card;
+						break;
+					}
+				}
+			}
+			else//手札にカードがなければ
+			{
+				//手札にカードを移動する
+				QuickEraseItem(card);
+				cards.emplace_back(card);
+			}
+		}
+	}
+
 	//マウスが持っているカードを更新	
 	if (isMoveable && !haveCard.expired())
 	{
@@ -378,7 +406,7 @@ void CardManager::Update(float elapsedTime)
 							QuickEraseItem(card);
 							SetCards[i] = card;
 						}
-						else
+						else if(!(SetCards[std::size(SetCards)-1] == card&&SetCards[i]->GetType()==Card::Type::SPECIAL))
 						{
 							SetCards[i]->Swap(card.get());
 						}
@@ -430,16 +458,32 @@ void CardManager::Render(ID3D11DeviceContext* dc)
 
 		//説明
 		Sprite* sprite = nullptr;
-		std::pair<Card::Type, Card::Type> types = { Card::Type::NONE,Card::Type::NONE };
+		std::pair<Card::Type, Card::Type> types = { Card::Type::NONE,Card::Type::NONE };//前回のカード:今回のカード
 		renderSize = { renderSize.x,renderSize.y * 0.5f };
-		//左のタイプ決定
-		for (size_t i = 1; i < std::size(SetCards); i++)
+		auto card = HitCheck(mouse.GetPosition());//どのカードの上にいるか
+		//カードを何も持っていない&&カードが手札にあるか
+		if (card != nullptr&& (haveCard.expired()) &&!IsFillSetCards()&&
+			std::find(cards.begin(), cards.end(), card) != cards.end())
 		{
-			DirectX::XMFLOAT2 pos = SET_CARDS_START_POS;
-			pos.y += (CARD_SIZE.y + CARD_DISTANCE) * i;
-			if (Collision2D::BoxVsPos(pos, CardManager::CARD_SIZE, mouse.GetPosition()))
+			for (auto& set : SetCards)
 			{
-				if (auto card = SetCards[i - 1])types.first = card->GetType();
+				if (set == nullptr)
+					break;
+				else
+					types.first = set->GetType();
+			}
+		}
+		//カードを持っているもしくはカードがセットにあるか
+		{
+			//左のタイプ決定
+			for (size_t i = 1; i < std::size(SetCards); i++)
+			{
+				DirectX::XMFLOAT2 pos = SET_CARDS_START_POS;
+				pos.y += (CARD_SIZE.y + CARD_DISTANCE) * i;
+				if (Collision2D::BoxVsPos(pos, CardManager::CARD_SIZE, mouse.GetPosition()))
+				{
+					if (auto card = SetCards[i - 1])types.first = card->GetType();
+				}
 			}
 		}
 
@@ -469,16 +513,18 @@ void CardManager::Render(ID3D11DeviceContext* dc)
 	//セットカードの描画裏側
 	SetCardSprites[0]->Render(dc, renderpos, renderSize, .0f, color);
 
-	for (auto& card : cards)
-	{
-		card->Render(dc);
-	}
-
+	//せっとの描画
 	for (auto& card : SetCards)
 	{
 		if (card.get() == nullptr)continue;
 		card->Render(dc);
 	}
+	//手札の描画
+	for (auto& card : cards)
+	{
+		card->Render(dc);
+	}
+
 
 	//セットカードの描画表側
 	SetCardSprites[1]->Render(dc, renderpos, renderSize, .0f, color);

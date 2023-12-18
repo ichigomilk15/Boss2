@@ -17,7 +17,7 @@ public:
 	//Player(CameraController* cameraController);
 	~Player() override;
 
-	void Update(float elapsedTime);
+	void Update(float elapsedTime)override;
 	void Render(ID3D11DeviceContext* dc, Shader* shader);
 	//void Render2D(RenderContext& rc,ID3D11DeviceContext* dc);//2DŠÖŒW‚Ì•`‰æ
 	void DrawDebugGUI();

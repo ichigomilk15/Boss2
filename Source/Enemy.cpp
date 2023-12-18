@@ -8,6 +8,7 @@
 
 void Enemy::Update(float elapsedTime)
 {
+	Character::Update(elapsedTime);
 	// 速力処理更新
 	UpdateVelocity(elapsedTime);
 
@@ -16,11 +17,6 @@ void Enemy::Update(float elapsedTime)
 
 	//オブジェクト行列を更新
 	UpdateTransform();
-
-#if _DEBUG
-	//攻撃範囲を表示
-
-#endif
 
 	this->model->UpdateAnimation(elapsedTime);
 	//モデル行列更新

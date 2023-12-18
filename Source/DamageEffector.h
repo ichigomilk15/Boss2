@@ -16,6 +16,7 @@ public:
 		DirectX::XMFLOAT4 color;
 		float scale;
 		float timer;
+		bool isDrawSymbol;
 
 	public://functions
 		bool operator<(const EffectData& dst);

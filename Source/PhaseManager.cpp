@@ -32,6 +32,10 @@ PhaseManager::PhaseManager()
 	waveSprites[1] = std::make_unique<Sprite>("./Data/Sprite/WAVE_02.png");
 	waveSprites[2] = std::make_unique<Sprite>("./Data/Sprite/WAVE_03.png");
 
+	waveChangeData.sprite = std::make_unique<Sprite>("./Data/Sprite/wave_change.png");
+	waveChangeData.offsetY = screenSize.y * 0.2f;
+	waveChangeData.DepthNum = screenSize.y / waveChangeData.offsetY;
+
 	InitializeAudio();
 }
 
@@ -68,23 +72,30 @@ void PhaseManager::Update(float elapsedTime)
 			SceneManager::Instance().ChangeScene(new SceneClear);
 			return;
 		}
-		//ステージのレベルを参照してenemyをセットする
-		StageInit(stageLevel);
-		Stage::Instance()->ResetAllSquare();
+
 
 
 		if (!SaveData::Instance().Save())
 		{
 			//セーブに失敗したら
-			int a = 0;
-		}		
+		}
 
+
+
+		StartWaveChange();
 		NextPhase();//次のフェーズへ
 	}
 	[[fallthrough]];
 	case PhaseManager::Phase::Phase_NextStage:
 	{
-		if (IsSlowNextPhase(true))
+		if (waveChangeData.oldIsLoadOk != waveChangeData.isLoadOk)
+		{
+			//ステージのレベルを参照してenemyをセットする
+			StageInit(Stage::Instance()->GetStageLevel());
+			Stage::Instance()->ResetAllSquare();
+		}
+
+		if (IsQuickNextPhase(waveChangeData.isChangeOk))
 		{
 			NextPhase();//次のフェーズへ
 		}
@@ -247,6 +258,21 @@ void PhaseManager::Update(float elapsedTime)
 	//全てのフェーズで実行するもの
 	phaseTimer = (isNextPhase ? phaseTimer - elapsedTime : NEXT_PHASE_WAIT_TIMER);
 	isNextPhase = false;
+	auto&& data = waveChangeData;
+	if (!data.isChangeOk)
+	{
+		data.timer += elapsedTime;
+		data.oldIsLoadOk = data.isLoadOk;
+		if (data.timer > data.TIMER_MAX * 0.5f)
+		{
+			data.isLoadOk = true;
+		}
+		if (data.timer > data.TIMER_MAX)
+		{
+			data.timer = .0f;
+			data.isChangeOk = true;
+		}
+	}
 }
 
 void PhaseManager::ResetTurn()
@@ -259,12 +285,7 @@ void PhaseManager::Render(ID3D11DeviceContext* dc)
 {
 	const DirectX::XMFLOAT2 ScreenSize = Graphics::Instance().GetScreenSize();
 
-	if (phase == Phase::Phase_NextStage)
-	{
-		HitBox2D box = HitBox2D::CreateBoxFromCenter({ ScreenSize.x * 0.5f,ScreenSize.y * 0.5f }, { ScreenSize.x,ScreenSize.y * 0.3f });
-		waveSprites[Stage::Instance()->GetStageLevel()-1]->Render(dc,
-			box.GetLeftTop(), box.GetBoxSize(), .0f, { 1.0f,1.0f,1.0f,1.0f });
-	}
+
 
 	//完了ボタン描画
 	{
@@ -277,6 +298,35 @@ void PhaseManager::Render(ID3D11DeviceContext* dc)
 		okButton->Render(dc, lefttop, Size, .0f, color);
 		
 	}
+}
+
+void PhaseManager::RenderWaveChange(ID3D11DeviceContext* dc)const
+{
+	if (phase != Phase::Phase_NextStage)return;//ウェーブの変更時以外描画しない
+
+	const DirectX::XMFLOAT2 ScreenSize = Graphics::Instance().GetScreenSize();//画面サイズ
+
+	float parsent = waveChangeData.timer / waveChangeData.TIMER_MAX;
+	DirectX::XMFLOAT2 pos = { .0f,ScreenSize.y - ScreenSize.y * 
+		sinf(parsent * DirectX::XM_PI) };
+	DirectX::XMFLOAT2 size = { ScreenSize.x ,ScreenSize.y * 0.4f };
+	DirectX::XMFLOAT2 texSize = waveChangeData.sprite->GetTextureSize();
+
+	for (size_t i = 0,end = waveChangeData.DepthNum; i < end; i++)
+	{
+		waveChangeData.sprite->Render(dc,
+			pos, size, DirectX::XMFLOAT2{ texSize.x * parsent,.0f }, DirectX::XMFLOAT2{texSize.x *(end-i),texSize.y}, .0f, { 1.0f,1.0f,1.0f,1.0f });
+		pos.y += waveChangeData.offsetY;
+	}
+
+
+
+
+
+	//waveの進行度の表示
+	HitBox2D box = HitBox2D::CreateBoxFromCenter({ ScreenSize.x * 0.5f,ScreenSize.y * 0.5f }, { ScreenSize.x,ScreenSize.y * 0.3f });
+	waveSprites[Stage::Instance()->GetStageLevel() - 1]->Render(dc,
+		box.GetLeftTop(), box.GetBoxSize(), .0f, { 1.0f,1.0f,1.0f,1.0f });
 }
 
 void PhaseManager::Reset()
@@ -442,6 +492,10 @@ void PhaseManager::StageInit(const int level)
 		boss1->SetPivotAdjustPosWorld(pivot);
 		boss1->SetState(State::Attack_Init);
 		boss1->SetHealth(150);
+#ifdef _DEBUG//todo : debug ボスの体力の初期体力を設定
+		boss1->SetHealth(150);
+#endif // _DEBUG
+
 		boss1->SetMaxHealth(150);
 		boss1->SetAttackRange(4);
 	}	
@@ -455,4 +509,12 @@ void PhaseManager::StageInit(const int level)
 
 void PhaseManager::InitializeAudio()
 {
+}
+
+void PhaseManager::StartWaveChange(float startTime)
+{
+	waveChangeData.timer = std::clamp(startTime,.0f,waveChangeData.TIMER_MAX);
+	waveChangeData.isChangeOk = false;
+	waveChangeData.isLoadOk = false;
+	waveChangeData.oldIsLoadOk = false;
 }

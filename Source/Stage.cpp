@@ -34,6 +34,7 @@ Stage::Stage() :
 	rockData.pos ={};
 	rockData.rotate ={};
 	rockData.scale = { 0.6f,1.0f,0.6f };
+	
 }
 
 void Stage::ClearStage() noexcept

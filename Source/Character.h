@@ -64,6 +64,8 @@ public:
 	Character();
 	virtual ~Character();
 
+	virtual void Update(float elapsedTime);
+
 	//行列更新処理
 	void UpdateTransform();
 
@@ -153,7 +155,7 @@ public:
 	//最大健康状態を取得
 	int GetMaxHealth() const { return maxHealth; }
 
-	void Render2D(ID3D11DeviceContext* dc, const HitBox2D& box);
+	void Render2D(ID3D11DeviceContext* dc, const HitBox2D& box)const;
 
 	//Getter&Setter*****************************************************
 #if 1
@@ -171,7 +173,7 @@ public:
 
 	const Sprite* GetIcon()const noexcept { return icon.get(); }
 
-	void ShowDamageNumber(const int damageNumber, const DirectX::XMFLOAT4& color = {1.0f, 0.0f, 0.0f, 1.0f});
+	void ShowDamageNumber(const int damageNumber, bool isDrawSymbol, const DirectX::XMFLOAT4& color = {1.0f, 0.0f, 0.0f, 1.0f});
 
 	//レイキャスト用
 	bool RayCast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end, HitResult& hit);
@@ -232,6 +234,12 @@ protected:
 
 	//HPバー関係の値
 	std::unique_ptr<Sprite> icon;
+	struct 
+	{
+		float shake = .0f;
+		int oldHp = 0;
+		float timer = .0f;
+	}hpBarData;
 
 	std::unique_ptr<Model> model;
 

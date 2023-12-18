@@ -58,18 +58,10 @@ void Mouse::Update()
 	UINT viewportH = screenHeight;
 	float rateX = 1.0f;
 	float rateY = 1.0f;
-	if (Graphics::Instance().IsFullScreen())
-	{
-		auto dpi = GetDeviceCaps(GetDC(nullptr), LOGPIXELSY);
-		rateX = static_cast<float>(USER_DEFAULT_SCREEN_DPI) / dpi;
-		rateY = rateX;
-		//rateX *= static_cast<float>(screenW)/static_cast<float>(viewportW);
-		//rateY *= static_cast<float>(screenH) / static_cast<float>(viewportH);
-	}
 
 	// âÊñ ï‚ê≥
 	positionX[1] = positionX[0];
 	positionY[1] = positionY[0];
-	positionX[0] = (LONG)((((cursor.x/* * rateX*/) / static_cast<float>(viewportW) * static_cast<float>(screenW)) ));
-	positionY[0] = (LONG)((((cursor.y/* * rateY*/) / static_cast<float>(viewportH) * static_cast<float>(screenH))));
+	positionX[0] = (LONG)((cursor.x) / static_cast<double>(viewportW) * static_cast<double>(screenW));
+	positionY[0] = (LONG)((cursor.y) / static_cast<double>(viewportH) * static_cast<double>(screenH));
 }
