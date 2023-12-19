@@ -43,7 +43,7 @@ void SceneLoading::Update(float elapsedTime)
 	angle += speed * elapsedTime;
 
 	//次のシーンの準備が完了したらシーンを切り替える
-	if (this->nextScene->IsReady())
+	if (!SceneManager::Instance().IsWaitSceneChange()&&this->nextScene->IsReady())
 	{
 		this->thread->detach();
 		SceneManager::Instance().ChangeScene(this->nextScene);

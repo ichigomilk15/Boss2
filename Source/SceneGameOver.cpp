@@ -44,10 +44,10 @@ void SceneGameOver::Update(float elapsedTime)
 {
     Mouse& mouse = Input::Instance().GetMouse();
 
-    if (mouse.GetButtonDown() & Mouse::BTN_LEFT && GoTitle.GetHitBox().Hit(mouse.GetPosition()))
+    if (!SceneManager::Instance().IsWaitSceneChange() && mouse.GetButtonDown() & Mouse::BTN_LEFT && GoTitle.GetHitBox().Hit(mouse.GetPosition()))
         SceneManager::Instance().ChangeScene(new SceneTitle);
 
-    if (mouse.GetButtonDown() & Mouse::BTN_LEFT && Retry.GetHitBox().Hit(mouse.GetPosition()))
+    if (!SceneManager::Instance().IsWaitSceneChange() && mouse.GetButtonDown() & Mouse::BTN_LEFT && Retry.GetHitBox().Hit(mouse.GetPosition()))
         SceneManager::Instance().ChangeScene(new SceneGame);
 }
 

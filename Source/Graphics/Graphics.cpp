@@ -146,6 +146,7 @@ Graphics::Graphics(HWND hWnd) :hwnd(hWnd)
 	}
 
 	swapchain->SetFullscreenState(TRUE, nullptr);
+	//ShowCursor(FALSE);
 
 	swapchain->GetFullscreenState(&isFullScreen, nullptr);
 }
@@ -157,6 +158,7 @@ Graphics::~Graphics()
 	swapchain->GetFullscreenState(&isFullScreen, nullptr);
 	if(isFullScreen)
 		swapchain->SetFullscreenState(FALSE, nullptr);
+	//ShowCursor(TRUE);
 }
 
 void Graphics::Quit() const noexcept

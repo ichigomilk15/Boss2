@@ -120,7 +120,7 @@ void GameSystemManager::PousedOnlyUpdate(float elapsedTime)
     }
 
     //タイトルへボタン
-    if (mouse.GetButtonDown()&Mouse::BTN_LEFT&& GoTitleButton.GetHitBox().Hit(mouse.GetPosition()))
+    if (!SceneManager::Instance().IsWaitSceneChange()&& mouse.GetButtonDown()&Mouse::BTN_LEFT&& GoTitleButton.GetHitBox().Hit(mouse.GetPosition()))
     {
         SceneManager::Instance().ChangeScene(new SceneTitle);
     }
@@ -139,9 +139,9 @@ void GameSystemManager::PousedOnlyUpdate(float elapsedTime)
 
     //debug
 #ifdef _DEBUG
-    if (mouse.GetPositionX() < .0f)
+    if (!SceneManager::Instance().IsWaitSceneChange()&& mouse.GetPositionX() < .0f)
         SceneManager::Instance().ChangeScene(new SceneClear);
-    if (mouse.GetPositionY() < .0f)
+    if (!SceneManager::Instance().IsWaitSceneChange()&& mouse.GetPositionY() < .0f)
         SceneManager::Instance().ChangeScene(new SceneGameOver);
 #endif // _DEBUG
 }

@@ -60,26 +60,33 @@ void SceneTitle::Update(float elapsedTime)
 		Graphics::Instance().Quit();
 	}
 
-	if (timer <= .0f)
+	//if (timer <= .0f)
+	//{
+
+
+	//	//なにかボタンを押したらローディングシーンを挟んでゲームシーン切り替え
+	//	if (mouse.GetButtonDown() & Mouse::BTN_LEFT)
+	//	{
+
+	//		startTimer = timer = 2.0f;
+	//		SaveData::Instance().ReSet();
+	//	}
+	//}
+
+	//if (timer > .0f)
+	//{
+	//	timer -= elapsedTime;
+	//	if (timer < .0f)
+	//	{
+	//		SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame()));
+	//	}
+	//}	
+	auto& SceneManager = SceneManager::Instance();
+	if (! SceneManager.IsWaitSceneChange()&& mouse.GetButtonDown() & Mouse::BTN_LEFT)
 	{
-
-
-		//なにかボタンを押したらローディングシーンを挟んでゲームシーン切り替え
-		if (mouse.GetButtonDown() & Mouse::BTN_LEFT)
-		{
-
-			startTimer = timer = 2.0f;
-			SaveData::Instance().ReSet();
-		}
-	}
-
-	if (timer > .0f)
-	{
-		timer -= elapsedTime;
-		if (timer < .0f)
-		{
-			SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame()));
-		}
+		SaveData::Instance().ReSet();
+		SceneManager.SetSceneChangeSprite(std::make_unique<Sprite>("./Data/Sprite/loading_back.png"));
+		SceneManager.ChangeScene(new SceneLoading(new SceneGame()));
 	}
 }
 

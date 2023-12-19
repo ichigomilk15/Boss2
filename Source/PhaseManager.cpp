@@ -67,7 +67,7 @@ void PhaseManager::Update(float elapsedTime)
 
 
 		unsigned int stageLevel = Stage::Instance()->StageLevelStepUp();
-		if (stageLevel > Stage::STAGE_LEVEL_MAX)
+		if (!SceneManager::Instance().IsWaitSceneChange()&& stageLevel > Stage::STAGE_LEVEL_MAX)
 		{
 			SceneManager::Instance().ChangeScene(new SceneClear);
 			return;
@@ -231,7 +231,7 @@ void PhaseManager::Update(float elapsedTime)
 		{
 			if (player->GetHealth() > 0 /*|| player->GetPlayerDeadTime() > 0.000001f*/) { isGameOver = false; break; }
 		}
-		if (isGameOver)
+		if (!SceneManager::Instance().IsWaitSceneChange()&& isGameOver)
 			SceneManager::Instance().ChangeScene(new SceneGameOver);
 	}
 	break;
