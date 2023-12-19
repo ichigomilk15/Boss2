@@ -18,7 +18,7 @@ public:
 	~Player() override;
 
 	void Update(float elapsedTime)override;
-	void Render(ID3D11DeviceContext* dc, Shader* shader);
+	void Render(ID3D11DeviceContext* dc, Shader* shader, RenderContext& rc);
 	//void Render2D(RenderContext& rc,ID3D11DeviceContext* dc);//2D関係の描画
 	void DrawDebugGUI();
 
@@ -26,6 +26,7 @@ public:
 	void DrawDebugPrimitive();
 
 	void SetTurnPosInit(const DirectX::XMINT2& pos) { this->turnPosInit = pos; }
+
 private:
 	//ステート更新処理
 	void UpdateState(float elapsedTime) override;
@@ -64,10 +65,14 @@ private:
 	//オーディオの初期化
 	void InitializeAudio();
 
+	//死亡処理
+	void UpdateDeath(float elapsedTime) override;
+
 private:
 	//Model* model = nullptr;
 	Effect* hitEffect = nullptr;
 	std::unique_ptr<Effect> buffEffect;
+	std::unique_ptr<Effect> debuffEffect;
 	std::unique_ptr<Effect> shieldEffect;
 	CardComboDataBase* cardComboDataBase;
 	DirectX::XMINT2 turnPosInit;			//ターン開始の位置

@@ -49,7 +49,8 @@ void ProjectileStraight::Update(float elapsedTime)
 
 void ProjectileStraight::Render(ID3D11DeviceContext* dc, Shader* shader)
 {
-	shader->Draw(dc, model);
+	RenderContext rc{};
+	shader->Draw(dc, model, rc);
 }
 
 void ProjectileStraight::Launch(const DirectX::XMFLOAT3& direction, const DirectX::XMFLOAT3& positionWorld)

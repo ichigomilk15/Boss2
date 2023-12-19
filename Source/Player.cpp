@@ -22,11 +22,15 @@ Player::Player() :Character()
 	this->model = std::make_unique<Model>("Data/Model/Player/Player.mdl");
 	icon = std::make_unique<Sprite>("./Data/Sprite/icon_player.png");
 
+	//マスクシェーダー色
+	maskShaderDetails.edgeColor = { 0.0f, 0.0f, 1.0f, 1.0f };
+
 	//モデルが大きいのでスケーリング
 	scale.x = scale.y = scale.z = 0.1f;
 
 	//effectたちの設定
-	buffEffect = std::make_unique<Effect>("./Data/Effect/vortex.efk");
+	buffEffect = std::make_unique<Effect>("./Data/Effect/powerup.efk");
+	debuffEffect = std::make_unique<Effect>("./Data/Effect/powerdown.efk");
 	shieldEffect = std::make_unique<Effect>("./Data/Effect/sheild.efk");
 	effects.attack = std::make_unique<Effect>("./Data/Effect/attack.efk");
 	effects.damage = std::make_unique<Effect>("./Data/Effect/damage.efk");
@@ -54,6 +58,9 @@ Player::~Player()
 void Player::Update(float elapsedTime)
 {
 	Character::Update(elapsedTime);
+	//死亡処理
+	UpdateDeath(elapsedTime);
+
 	//ステート更新処理
 	UpdateState(elapsedTime);
 
@@ -69,9 +76,13 @@ void Player::Update(float elapsedTime)
 	model->UpdateTransform(transform);
 }
 
-void Player::Render(ID3D11DeviceContext* dc, Shader* shader)
+void Player::Render(ID3D11DeviceContext* dc, Shader* shader, RenderContext& rc)
 {
-	shader->Draw(dc, model.get());
+	rc.maskData.maskTexture = maskShaderDetails.maskTexture->GetShaderResourceView().Get();
+	rc.maskData.dissolveThreshold = maskShaderDetails.dissolveThreshold;
+	rc.maskData.edgeColor = maskShaderDetails.edgeColor;
+	rc.maskData.edgeThreshold = maskShaderDetails.edgeThreshold;
+	shader->Draw(dc, model.get(), rc);
 }
 
 void Player::DrawDebugGUI()
@@ -101,6 +112,9 @@ void Player::DrawDebugGUI()
 			ImGui::InputInt("Shield", &shield, 0);
 			ImGui::InputInt("Block", &block, 0);
 			ImGui::InputInt("HP", &health, 0);
+
+			//Mask Shader
+			ImGui::DragFloat("Dissolve Value", &maskShaderDetails.dissolveThreshold, 0.01f, 0.0f, 1.0f);
 		}
 	}
 	ImGui::End();
@@ -227,7 +241,7 @@ void Player::UpdateState(float elapsedTime)
 		Stage::Instance()->ResetAllSquare();
 		state = State::Special;
 		cardComboDataBase = nullptr;
-		buffEffect->Play(positionWorld, 0.5f);//effect再生
+		buffEffect->Play(positionWorld, 1.0f);//effect再生
 		[[fallthrough]];
 	case State::Special:
 		actTimer -= elapsedTime;
@@ -241,6 +255,7 @@ void Player::UpdateState(float elapsedTime)
 	case State::Debuff_Init:
 		actTimer = 0.5f;
 		Stage::Instance()->ResetAllSquare();
+		debuffEffect->Play(positionWorld, 1.0f);
 		state = State::Debuff;
 		SetDebuffAction();
 		[[fallthrough]];
@@ -281,6 +296,14 @@ void Player::UpdateState(float elapsedTime)
 			SetState(State::Idle_Init);
 			break;
 		}
+		break;
+
+	case State::Death_Init:
+		model->PlayAnimation(Animation::Death, false);
+		state = State::Death;
+		[[fallthrough]];
+	case State::Death:
+
 		break;
 
 	case State::Act_Finish_Init:
@@ -484,10 +507,12 @@ void Player::SetShieldAction()
 		int moveRange = Stage::Instance()->GetTargetPosCost(position, turnPosInit);
 		shieldGet += moveRange;
 	}
-	if(defenceDetail->getShield)
-		ShowDamageNumber(shieldGet,true , { 0.0f, 1.0f, 1.0f, 1.0f });
-	if (defenceDetail->GetBlock)
-		ShowDamageNumber(defenceDetail->GetBlock,true , { .5f,.5f,1.0f,1.0f });
+
+
+	if(defenceDetail->getShield > 0)
+		ShowDamageNumber(shieldGet,true, { 0.0f, 1.0f, 1.0f, 1.0f }, CommonClass::Right);
+	if (defenceDetail->GetBlock > 0)
+		ShowDamageNumber(defenceDetail->GetBlock,true, { .5f,.5f,1.0f,1.0f }, CommonClass::Left);
 	//if (defenceDetail->heal)
 	//	ShowDamageNumber(defenceDetail->heal, { .5f,1.0f,0.5f,1.0f });
 	shield += shieldGet;
@@ -577,6 +602,8 @@ void Player::OnDamaged()
 void Player::OnDead()
 {
 	playerSes.deadSe.get()->Play(false);
+	state = State::Death_Init;
+	destroyedStatus.destroyedTime = 3.0f;
 	//playerDeadTime = 4.0f;
 }
 
@@ -683,4 +710,18 @@ void Player::InitializeAudio()
 	AudioLoader::Load(AUDIO::SE_CARD_DECIDE, cardSes.cardDecideSe);
 	AudioLoader::Load(AUDIO::SE_CARD_DRAW, cardSes.cardDraw);
 	AudioLoader::Load(AUDIO::SE_CARD_SET, cardSes.cardSet);
+}
+
+void Player::UpdateDeath(float elapsedTime)
+{
+	if (!GetIsDead())
+		return;
+
+	destroyedStatus.destroyedTime -= elapsedTime;
+	 maskShaderDetails.dissolveThreshold = max(0.0f, maskShaderDetails.dissolveThreshold - (elapsedTime / 2.0f));
+
+	if (destroyedStatus.destroyedTime <= 0.0f)
+	{
+		destroyedStatus.isDestroyed = true;
+	}
 }

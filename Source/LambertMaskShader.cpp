@@ -1,13 +1,13 @@
 #include "Misc.h"
-#include "Graphics/LambertShader.h"
+#include "LambertMaskShader.h"
 
-LambertShader::LambertShader(ID3D11Device* device)
+LambertMaskShader::LambertMaskShader(ID3D11Device* device)
 {
 	// 頂点シェーダー
 	{
 		// ファイルを開く
 		FILE* fp = nullptr;
-		fopen_s(&fp, "Shader\\LambertVS.cso", "rb");
+		fopen_s(&fp, "Shader\\LambertMaskVS.cso", "rb");
 		_ASSERT_EXPR_A(fp, "CSO File not found");
 
 		// ファイルのサイズを求める
@@ -43,7 +43,7 @@ LambertShader::LambertShader(ID3D11Device* device)
 	{
 		// ファイルを開く
 		FILE* fp = nullptr;
-		fopen_s(&fp, "Shader\\LambertPS.cso", "rb");
+		fopen_s(&fp, "Shader\\LambertMaskPS.cso", "rb");
 		_ASSERT_EXPR_A(fp, "CSO File not found");
 
 		// ファイルのサイズを求める
@@ -86,6 +86,11 @@ LambertShader::LambertShader(ID3D11Device* device)
 		desc.ByteWidth = sizeof(CbSubset);
 
 		hr = device->CreateBuffer(&desc, 0, subsetConstantBuffer.GetAddressOf());
+		_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
+
+		desc.ByteWidth = sizeof(CbMask);
+
+		hr = device->CreateBuffer(&desc, 0, maskConstantBuffer.GetAddressOf());
 		_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
 	}
 
@@ -156,7 +161,6 @@ LambertShader::LambertShader(ID3D11Device* device)
 		desc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
 		desc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
 		desc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-		//desc.Filter = D3D11_FILTER_ANISOTROPIC;
 
 		HRESULT hr = device->CreateSamplerState(&desc, samplerState.GetAddressOf());
 		_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
@@ -164,7 +168,7 @@ LambertShader::LambertShader(ID3D11Device* device)
 }
 
 // 描画開始
-void LambertShader::Begin(ID3D11DeviceContext* dc, const RenderContext& rc)
+void LambertMaskShader::Begin(ID3D11DeviceContext* dc, const RenderContext& rc)
 {
 	dc->VSSetShader(vertexShader.Get(), nullptr, 0);
 	dc->PSSetShader(pixelShader.Get(), nullptr, 0);
@@ -174,7 +178,8 @@ void LambertShader::Begin(ID3D11DeviceContext* dc, const RenderContext& rc)
 	{
 		sceneConstantBuffer.Get(),
 		meshConstantBuffer.Get(),
-		subsetConstantBuffer.Get()
+		subsetConstantBuffer.Get(),
+		maskConstantBuffer.Get(),
 	};
 	dc->VSSetConstantBuffers(0, ARRAYSIZE(constantBuffers), constantBuffers);
 	dc->PSSetConstantBuffers(0, ARRAYSIZE(constantBuffers), constantBuffers);
@@ -197,10 +202,18 @@ void LambertShader::Begin(ID3D11DeviceContext* dc, const RenderContext& rc)
 }
 
 // 描画
-void LambertShader::Draw(ID3D11DeviceContext* dc, const Model* model, const RenderContext& rc)
+void LambertMaskShader::Draw(ID3D11DeviceContext* dc, const Model* model, const RenderContext& rc)
 {
 	const ModelResource* resource = model->GetResource();
 	const std::vector<Model::Node>& nodes = model->GetNodes();
+
+	//Mask ConstantBuffer更新
+	CbMask cbMask;
+	::memset(&cbMask, 0, sizeof(cbMask));
+	cbMask.dissolveThreshold = rc.maskData.dissolveThreshold;
+	cbMask.edgeThreshold = rc.maskData.edgeThreshold;
+	cbMask.edgeColor = rc.maskData.edgeColor;
+	dc->UpdateSubresource(maskConstantBuffer.Get(), 0, 0, &cbMask, 0, 0);
 
 	for (const ModelResource::Mesh& mesh : resource->GetMeshes())
 	{
@@ -234,7 +247,13 @@ void LambertShader::Draw(ID3D11DeviceContext* dc, const Model* model, const Rend
 			CbSubset cbSubset;
 			cbSubset.materialColor = subset.material->color;
 			dc->UpdateSubresource(subsetConstantBuffer.Get(), 0, 0, &cbSubset, 0, 0);
-			dc->PSSetShaderResources(0, 1, subset.material->shaderResourceView.GetAddressOf());
+
+			ID3D11ShaderResourceView* srvs[] =
+			{
+				subset.material->shaderResourceView.Get(),
+				rc.maskData.maskTexture
+			};
+			dc->PSSetShaderResources(0, ARRAYSIZE(srvs), srvs);
 			dc->PSSetSamplers(0, 1, samplerState.GetAddressOf());
 			dc->DrawIndexed(subset.indexCount, subset.startIndex, 0);
 		}
@@ -243,7 +262,7 @@ void LambertShader::Draw(ID3D11DeviceContext* dc, const Model* model, const Rend
 }
 
 // 描画終了
-void LambertShader::End(ID3D11DeviceContext* dc)
+void LambertMaskShader::End(ID3D11DeviceContext* dc)
 {
 	dc->VSSetShader(nullptr, nullptr, 0);
 	dc->PSSetShader(nullptr, nullptr, 0);

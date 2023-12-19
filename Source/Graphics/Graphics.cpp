@@ -1,5 +1,6 @@
 #include "Misc.h"
 #include "Graphics/LambertShader.h"
+#include "Graphics/LambertMaskShader.h"
 #include "Graphics/Graphics.h"
 
 Graphics* Graphics::instance = nullptr;
@@ -133,7 +134,8 @@ Graphics::Graphics(HWND hWnd) :hwnd(hWnd)
 
 	// シェーダー
 	{
-		shader = std::make_unique<LambertShader>(device.Get());
+		shaders[0] = std::make_unique<LambertShader>(device.Get());
+		shaders[1] = std::make_unique<LambertMaskShader>(device.Get());
 	}
 
 	// レンダラ
@@ -148,7 +150,7 @@ Graphics::Graphics(HWND hWnd) :hwnd(hWnd)
 	swapchain->SetFullscreenState(TRUE, nullptr);
 	//ShowCursor(FALSE);
 
-	swapchain->GetFullscreenState(&isFullScreen, nullptr);
+	//swapchain->GetFullscreenState(&isFullScreen, nullptr);
 }
 
 // デストラクタ

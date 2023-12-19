@@ -35,7 +35,6 @@ void KnockbackAttack::Update(float elapsedTime)
 
 			if ( isTarget)
 			{
-				e.targetChara->ApplyDamage(damage);
 				e.isAttacked = true;
 				for (int cost = knockbackCost; cost > 0; --cost)
 				{
@@ -63,6 +62,7 @@ void KnockbackAttack::Update(float elapsedTime)
 						break;
 					}
 				}
+				e.targetChara->ApplyDamage(damage);
 			}
 			else
 			{

@@ -37,8 +37,8 @@ void EnemyMinion1::UpdateState(float elapsedTime)
 	switch (state)
 	{
 	case State::Idle_Init:
-		if (!this->model->IsPlayAnimation(Animation::Idle))
-			this->model->PlayAnimation(Animation::Idle, true);
+		if (!this->model->IsPlayAnimation(ANIMATION_MINION1::Minion1Run))
+			this->model->PlayAnimation(ANIMATION_MINION1::Minion1Run, true);
 		state = State::Idle;
 		[[fallthrough]];
 	case State::Idle:
@@ -46,7 +46,7 @@ void EnemyMinion1::UpdateState(float elapsedTime)
 		break;
 
 	case State::Act_Init:
-		this->model->PlayAnimation(Animation::Idle, true);
+		this->model->PlayAnimation(ANIMATION_MINION1::Minion1Run, true);
 		actTimer = 0.5f;
 		state = State::Act;
 		Stage::Instance()->ResetAllSquare();
@@ -102,7 +102,7 @@ void EnemyMinion1::UpdateState(float elapsedTime)
 		break;
 
 	case State::Attack_Init:
-		this->model->PlayAnimation(Animation::Run, false);
+		this->model->PlayAnimation(ANIMATION_MINION1::Minion1Dive, false);
 		actTimer = 1.0f;
 		effects.vortex->Play(positionWorld, 1.0f);
 		state = State::Attack;
@@ -124,7 +124,7 @@ void EnemyMinion1::UpdateState(float elapsedTime)
 		break;
 
 	case State::Attacking_Init:
-		this->model->PlayAnimation(Animation::Attack, false, 0.0f);
+		this->model->PlayAnimation(ANIMATION_MINION1::Minion1Attack, false, 0.0f);
 		minion1Ses.attackSe.get()->Stop();
 		minion1Ses.attackSe.get()->ResetPlay();
 		state = State::Attacking;
@@ -156,6 +156,14 @@ void EnemyMinion1::UpdateState(float elapsedTime)
 		}
 		break;
 
+	case State::Death_Init:
+		model->PlayAnimation(ANIMATION_MINION1::Minion1Death, false);
+		state = State::Death;
+		[[fallthrough]];
+	case State::Death:
+
+		break;
+
 	case State::Act_Finish_Init:
 		actTimer = 1.0f;
 		isActEnd = true;
@@ -184,7 +192,8 @@ void EnemyMinion1::OnDamaged()
 void EnemyMinion1::OnDead()
 {
 	minion1Ses.deathSe.get()->Play(false);
-	Enemy::OnDead();
+	destroyedStatus.destroyedTime = 1.0f;
+	state = State::Death_Init;
 }
 
 void EnemyMinion1::InitializeAudio()

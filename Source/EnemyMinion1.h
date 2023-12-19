@@ -4,6 +4,14 @@
 #include "Enemy.h"
 #include "Audio\AudioSource.h"
 
+enum ANIMATION_MINION1
+{
+	Minion1Run,
+	Minion1Dive,
+	Minion1Attack,
+	Minion1Death,
+};
+
 // ’¼üˆÚ“®‚Ì“G(‰¼)
 class EnemyMinion1 : public Enemy
 {

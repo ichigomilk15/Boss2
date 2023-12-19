@@ -28,7 +28,7 @@ public:
 	virtual void Update(float elapsedTime)override;
 
 	//描画処理
-	virtual void Render(ID3D11DeviceContext* dc, Shader* shader);
+	virtual void Render(ID3D11DeviceContext* dc, Shader* shader, RenderContext& rc);
 
 	//デバッグ用GUI描画
 	void DrawDebugGUI();
@@ -65,6 +65,8 @@ protected:
 	virtual void MakeHalfTransparent();
 	virtual void MakeFullTransparent();
 
+	void UpdateDeath(float elapsedTime) override;
+
 private:
 	bool IsConcealPlayer();
 
@@ -78,12 +80,8 @@ protected:
 	int attackRange = 2;
 	float hpBarUseScale = 0.5f;//HPバーの使用率
 
-	struct DestroyedStatus
-	{
-		std::unique_ptr<Effect> destroyedEffect;
-		float destroyedTime = 0.0f;
-		bool isDestroyed = false;
-	} destroyedStatus;//死亡時使用データ
+	float deathMaskTimer = 1.0f;
+
 protected:
 	Character* player;
 };

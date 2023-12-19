@@ -24,7 +24,7 @@ public:
     void Update(float elapsedTime, Character* player);
 
     //ï`âÊèàóù
-    void Render(ID3D11DeviceContext* context, Shader* shader);
+    void Render(ID3D11DeviceContext* context, Shader* shader, RenderContext& rc);
     void Render2D(ID3D11DeviceContext* dc);
 
     //ÉGÉlÉ~Å[ìoò^
@@ -64,6 +64,7 @@ public:
 
     const bool GetIsAllActEnd() const;
     const bool GetIsAllDead() const;
+    const bool GetIsAllDestroyed() const;
 
 
     void SetStartEnemyNum()noexcept { startEnemyNum = static_cast<int>(enemies.size()); }

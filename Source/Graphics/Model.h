@@ -46,7 +46,7 @@ public:
 	void UpdateAnimation(float elapedTime);
 
 	//アニメーション再生
-	void PlayAnimation(int index, bool loop, float blendSeconds = 0.2f);
+	void PlayAnimation(int index, bool loop, float blendSeconds = 0.2f, float speedRate = 1.0f);
 
 	//アニメーション再生中か
 	bool IsPlayAnimation() const;
@@ -63,4 +63,5 @@ private:
 	bool animationEndFlag = false;
 	float animationBlendTime = 0.0f;
 	float animationBlendSeconds = 0.0f;
+	float animationSpeedRate = 1.0f;
 };

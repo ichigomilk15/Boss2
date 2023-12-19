@@ -150,7 +150,7 @@ void PhaseManager::Update(float elapsedTime)
 	{
 		Mouse& mouse = Input::Instance().GetMouse();
 		//okボタンを押したら次のフェーズへ
-		if (IsQuickNextPhase(mouse.GetButtonDown()&Mouse::BTN_LEFT&&
+		if (IsQuickNextPhase(mouse.GetButtonDown() & Mouse::BTN_LEFT &&
 			okButtonCollision.Hit(mouse.GetPosition()) && CardManager::Instance().IsFillSetCards()))
 		{
 			CardManager::Instance().SetIsMoveable(false);
@@ -172,28 +172,30 @@ void PhaseManager::Update(float elapsedTime)
 	{
 		const bool isPlayseActFinished = PlayerManager::Instance().GetFirstPlayer()->GetIsActEnd();
 
-		UpdatePlayerAct(elapsedTime); 
+		UpdatePlayerAct(elapsedTime);
 
-		//enemyが全員死んでいたらフェーズをphase_nextstage_init　に変更
-		if (IsSlowNextPhase(EnemyManager::Instance().GetIsAllDead()))
+		if (EnemyManager::Instance().GetIsAllDead())
 		{
 			auto player = PlayerManager::Instance().GetFirstPlayer();
 			player->SetState(State::Act_Finish_Init);
 			CardManager::Instance().SetCardsClear();
-			ChangePhase(Phase::Phase_NextStage_Init);
+
+			//enemyが全員死んでいたらフェーズをphase_nextstage_init　に変更
+			if (IsSlowNextPhase(EnemyManager::Instance().GetIsAllDestroyed()))
+			{
+				ChangePhase(Phase::Phase_NextStage_Init);
+			}
 		}
-
-
 		//カード置き場のカードがなくなれば
-		if (IsQuickNextPhase(CardManager::Instance().IsSetCardsEmpty()&&isPlayseActFinished))
+		else if (IsQuickNextPhase(CardManager::Instance().IsSetCardsEmpty() && isPlayseActFinished))
 		{
 			NextPhase();//次のフェーズへ
 		}
 
 	}
-		break;
+	break;
 
-		//***********************************************************************************
+	//***********************************************************************************
 	case PhaseManager::Phase::Phase_Enemy_Init:
 	{
 		Stage::Instance()->ResetAllSquare();
@@ -219,20 +221,28 @@ void PhaseManager::Update(float elapsedTime)
 	[[fallthrough]];
 	case PhaseManager::Phase::Phase_EnemyAct:
 	{
-		//enemyが全員行動を完了していたら
-		if (IsQuickNextPhase(EnemyManager::Instance().GetIsAllActEnd()))
-		{
-			NextPhase();
-		}
-
 		//ゲームオーバー判定
-		bool isGameOver = true;
+		bool isGameOver = false;
+		bool isPlayerDead = false;
 		for (auto& player : *PlayerManager::Instance().GetPlayerVector())
 		{
-			if (player->GetHealth() > 0 /*|| player->GetPlayerDeadTime() > 0.000001f*/) { isGameOver = false; break; }
+			if (player->GetIsDead())
+			{
+				if (player->GetIsDestroyed()) {
+					isGameOver = true; 
+					break;
+				}
+				isPlayerDead = true;
+			}
 		}
 		if (!SceneManager::Instance().IsWaitSceneChange()&& isGameOver)
 			SceneManager::Instance().ChangeScene(new SceneGameOver);
+
+		//enemyが全員行動を完了していたら
+		if (!isPlayerDead && IsQuickNextPhase(EnemyManager::Instance().GetIsAllActEnd()))
+		{
+			NextPhase();
+		}
 	}
 	break;
 	//***********************************************************************************
@@ -292,9 +302,9 @@ void PhaseManager::Render(ID3D11DeviceContext* dc)
 		const DirectX::XMFLOAT2& lefttop = okButtonCollision.GetLeftTop();
 		const DirectX::XMFLOAT2& Size = okButtonCollision.GetBoxSize();
 		//カードが全てセットされていたら
-		const DirectX::XMFLOAT4 color = phase==Phase::Phase_Player&& CardManager::Instance().IsFillSetCards()?
-			DirectX::XMFLOAT4{ 1.0f,1.0f,1.0f,1.0f }://埋まっているとき
-			DirectX::XMFLOAT4{.5f,.5f,.5f,1.0f};//埋まっていないとき
+		const DirectX::XMFLOAT4 color = phase == Phase::Phase_Player && CardManager::Instance().IsFillSetCards() ?
+			DirectX::XMFLOAT4{ 1.0f,1.0f,1.0f,1.0f } ://埋まっているとき
+			DirectX::XMFLOAT4{ .5f,.5f,.5f,1.0f };//埋まっていないとき
 		okButton->Render(dc, lefttop, Size, .0f, color);
 		
 	}
@@ -323,10 +333,10 @@ void PhaseManager::RenderWaveChange(ID3D11DeviceContext* dc)const
 
 
 
-	//waveの進行度の表示
-	HitBox2D box = HitBox2D::CreateBoxFromCenter({ ScreenSize.x * 0.5f,ScreenSize.y * 0.5f }, { ScreenSize.x,ScreenSize.y * 0.3f });
-	waveSprites[Stage::Instance()->GetStageLevel() - 1]->Render(dc,
-		box.GetLeftTop(), box.GetBoxSize(), .0f, { 1.0f,1.0f,1.0f,1.0f });
+	////waveの進行度の表示
+	//HitBox2D box = HitBox2D::CreateBoxFromCenter({ ScreenSize.x * 0.5f,ScreenSize.y * 0.5f }, { ScreenSize.x,ScreenSize.y * 0.3f });
+	//waveSprites[Stage::Instance()->GetStageLevel() - 1]->Render(dc,
+	//	box.GetLeftTop(), box.GetBoxSize(), .0f, { 1.0f,1.0f,1.0f,1.0f });
 }
 
 void PhaseManager::Reset()
@@ -359,7 +369,7 @@ void PhaseManager::DrawDebugGUI()
 			}
 			ImGui::EndCombo();
 		}
-		
+
 		if (ImGui::InputFloat("timer", &phaseTimer), .0f) {};
 		if (ImGui::InputInt("turn", &this->turnCount)) {};
 	}
@@ -369,7 +379,7 @@ void PhaseManager::DrawDebugGUI()
 
 void PhaseManager::NextPhase()
 {
-	ChangePhase(static_cast<Phase>(static_cast<int>(phase) + 1%static_cast<int>(Phase::Phase_Max)));
+	ChangePhase(static_cast<Phase>(static_cast<int>(phase) + 1 % static_cast<int>(Phase::Phase_Max)));
 }
 
 void PhaseManager::ChangePhase(const Phase&& next)noexcept
@@ -416,26 +426,26 @@ void PhaseManager::StageInit(const int level)
 {
 	switch (level)
 	{
-	//case 1:
-	//{
-	//	PlayerManager::Instance().GetFirstPlayer()->SetPositionWorld(Common::PlayerPosInit);
-	//	//enemyの配置
-	//	EnemyMinion1* enemy = new EnemyMinion1(PlayerManager::Instance().GetFirstPlayer());
-	//	EnemyManager::Instance().Register(enemy);
-	//	enemy->SetPositionWorld({ 1, 1 });
-	//	enemy->SetTargetMovePosition({ -1, -1 });
-	//	enemy->SetState(State::Idle_Init);
-	//	enemy->SetAttackRange(1);
-	//	enemy->SetHealth(30);
-	//	enemy->SetMaxHealth(30);
-	//	enemy->SetDirection(CommonClass::DirectionFace::Left);
-	//	Stage::Instance()->GetSquare(0, 0)->SetCard(std::make_shared<Card>(CardManager::Instance().GetCardSpwnPos(), CardManager::CARD_SIZE, Card::Type::SPECIAL));
-	//}
-	//break;
+		//case 1:
+		//{
+		//	PlayerManager::Instance().GetFirstPlayer()->SetPositionWorld(Common::PlayerPosInit);
+		//	//enemyの配置
+		//	EnemyMinion1* enemy = new EnemyMinion1(PlayerManager::Instance().GetFirstPlayer());
+		//	EnemyManager::Instance().Register(enemy);
+		//	enemy->SetPositionWorld({ 1, 1 });
+		//	enemy->SetTargetMovePosition({ -1, -1 });
+		//	enemy->SetState(State::Idle_Init);
+		//	enemy->SetAttackRange(1);
+		//	enemy->SetHealth(30);
+		//	enemy->SetMaxHealth(30);
+		//	enemy->SetDirection(CommonClass::DirectionFace::Left);
+		//	Stage::Instance()->GetSquare(0, 0)->SetCard(std::make_shared<Card>(CardManager::Instance().GetCardSpwnPos(), CardManager::CARD_SIZE, Card::Type::SPECIAL));
+		//}
+		//break;
 	case 1:
 	{
-		PlayerManager::Instance().GetFirstPlayer()->SetTargetMovePosition({3,3});
-		PlayerManager::Instance().GetFirstPlayer()->SetPositionWorld({3,3});
+		PlayerManager::Instance().GetFirstPlayer()->SetTargetMovePosition({ 3,3 });
+		PlayerManager::Instance().GetFirstPlayer()->SetPositionWorld({ 3,3 });
 		Stage::Instance()->ResetAllSquare();
 		//enemyの配置
 		EnemyMinion1* enemy = new EnemyMinion1(PlayerManager::Instance().GetFirstPlayer());
@@ -472,11 +482,11 @@ void PhaseManager::StageInit(const int level)
 		enemy2->SetHealth(30);
 		enemy2->SetMaxHealth(30);
 	}
-		break;
+	break;
 	case 3:
 	{
-		PlayerManager::Instance().GetFirstPlayer()->SetTargetMovePosition({1,3});
-		PlayerManager::Instance().GetFirstPlayer()->SetPositionWorld({1,3});
+		PlayerManager::Instance().GetFirstPlayer()->SetTargetMovePosition({ 1,3 });
+		PlayerManager::Instance().GetFirstPlayer()->SetPositionWorld({ 1,3 });
 		Stage::Instance()->ResetAllSquare();
 		auto player = PlayerManager::Instance().GetFirstPlayer();
 		EnemyBoss1* boss1 = new EnemyBoss1(player);
@@ -485,7 +495,7 @@ void PhaseManager::StageInit(const int level)
 		pos.x = (player->GetPosition().x > 4) ? 0 : 5;
 		pos.y = (player->GetPosition().y > 4) ? 0 : 5;
 		//boss1->SetPositionWorld(pos);
-		boss1->SetPositionWorld({3,3 });
+		boss1->SetPositionWorld({ 3,3 });
 		boss1->SetTargetMovePosition({ -1, -1 });
 		boss1->SetSize({ 2, 2 });
 		DirectX::XMFLOAT3 pivot = { Common::SquareWidth / 2, 1.0f, -Common::SquareHeight / 2 };
@@ -498,8 +508,8 @@ void PhaseManager::StageInit(const int level)
 
 		boss1->SetMaxHealth(150);
 		boss1->SetAttackRange(4);
-	}	
-		break;
+	}
+	break;
 
 	}
 

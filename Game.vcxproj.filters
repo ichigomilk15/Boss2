@@ -283,6 +283,12 @@
     <ClInclude Include="Source\Audio\AudioLoader.h">
       <Filter>Source\System\Audio</Filter>
     </ClInclude>
+    <ClInclude Include="Source\LambertMaskShader.h">
+      <Filter>Source\System\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Graphics\Texture.h">
+      <Filter>Source\System\Graphics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="External\imgui\imgui.cpp">
@@ -477,6 +483,15 @@
     <ClCompile Include="Source\Audio\AudioLoader.cpp">
       <Filter>Source\System\Audio</Filter>
     </ClCompile>
+    <ClCompile Include="Source\LambertMaskShader.cpp">
+      <Filter>Source\System\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Graphics\Shader.cpp">
+      <Filter>Source\System\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Graphics\Texture.cpp">
+      <Filter>Source\System\Graphics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="HLSL\Debug.hlsli">
@@ -492,6 +507,9 @@
       <Filter>HLSL</Filter>
     </None>
     <None Include="HLSL\Sprite.hlsli">
+      <Filter>HLSL</Filter>
+    </None>
+    <None Include="HLSL\LambertMask.hlsli">
       <Filter>HLSL</Filter>
     </None>
   </ItemGroup>
@@ -524,6 +542,12 @@
       <Filter>HLSL</Filter>
     </FxCompile>
     <FxCompile Include="HLSL\SpritePS.hlsl">
+      <Filter>HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\LambertMaskVS.hlsl">
+      <Filter>HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\LambertMaskPS.hlsl">
       <Filter>HLSL</Filter>
     </FxCompile>
   </ItemGroup>

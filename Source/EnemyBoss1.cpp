@@ -17,6 +17,8 @@ EnemyBoss1::EnemyBoss1(Character* p) :
 	model = std::make_unique<Model>("./Data/Model/Enemy/Boss/Boss.mdl");
 	icon = std::make_unique<Sprite>("./Data/Sprite/icon_boss.png");
 
+	deathMaskTimer = 3.0f;
+
 	//ƒXƒP[ƒ‹‚Ì’²®
 	scale.x = scale.y = scale.z = 0.18f;
 
@@ -287,6 +289,14 @@ void EnemyBoss1::UpdateState(float elapsedTime)
 		}
 		break;
 
+	case State::Death_Init:
+		model->PlayAnimation(ANIMATION_BOSS::BossDeath, false, 0.2f, 0.25f);
+		state = State::Death;
+		[[fallthrough]];
+	case State::Death:
+
+		break;
+
 	case State::Act_Finish_Init:
 		actTimer = 1.0f;
 		isActEnd = true;
@@ -484,7 +494,8 @@ void EnemyBoss1::OnDamaged()
 void EnemyBoss1::OnDead()
 {
 	boss1Ses.deathSe.get()->Play(false);
-	Enemy::OnDead();
+	destroyedStatus.destroyedTime = 3.0f;
+	state = State::Death_Init;
 }
 
 void EnemyBoss1::InitializeAudio()

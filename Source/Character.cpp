@@ -8,6 +8,7 @@
 #include "EnemyManager.h"
 #include "DamageEffector.h"
 #include "Camera.h"
+#include "CameraController.h"
 #undef NOMINMAX
 
 Character::Character()
@@ -15,6 +16,11 @@ Character::Character()
 	hpBar[0] = std::make_unique<Sprite>("./Data/Sprite/life_waku.png");
 	hpBar[1] = std::make_unique<Sprite>("./Data/Sprite/life_1.png");
 	hpBar[2] = std::make_unique<Sprite>("./Data/Sprite/life_2.png");
+
+	maskShaderDetails.maskTexture = std::make_unique<Texture>("Data/Textures/dissolve_animation.png");
+	maskShaderDetails.dissolveThreshold = 1.0f;
+	maskShaderDetails.edgeThreshold = 0.3f;
+	maskShaderDetails.edgeColor = { 1.0f, 0.0f, 0.0f, 1.0f };
 }
 
 Character::~Character()
@@ -163,6 +169,11 @@ void Character::UpdateVelocity(float elapsedTime)
 	}
 }
 
+bool Character::GetIsDead()
+{
+	return (health <= 0);
+}
+
 bool Character::IsTargetMovePosValid(const DirectX::XMINT2& targetPos)
 {
 	for (int y = targetPos.y; y < targetPos.y + size.y; ++y)
@@ -246,6 +257,7 @@ void Character::Heal(const int hp)
 {
 	this->health += hp;
 	this->health = std::min(health, maxHealth);
+	ShowDamageNumber(hp,false, { .1f,1.0f,.1f,1.0f }, CommonClass::Left);
 }
 
 int Character::GetWhichHorizontalSide(const DirectX::XMINT2& pos)
@@ -281,6 +293,13 @@ bool Character::ApplyDamage(int damage)
 	if (damage <= 0) return false;
 	//éÄñSÇµÇƒÇ¢ÇÈèÍçáÇÕåíçNèÛë‘ÇïœçXÇµÇ»Ç¢
 	if (health <= 0) return false;
+
+	//ÉXÉ^ÉìèÛë‘Ç»ÇÁÉ_ÉÅÅ[ÉW2î{
+	if (state == State::Stunned)
+		damage *= 2;
+
+	if (damage >= 10 && !CameraController::Instance().IsCameraShaking())
+		CameraController::Instance().ShakeCamera(0.25f, 1);
 
 	damage -= block;
 	/*if (damage <= 0)
@@ -370,13 +389,13 @@ void Character::Render2D(ID3D11DeviceContext* dc, const HitBox2D& box)const
 		str += std::to_string(health);
 		str += "/";
 		str += std::to_string(maxHealth);
-		NumberSprite::Instance().NumberOut(str.c_str(), dc, DirectX::XMFLOAT2{ BoxSize.x - NumSize.x,.0f }+leftTop, NumSize, {1.0f,1.0f,1.0f,1.0f});
+		NumberSprite::Instance().NumberOut(str.c_str(), dc, DirectX::XMFLOAT2{ BoxSize.x - NumSize.x,.0f } + leftTop, NumSize, { 1.0f,1.0f,1.0f,1.0f });
 	}
 	//ÉVÅ[ÉãÉhÇÃílÇï`âÊ
 	if (shield > 0)
 	{
 		std::string str = "+" + std::to_string(shield);
-		NumberSprite::Instance().NumberOut(str.c_str(), dc, DirectX::XMFLOAT2{ BoxSize.x - NumSize.x * 2.0f,.0f } + leftTop, { NumSize.x*0.5f,NumSize.y }, { .0f,1.0f,1.0f,1.0f });
+		NumberSprite::Instance().NumberOut(str.c_str(), dc, DirectX::XMFLOAT2{ BoxSize.x - NumSize.x * 2.0f,.0f } + leftTop, { NumSize.x * 0.5f,NumSize.y }, { .0f,1.0f,1.0f,1.0f });
 	}
 
 	//HPÉoÅ[ÇÃîwåiÇï`âÊ
@@ -391,12 +410,12 @@ void Character::Render2D(ID3D11DeviceContext* dc, const HitBox2D& box)const
 	}
 }
 
-void Character::ShowDamageNumber(const int damageNumber, bool isDrawSymbol, const DirectX::XMFLOAT4& color)
+
+void Character::ShowDamageNumber(const int damageNumber, bool isDrawSymbol, const DirectX::XMFLOAT4& color, int direction)
 {
 	DamageEffector::EffectData data;
 	data.color = color;
 	data.damage = damageNumber;
-	data.velocity = { 30.0f,-80.0f };
 	data.scale = 2.5f;
 	data.timer = 1.0f;
 	data.isDrawSymbol = isDrawSymbol;
@@ -433,6 +452,35 @@ void Character::ShowDamageNumber(const int damageNumber, bool isDrawSymbol, cons
 	DirectX::XMStoreFloat3(&screenPos, ScreenPosition);
 
 	data.pos = { screenPos.x, screenPos.y };
+
+	//ï˚å¸
+	const int offset = 40.0f;
+	switch (direction)
+	{
+	case CommonClass::FrontLeft:
+	case CommonClass::Left:
+		data.velocity = { -30.0f,-80.0f };
+		data.pos.x -= offset;
+		break;
+
+	case CommonClass::FrontRight:
+	case CommonClass::Right:
+		data.velocity = { 30.0f,-80.0f };
+		data.pos.x += offset;
+		break;
+
+	case CommonClass::Back:
+		data.velocity = { 0.0f, 80.0f };
+		data.pos.y += offset;
+		break;
+	case CommonClass::Front:
+	default:
+		data.velocity = { 0.0f, -80.0f };
+		data.pos.y -= offset;
+		break;
+	}
+
+
 	DamageEffector::Instance().Register(data);
 }
 

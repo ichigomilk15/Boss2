@@ -4,11 +4,11 @@
 #include <wrl.h>
 #include "Graphics/Shader.h"
 
-class LambertShader : public Shader
+class LambertMaskShader : public Shader
 {
 public:
-	LambertShader(ID3D11Device* device);
-	~LambertShader() override {}
+	LambertMaskShader(ID3D11Device* device);
+	~LambertMaskShader() override {}
 
 	void Begin(ID3D11DeviceContext* dc, const RenderContext& rc) override;
 	void Draw(ID3D11DeviceContext* dc, const Model* model, const RenderContext& rc = {}) override;
@@ -33,10 +33,19 @@ private:
 		DirectX::XMFLOAT4	materialColor;
 	};
 
+	struct CbMask
+	{
+		float dissolveThreshold;		//ディゾルブ量
+		float edgeThreshold;			//縁の閾値
+		DirectX::XMFLOAT2 dummy;
+		DirectX::XMFLOAT4 edgeColor;	//縁の色
+	};
+
 
 	Microsoft::WRL::ComPtr<ID3D11Buffer>			sceneConstantBuffer;
 	Microsoft::WRL::ComPtr<ID3D11Buffer>			meshConstantBuffer;
 	Microsoft::WRL::ComPtr<ID3D11Buffer>			subsetConstantBuffer;
+	Microsoft::WRL::ComPtr<ID3D11Buffer>			maskConstantBuffer;
 
 	Microsoft::WRL::ComPtr<ID3D11VertexShader>		vertexShader;
 	Microsoft::WRL::ComPtr<ID3D11PixelShader>		pixelShader;

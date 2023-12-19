@@ -14,7 +14,7 @@ void PlayerManager::Render(ID3D11DeviceContext* context, Shader* shader, RenderC
 {
 	for (Player* player : players)
 	{
-		player->Render(context, shader);
+		player->Render(context, shader, rc);
 	}
 }
 

@@ -1,5 +1,6 @@
 #include "EnemyManager.h"
 #include "PhaseManager.h"
+#include "PlayerManager.h"
 
 int EnemyManager::enemyTurnIndex = -1;
 
@@ -30,11 +31,11 @@ void EnemyManager::Update(float elapsedTime, Character* player)
 	this->removes.clear();
 }
 
-void EnemyManager::Render(ID3D11DeviceContext* context, Shader* shader)
+void EnemyManager::Render(ID3D11DeviceContext* context, Shader* shader, RenderContext& rc)
 {
 	for (auto&& enemy : enemies)
 	{
-		enemy->Render(context, shader);
+		enemy->Render(context, shader, rc);
 	}
 }
 
@@ -128,6 +129,16 @@ const bool EnemyManager::GetIsAllDead() const
 {
 	for (auto& enemy : enemies)
 	{
+		if (!enemy->GetIsDead())
+			return false;
+	}
+	return true;
+}
+
+const bool EnemyManager::GetIsAllDestroyed() const
+{
+	for (auto& enemy : enemies)
+	{
 		if (!enemy->GetIsDestroyed())
 			return false;
 	}
@@ -136,8 +147,11 @@ const bool EnemyManager::GetIsAllDead() const
 
 void EnemyManager::UpdateEnemiesTurn(float elapsedTime)
 {
-	if (PhaseManager::Instance().GetFhase() != PhaseManager::Phase::Phase_EnemyAct)
+	if (PhaseManager::Instance().GetFhase() != PhaseManager::Phase::Phase_EnemyAct || PlayerManager::Instance().GetFirstPlayer()->GetIsDead())
 		return;
+
+	if (enemyTurnIndex == 1)
+		int a = 1;
 
 	if (enemyTurnIndex < 0)
 	{
