@@ -31,7 +31,7 @@ Framework::Framework(HWND hWnd)
 	SceneManager::Instance().ChangeScene(new SceneTitle,false);
 	//SceneManager::Instance().ChangeScene(new SceneGame);
 #else
-	SceneManager::Instance().ChangeScene((new SceneTitle,false));
+	SceneManager::Instance().ChangeScene(new SceneTitle,false);
 #endif
 }
 
