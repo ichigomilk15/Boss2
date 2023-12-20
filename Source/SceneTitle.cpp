@@ -86,7 +86,7 @@ void SceneTitle::Update(float elapsedTime)
 	{
 		SaveData::Instance().ReSet();
 		SceneManager.SetSceneChangeSprite(std::make_unique<Sprite>("./Data/Sprite/loading_back.png"));
-		SceneManager.ChangeScene(new SceneLoading(new SceneGame()));
+		SceneManager.ChangeScene(new SceneLoading(new SceneGame()),true);
 	}
 }
 

@@ -60,6 +60,8 @@ private:
 	void SetGlobalDirection();
 
 private://members
+	static bool isTutrialfinished;
+
 	//Player* player = nullptr;
 	CameraController* cameraController = &(CameraController::Instance());
 	std::unique_ptr<Sprite> playerHP[3];

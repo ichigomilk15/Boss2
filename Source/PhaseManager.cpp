@@ -46,6 +46,7 @@ void PhaseManager::Initialize()
 
 void PhaseManager::Update(float elapsedTime)
 {
+	if (SceneManager::Instance().IsWaitSceneChange())return;
 	switch (phase)
 	{
 	case PhaseManager::Phase::Phase_GameStart_Init:
@@ -69,7 +70,8 @@ void PhaseManager::Update(float elapsedTime)
 		unsigned int stageLevel = Stage::Instance()->StageLevelStepUp();
 		if (!SceneManager::Instance().IsWaitSceneChange()&& stageLevel > Stage::STAGE_LEVEL_MAX)
 		{
-			SceneManager::Instance().ChangeScene(new SceneClear);
+			SceneManager::Instance().SetSceneChangeSprite(std::make_unique<Sprite>("./Data/Sprite/SceneBack/clear_Back.png"));
+			SceneManager::Instance().ChangeScene(new SceneClear,true);
 			return;
 		}
 

@@ -16,6 +16,7 @@
 #include "DamageEffector.h"
 
 std::map<int, DirectX::XMFLOAT3> CommonClass::directionMaps;
+bool SceneGame::isTutrialfinished = false;
 
 // ‰Šú‰»
 void SceneGame::Initialize()
@@ -63,7 +64,11 @@ void SceneGame::Initialize()
 	gameSe->Play(true);
 
 	SaveData::Instance().Load();
-	GameSystemManager::Instance().CollTutorial();
+	if (!isTutrialfinished)
+	{
+		GameSystemManager::Instance().CollTutorial();
+		isTutrialfinished = true;
+	}
 
 #ifdef _DEBUG
 	sprite = Sprite(nullptr);

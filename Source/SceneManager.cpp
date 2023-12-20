@@ -9,7 +9,7 @@ void SceneManager::Update(float elapsedTime)
 	if (nextScene != nullptr)
 	{
 		timer -= elapsedTime;
-		if (timer < .0f)
+		if (timer < .0f||!isFadeOut)
 		{
 			//ŒÃ‚¢ƒV[ƒ“‚ðI—¹ˆ—
 			Clear();
@@ -28,7 +28,7 @@ void SceneManager::Update(float elapsedTime)
 	}
 	else if(isFadeOut)
 	{
-		timer = std::max(timer+elapsedTime,SceneChangeTime);
+		timer = std::min(timer+elapsedTime,SceneChangeTime);
 	}
 
 	if (currentScene != nullptr)
