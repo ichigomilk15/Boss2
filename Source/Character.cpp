@@ -315,6 +315,7 @@ bool Character::ApplyDamage(int damage)
 		ShowDamageNumber(tempDamage, true, { .0f,1.0f,1.0f,1.0f }, CommonClass::DirectionFace::Left);
 	}
 
+	damage = std::min(damage, health);
 	//ƒ_ƒ[ƒWˆ—
 	hpBarData.oldHp = health;
 	health -= damage;
