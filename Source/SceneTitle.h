@@ -30,4 +30,5 @@ private:
 
 	float startTimer;
 	float timer;
+	float SceneTimer = .0f;
 };

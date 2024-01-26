@@ -147,7 +147,9 @@ Graphics::Graphics(HWND hWnd) :hwnd(hWnd)
 #endif // _DEBUG
 	}
 
-	swapchain->SetFullscreenState(TRUE, nullptr);
+
+	hr = swapchain->SetFullscreenState(FALSE, nullptr);
+	_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
 	//ShowCursor(FALSE);
 
 	//swapchain->GetFullscreenState(&isFullScreen, nullptr);

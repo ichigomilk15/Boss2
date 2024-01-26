@@ -366,7 +366,7 @@ const bool SaveData::ReSet()
 	bool ok;
 	ok = true;
 
-	this->StageLevel = 3;
+	this->StageLevel = 1;//1からスタート
 	this->PhaseTurn = 0;
 	this->playerHp = -1;
 	this->playerpos = { -1,-1 };

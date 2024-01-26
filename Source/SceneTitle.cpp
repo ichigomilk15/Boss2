@@ -88,6 +88,8 @@ void SceneTitle::Update(float elapsedTime)
 		SceneManager.SetSceneChangeSprite(std::make_unique<Sprite>("./Data/Sprite/loading_back.png"));
 		SceneManager.ChangeScene(new SceneLoading(new SceneGame()),true);
 	}
+
+	SceneTimer += elapsedTime;
 }
 
 void SceneTitle::Render()
@@ -109,6 +111,10 @@ void SceneTitle::Render()
 		float screenHeight = static_cast<float>(graphics.GetScreenHeight());
 		float textureWidth = static_cast<float>(back->GetTextureWidth());
 		float textureHeight = static_cast<float>(back->GetTextureHeight());
+
+		float alpha = fabsf(fmodf(SceneTimer, 2.0f) - 1.0f);
+
+
 		//タイトルスプライト描画
 		back->Render(dc,
 			0, 0, screenWidth, screenHeight,
@@ -124,7 +130,7 @@ void SceneTitle::Render()
 			1.0f,1.0f,1.0f,1.0f);
 
 		HitBox2D box = HitBox2D::CreateBoxFromCenter({ screenWidth * 0.5f,screenHeight * 0.9f }, { screenWidth * 0.5f,screenHeight * 0.1f });
-		pressClick->Render(dc, box.GetLeftTop(), box.GetBoxSize(), .0f, DirectX::XMFLOAT4{ 1.0f,1.0f,1.0f,1.0f });
+		pressClick->Render(dc, box.GetLeftTop(), box.GetBoxSize(), .0f, DirectX::XMFLOAT4{ 1.0f,1.0f,1.0f,alpha });
 
 		if (timer!=.0f)
 		{
