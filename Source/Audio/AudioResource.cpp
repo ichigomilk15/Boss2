@@ -1,5 +1,9 @@
 #include "Misc.h"
 #include "Audio/AudioResource.h"
+#include <string>
+#include <filesystem>
+
+const std::string KEY = "IEIHjewh";
 
 // WAVEタグ作成マクロ
 #define MAKE_WAVE_TAG_VALUE(c1, c2, c3, c4)  ( c1 | (c2<<8) | (c3<<16) | (c4<<24) )
@@ -7,6 +11,61 @@
 // コンストラクタ
 AudioResource::AudioResource(const char* filename)
 {
+#if 0
+
+
+	//複合化
+	{
+		std::filesystem::path path = filename;
+		std::string extension = path.extension().generic_string();
+		if (extension==".bin")
+		{
+			FILE* encodeFp = nullptr;
+			errno_t error = fopen_s(&encodeFp,filename,"rb");
+			_ASSERT_EXPR_A(error == 0,"File is not found");
+
+			fseek(encodeFp,0,SEEK_END);
+			size_t size = ftell(encodeFp);
+			fseek(encodeFp,0,SEEK_SET);
+
+			char* data = new char[size];
+			::memset(data,0,size);
+
+			fread(data,sizeof(char),size,encodeFp);
+			fclose(encodeFp);
+			encodeFp = nullptr;
+
+			for (size_t i = 0; i < size; i++)
+			{
+				data[i] ^= KEY[i&0x07];
+			}
+
+			path = path.replace_extension(".wav");
+			std::string fileStr = path.generic_string();
+			filename = fileStr.c_str();
+
+			error = fopen_s(&encodeFp,filename,"wb");
+			_ASSERT_EXPR_A(error == 0, "File is not found");
+
+			for (size_t i=0;i<size;++i)
+			{
+				fputs(&data[i], encodeFp);
+			}
+			fclose(encodeFp);
+
+			delete[] data;
+		}
+	}
+#else
+	std::filesystem::path path = filename;
+	if (path.extension().string() == ".bin")
+	{
+		path = path.replace_extension(".wav");
+	}
+	std::string str = path.string();
+	filename = str.c_str();
+#endif // 0
+
 	// WAVファイル読み込み
 	{
 		FILE* fp = nullptr;
