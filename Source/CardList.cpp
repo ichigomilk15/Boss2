@@ -33,13 +33,11 @@ CardManager::CardManager() :
 	comboBorderDetail[1].sprBorder = std::make_unique<Sprite>("./Data/Sprite/combo_border2.png");
 	comboBorderDetail[1].Pos = { 133.0f, 403.0f };
 	comboBorderDetail[1].Size = { 280.0f, 548.0f };
-	/*auto cardPos1 = SetCards[0]->GetPosition();
-	auto cardPos2 = SetCards[1]->GetPosition();
-	auto cardPos3 = SetCards[2]->GetPosition();
-	testPos[0].x = (cardPos1.x + cardPos2.x) * 0.5f;
-	testPos[0].y = (cardPos1.y + cardPos2.y) * 0.5f;
-	testPos[1].x = (cardPos2.x + cardPos3.x) * 0.5f;
-	testPos[1].y = (cardPos2.y + cardPos3.y) * 0.5f;*/
+
+	comboBorderExpDetail[0].sprBorder = std::make_unique<Sprite>("./Data/Sprite/combo_border1.png");
+	comboBorderExpDetail[0].Size = { 245.0f, 124.0f };
+	comboBorderExpDetail[1].sprBorder = std::make_unique<Sprite>("./Data/Sprite/combo_border2.png");
+	comboBorderExpDetail[1].Size = { 245.0f, 124.0f };
 
 	//カードコンボ設定
 	{
@@ -353,6 +351,27 @@ void CardManager::Update(float elapsedTime)
 	comboBorderDetail[1].isOn = true;
 	if (SetCards[0].get() == nullptr || SetCards[1].get() == nullptr) comboBorderDetail[0].isOn = false;
 	if (SetCards[1].get() == nullptr || SetCards[2].get() == nullptr) comboBorderDetail[1].isOn = false;
+	//コンボセットカード説明枠更新
+	comboBorderExpDetail[0].isOn = false;
+	comboBorderExpDetail[1].isOn = false;
+	const int index = HitCheckSetCardsIndex(mouse.GetPosition());
+	if (index >= 1 && comboBorderDetail[index - 1].isOn)
+	{
+		comboBorderExpDetail[index - 1].isOn = true;
+		auto prevCard = SetCards[index - 1];
+		switch (prevCard->GetType())
+		{
+		case Card::Type::ATTACK:
+			comboBorderExpDetail[index - 1].Pos = { 1421.0f, 470.0f };
+			break;
+		case Card::Type::DEFENCE:
+			comboBorderExpDetail[index - 1].Pos = { 1600.0f, 470.0f };
+			break;
+		case Card::Type::MOVE:
+			comboBorderExpDetail[index - 1].Pos = { 1519.0f, 573.0f };
+			break;
+		}
+	}
 
 	//何も持って無くてカードを右クリックしたら
 	if (haveCard.expired())
@@ -555,6 +574,11 @@ void CardManager::Render(ID3D11DeviceContext* dc)
 			if (!comboBorderDetail[i].isOn) continue;
 			comboBorderDetail[i].sprBorder->Render(dc, comboBorderDetail[i].Pos, comboBorderDetail[i].Size, .0f, { 1.0f, 1.0f, 1.0f, 1.0f });
 		}
+		for (int i = 0; i < 2; ++i)
+		{
+			if (!comboBorderExpDetail[i].isOn) continue;
+			comboBorderExpDetail[i].sprBorder->Render(dc, comboBorderExpDetail[i].Pos, comboBorderExpDetail[i].Size, .0f, { 1.0f, 1.0f, 1.0f, 1.0f });
+		}
 	}
 
 	cardStack.Render<RenderComponent>(dc);
@@ -639,6 +663,19 @@ std::shared_ptr<Card> CardManager::HitCheck(const DirectX::XMFLOAT2& screenPos)c
 		if (card->HitCheck(screenPos))return card;
 	}
 	return nullptr;
+}
+int CardManager::HitCheckSetCardsIndex(const DirectX::XMFLOAT2& screenPos)const
+{
+	for (int index = 0; index < 3; ++index)
+	{
+		if (SetCards[index] == nullptr)continue;
+
+		if (SetCards[index]->HitCheck(screenPos))
+		{
+			return index;
+		}
+	}
+	return -1;
 }
 
 std::shared_ptr<Card> CardManager::DrawCard(const std::pair<Card::Type, unsigned int>* const pair, const size_t pairSize)
