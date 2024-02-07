@@ -27,6 +27,19 @@ CardManager::CardManager() :
 
 	SetCardSprites[0] = std::make_unique<Sprite>("./Data/Sprite/SetCardBack.png");
 	SetCardSprites[1] = std::make_unique<Sprite>("./Data/Sprite/SetCardFront.png");
+	comboBorderDetail[0].sprBorder = std::make_unique<Sprite>("./Data/Sprite/combo_border1.png");
+	comboBorderDetail[0].Pos = { 133.0f, 63.0f };
+	comboBorderDetail[0].Size = { 280.0f, 643.0f };
+	comboBorderDetail[1].sprBorder = std::make_unique<Sprite>("./Data/Sprite/combo_border2.png");
+	comboBorderDetail[1].Pos = { 133.0f, 403.0f };
+	comboBorderDetail[1].Size = { 280.0f, 548.0f };
+	/*auto cardPos1 = SetCards[0]->GetPosition();
+	auto cardPos2 = SetCards[1]->GetPosition();
+	auto cardPos3 = SetCards[2]->GetPosition();
+	testPos[0].x = (cardPos1.x + cardPos2.x) * 0.5f;
+	testPos[0].y = (cardPos1.y + cardPos2.y) * 0.5f;
+	testPos[1].x = (cardPos2.x + cardPos3.x) * 0.5f;
+	testPos[1].y = (cardPos2.y + cardPos3.y) * 0.5f;*/
 
 	//カードコンボ設定
 	{
@@ -244,30 +257,30 @@ CardManager::CardManager() :
 			CardComboDatas[typeSpecial][typeDebuff] = Data;
 		}
 
-	//コンボ無しの登録
-	{
-		CardComboNoUseing data;
-		data.type = Card::Type::NONE;
-		//コンボ無し
-		auto Data = std::make_shared<CardComboNoUseing>(data);
-		Data->infomation = std::make_shared<Sprite>("./Data/Sprite/CardCombos/_infomation.png");
-		CardComboDatas[typeNone][typeNone] = Data;
-		CardComboDatas[typeAttack][typeNone] = Data;
-		CardComboDatas[typeMove][typeNone] = Data;
-		CardComboDatas[typeDefence][typeNone] = Data;
-		CardComboDatas[typeDebuff][typeNone] = Data;
-		CardComboDatas[typeSpecial][typeNone] = Data;
+		//コンボ無しの登録
+		{
+			CardComboNoUseing data;
+			data.type = Card::Type::NONE;
+			//コンボ無し
+			auto Data = std::make_shared<CardComboNoUseing>(data);
+			Data->infomation = std::make_shared<Sprite>("./Data/Sprite/CardCombos/_infomation.png");
+			CardComboDatas[typeNone][typeNone] = Data;
+			CardComboDatas[typeAttack][typeNone] = Data;
+			CardComboDatas[typeMove][typeNone] = Data;
+			CardComboDatas[typeDefence][typeNone] = Data;
+			CardComboDatas[typeDebuff][typeNone] = Data;
+			CardComboDatas[typeSpecial][typeNone] = Data;
 
-		data.type = Card::Type::SPECIAL;
-		Data = std::make_shared<CardComboNoUseing>(data);
-		Data->infomation = std::make_shared<Sprite>("./Data/Sprite/CardCombos/buff.png");
-		CardComboDatas[typeNone][typeSpecial] = Data;
-		CardComboDatas[typeAttack][typeSpecial] = Data;
-		CardComboDatas[typeMove][typeSpecial] = Data;
-		CardComboDatas[typeDefence][typeSpecial] = Data;
-		CardComboDatas[typeDebuff][typeSpecial] = Data;
-		CardComboDatas[typeSpecial][typeSpecial] = Data;
-	}
+			data.type = Card::Type::SPECIAL;
+			Data = std::make_shared<CardComboNoUseing>(data);
+			Data->infomation = std::make_shared<Sprite>("./Data/Sprite/CardCombos/buff.png");
+			CardComboDatas[typeNone][typeSpecial] = Data;
+			CardComboDatas[typeAttack][typeSpecial] = Data;
+			CardComboDatas[typeMove][typeSpecial] = Data;
+			CardComboDatas[typeDefence][typeSpecial] = Data;
+			CardComboDatas[typeDebuff][typeSpecial] = Data;
+			CardComboDatas[typeSpecial][typeSpecial] = Data;
+		}
 	}
 
 	//カードの次のコンボの表示の
@@ -335,11 +348,17 @@ void CardManager::Update(float elapsedTime)
 		card->Update(elapsedTime);
 	}
 
+	//コンボセットカード枠更新
+	comboBorderDetail[0].isOn = true;
+	comboBorderDetail[1].isOn = true;
+	if (SetCards[0].get() == nullptr || SetCards[1].get() == nullptr) comboBorderDetail[0].isOn = false;
+	if (SetCards[1].get() == nullptr || SetCards[2].get() == nullptr) comboBorderDetail[1].isOn = false;
+
 	//何も持って無くてカードを右クリックしたら
 	if (haveCard.expired())
 	{
 		auto card = HitCheck(mouse.GetPosition());
-		if (card&&mouse.GetButtonDown()&Mouse::BTN_RIGHT)//マウスがカードの上にあるかつ左クリックしたら
+		if (card && mouse.GetButtonDown() & Mouse::BTN_RIGHT)//マウスがカードの上にあるかつ左クリックしたら
 		{
 			if (std::find(cards.begin(), cards.end(), card) != cards.end())//手札の中にカードがあれば
 			{
@@ -406,7 +425,7 @@ void CardManager::Update(float elapsedTime)
 							QuickEraseItem(card);
 							SetCards[i] = card;
 						}
-						else if(!(SetCards[std::size(SetCards)-1] == card&&SetCards[i]->GetType()==Card::Type::SPECIAL))
+						else if (!(SetCards[std::size(SetCards) - 1] == card && SetCards[i]->GetType() == Card::Type::SPECIAL))
 						{
 							SetCards[i]->Swap(card.get());
 						}
@@ -462,7 +481,7 @@ void CardManager::Render(ID3D11DeviceContext* dc)
 		renderSize = { renderSize.x,renderSize.y * 0.5f };
 		auto card = HitCheck(mouse.GetPosition());//どのカードの上にいるか
 		//カードを何も持っていない&&カードが手札にあるか
-		if (card != nullptr&& (haveCard.expired()) &&!IsFillSetCards()&&
+		if (card != nullptr && (haveCard.expired()) && !IsFillSetCards() &&
 			std::find(cards.begin(), cards.end(), card) != cards.end())
 		{
 			for (auto& set : SetCards)
@@ -505,9 +524,9 @@ void CardManager::Render(ID3D11DeviceContext* dc)
 				dc, renderpos, renderSize, .0f, color);
 	}
 
-	renderpos = { ScreenSize.x*0.076f,ScreenSize.y*0.075f };
+	renderpos = { ScreenSize.x * 0.076f,ScreenSize.y * 0.075f };
 	//renderpos = { ScreenSize.x*testdatas[0].x,ScreenSize.y*testdatas[0].y };//todo ichigomilk: screensizeに合わせるように
-	renderSize = { ScreenSize.x*0.141f,ScreenSize.y*0.828f};
+	renderSize = { ScreenSize.x * 0.141f,ScreenSize.y * 0.828f };
 	//renderSize = { ScreenSize.x*testdatas[1].x,ScreenSize.y*testdatas[1].y};//todo ihigomilk: screensizeに合わせるように
 
 	//セットカードの描画裏側
@@ -528,6 +547,15 @@ void CardManager::Render(ID3D11DeviceContext* dc)
 
 	//セットカードの描画表側
 	SetCardSprites[1]->Render(dc, renderpos, renderSize, .0f, color);
+
+	//設置カード枠の描画
+	{
+		for (int i = 0; i < 2; ++i)
+		{
+			if (!comboBorderDetail[i].isOn) continue;
+			comboBorderDetail[i].sprBorder->Render(dc, comboBorderDetail[i].Pos, comboBorderDetail[i].Size, .0f, { 1.0f, 1.0f, 1.0f, 1.0f });
+		}
+	}
 
 	cardStack.Render<RenderComponent>(dc);
 
@@ -570,10 +598,33 @@ void CardManager::DrawDebugGUI()
 			AddCardReserved(std::make_shared<Card>(CardManager::Instance().GetCardSpawnPos(), CARD_SIZE, Card::Type::DEBUFF));
 		}
 
-		if (ImGui::SliderFloat2("renderpos", &testdatas[0].x, .0f,1.0f)) {};
+		if (ImGui::SliderFloat2("renderpos", &testdatas[0].x, .0f, 1.0f)) {};
 		if (ImGui::SliderFloat2("rendersize", &testdatas[1].x, .0f, 1.0f)) {};
 	}
 	ImGui::End();
+
+#if _DEBUG
+	if (ImGui::Begin("ComboBorder Detail", nullptr, ImGuiWindowFlags_::ImGuiWindowFlags_None))
+	{
+		for (int i = 0; i < 2; ++i)
+		{
+			DirectX::XMFLOAT2 size = comboBorderDetail[i].Size;
+			std::string strSize = "Size border#" + i;
+			if (ImGui::DragFloat2(strSize.c_str(), &size.x, 1.0f, 0.0f, 1980.0f))
+			{
+				comboBorderDetail[i].Size = size;
+			}
+
+			DirectX::XMFLOAT2 pos = comboBorderDetail[i].Pos;
+			std::string strPos = "Pos border#" + i;
+			if (ImGui::DragFloat2(strPos.c_str(), &pos.x, 1.0f, 0.0f, 1980.0f))
+			{
+				comboBorderDetail[i].Pos = pos;
+			}
+		}
+	}
+	ImGui::End();
+#endif
 }
 
 std::shared_ptr<Card> CardManager::HitCheck(const DirectX::XMFLOAT2& screenPos)const
@@ -749,7 +800,7 @@ void CardManager::Replenish()
 			}
 
 			//移動が1枚もなかったら
-			if (cards.size() == (max-1)&&moveNum<1)
+			if (cards.size() == (max - 1) && moveNum < 1)
 			{
 				std::shared_ptr<Card> draw = std::make_shared<Card>(CardManager::Instance().GetCardSpawnPos(), CardManager::CARD_SIZE, Card::Type::MOVE);
 				AddCard(draw);
