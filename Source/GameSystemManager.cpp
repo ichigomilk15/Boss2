@@ -139,8 +139,11 @@ void GameSystemManager::PousedOnlyUpdate(float elapsedTime)
 
     //debug
 #ifdef _DEBUG
-    if (!SceneManager::Instance().IsWaitSceneChange()&& mouse.GetPositionX() < .0f)
-        SceneManager::Instance().ChangeScene(new SceneClear);
+    if (!SceneManager::Instance().IsWaitSceneChange() && mouse.GetPositionX() < .0f)
+    {
+        SceneManager::Instance().SetSceneChangeSprite(std::make_unique<Sprite>("./Data/Sprite/SceneBack/clear_Back.png"));
+        SceneManager::Instance().ChangeScene(new SceneClear,true);
+    }
     if (!SceneManager::Instance().IsWaitSceneChange()&& mouse.GetPositionY() < .0f)
         SceneManager::Instance().ChangeScene(new SceneGameOver);
 #endif // _DEBUG

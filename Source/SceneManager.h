@@ -28,7 +28,8 @@ public:
 	void Clear();
 
 	//シーン切り替え
-	void ChangeScene(Scene* scene,bool isFadeOut = true);
+	void ChangeScene(Scene* scene,bool isFadeOut = false);
+	const bool& IsFade()const { return isFadeOut; };
 
 	//シーン変更の画像設定
 	void SetSceneChangeSprite(std::unique_ptr<Sprite>&& sprite);

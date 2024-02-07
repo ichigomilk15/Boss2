@@ -46,7 +46,7 @@ void SceneLoading::Update(float elapsedTime)
 	if (!SceneManager::Instance().IsWaitSceneChange()&&this->nextScene->IsReady())
 	{
 		this->thread->detach();
-		SceneManager::Instance().ChangeScene(this->nextScene);
+		SceneManager::Instance().ChangeScene(this->nextScene,SceneManager::Instance().IsFade());
 	}
 }
 

@@ -17,6 +17,7 @@ void CameraController::Update(float elapsedTime)
 	UpdateCameraShake(elapsedTime);
 #ifdef _DEBUG
 	GamePad& gamePad = Input::Instance().GetGamePad();
+	const Mouse& mouse = Input::Instance().GetMouse();
 	float ax = gamePad.GetAxisRX();
 	float ay = gamePad.GetAxisRY();
 
@@ -36,6 +37,9 @@ void CameraController::Update(float elapsedTime)
 
 	if (angle.y < -DirectX::XM_PI) angle.y += DirectX::XM_2PI;
 	if (angle.y > DirectX::XM_PI) angle.y -= DirectX::XM_2PI;
+
+	//距離の計算
+	range = std::clamp(range - mouse.GetWheel(), 0.1f, 1000.0f);
 #endif // _DEBUG
 
 
@@ -48,6 +52,8 @@ void CameraController::Update(float elapsedTime)
 	DirectX::XMVECTOR Front = Transform.r[2];
 	DirectX::XMFLOAT3 front;
 	DirectX::XMStoreFloat3(&front, Front);
+
+
 
 	//注視点から後ろベクトル方向に一定距離離れたカメラ視点を求める
 	DirectX::XMFLOAT3 eye;
