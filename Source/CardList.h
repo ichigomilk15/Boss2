@@ -167,13 +167,13 @@ private://members
 		bool isOn = false;
 	} comboBorderDetail[2];
 
-	struct ComboBorderExplainDetail
+	/*struct ComboBorderExplainDetail
 	{
 		std::unique_ptr<Sprite> sprBorder;
 		DirectX::XMFLOAT2 Pos;
 		DirectX::XMFLOAT2 Size;
 		bool isOn = false;
-	} comboBorderExpDetail[2];
+	} comboBorderExpDetail[2];*/
 
 	UI cardStack;
 };
