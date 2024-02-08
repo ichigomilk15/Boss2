@@ -78,6 +78,7 @@ public://functions
 
 	//当たっているカードを取得
 	std::shared_ptr<Card> HitCheck(const DirectX::XMFLOAT2& screenPos)const;
+	int HitCheckSetCardsIndex(const DirectX::XMFLOAT2& screenPos)const;
 	//ランダムでカードを生成*手持ちには追加されないのでAddCardなどを使用してください
 	std::shared_ptr<Card> DrawCard(const std::pair<Card::Type, unsigned int>* const pair, const size_t pairSize);
 	//手札にカードを追加
@@ -135,7 +136,7 @@ private://functions
 public://static memberes
 	static constexpr unsigned int CARD_MAX = 5u;
 	static constexpr unsigned int SPECIAL_CARD_MAX = 1u;
-	static constexpr DirectX::XMFLOAT2 CARD_SIZE = DirectX::XMFLOAT2{ 90.0f*1.7f,140.0f*1.5f };//todo : スクリーンサイズを参照すること
+	static constexpr DirectX::XMFLOAT2 CARD_SIZE = DirectX::XMFLOAT2{ 90.0f * 1.7f,140.0f * 1.5f };//todo : スクリーンサイズを参照すること
 	static constexpr float CARD_DISTANCE = 20.0f * 1.5f;
 	static constexpr unsigned int SET_CARD_MAX = 3u;
 
@@ -157,6 +158,22 @@ private://members
 	Sprite cardInfoBack;
 	std::unique_ptr<Sprite> SetCardSprites[2];
 	DirectX::XMFLOAT2 testdatas[2];
+
+	struct ComboBorderDetail
+	{
+		std::unique_ptr<Sprite> sprBorder;
+		DirectX::XMFLOAT2 Pos;
+		DirectX::XMFLOAT2 Size;
+		bool isOn = false;
+	} comboBorderDetail[2];
+
+	struct ComboBorderExplainDetail
+	{
+		std::unique_ptr<Sprite> sprBorder;
+		DirectX::XMFLOAT2 Pos;
+		DirectX::XMFLOAT2 Size;
+		bool isOn = false;
+	} comboBorderExpDetail[2];
 
 	UI cardStack;
 };

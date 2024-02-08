@@ -312,7 +312,7 @@ bool Character::ApplyDamage(int damage)
 		damage -= tempDamage;
 
 		tempDamage *= -1;
-		ShowDamageNumber(tempDamage, true, { .0f,1.0f,1.0f,1.0f });
+		ShowDamageNumber(tempDamage, true, { .0f,1.0f,1.0f,1.0f }, CommonClass::DirectionFace::Left);
 	}
 
 	//ダメージ処理
@@ -322,7 +322,7 @@ bool Character::ApplyDamage(int damage)
 	hpBarData.timer = 1.0f;
 
 	//ダメージを出力
-	ShowDamageNumber(damage,false);
+	ShowDamageNumber(damage, false, {1.0f, 0.0f, 0.0f, 1.0f}, CommonClass::DirectionFace::Right);
 
 	//死亡通知
 	if (health <= 0)
