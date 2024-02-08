@@ -1,6 +1,7 @@
 #pragma once
 
 #include <thread>
+#include <mutex>
 #include "Graphics\Sprite.h"
 #include "Scene.h"
 
@@ -24,6 +25,8 @@ public:
 	//描画処理
 	void Render() override;
 
+	std::mutex& GetLoadingMutex(){return loadingMutex;}
+
 private:
 	//ローディングスレッド
 	static void LoadingThread(SceneLoading* scene);
@@ -34,4 +37,5 @@ private:
 	float angle = 0.0f;
 	Scene* nextScene = nullptr;
 	std::thread* thread = nullptr;
+	std::mutex loadingMutex;
 };

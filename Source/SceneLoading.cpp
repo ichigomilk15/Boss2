@@ -20,6 +20,7 @@ void SceneLoading::Initialize()
 
 void SceneLoading::Finalize()
 {
+	std::lock_guard lock(loadingMutex);
 	//スレッド終了化
 	if (thread != nullptr)
 	{
@@ -86,6 +87,7 @@ void SceneLoading::Render()
 
 void SceneLoading::LoadingThread(SceneLoading* scene)
 {
+	std::lock_guard lock(scene->GetLoadingMutex());
 	//COM関連の初期化でスレッド毎に呼ぶ必要がある
 	CoInitialize(nullptr);
 
