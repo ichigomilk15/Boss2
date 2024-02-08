@@ -16,6 +16,8 @@ Mouse::Mouse(HWND hWnd)
 	GetClientRect(hWnd, &rc);
 	screenWidth = rc.right - rc.left;
 	screenHeight = rc.bottom - rc.top;
+
+	tapEffect = std::make_unique<Sprite>("./Data/Effect/tap.png");
 }
 
 // 更新
@@ -64,4 +66,40 @@ void Mouse::Update()
 	positionY[1] = positionY[0];
 	positionX[0] = (LONG)((cursor.x) / static_cast<double>(viewportW) * static_cast<double>(screenW));
 	positionY[0] = (LONG)((cursor.y) / static_cast<double>(viewportH) * static_cast<double>(screenH));
+
+	for (auto& data : effectDatas)
+	{
+		data.animationFrame++;
+	}
+	//TIPS : マウスのエフェクトの画像変更した場合ここの値を変更
+	std::erase_if(effectDatas,[](EffectData& data){return data.animationFrame > 4*9 * 2;});
+
+	if (buttonDown & BTN_LEFT)
+	{
+		EffectData data;
+		data.pos = {static_cast<float>(positionX[0]),static_cast<float>(positionY[0])};
+		data.animationFrame = 0;
+		effectDatas.emplace_back(data);
+	}
+}
+
+//TIPS : マウスのエフェクトの画像変更した場合ここの値を変更
+void Mouse::Render(ID3D11DeviceContext* dc)
+{
+	DirectX::XMFLOAT2 size = {75.0f,75.0f};
+	DirectX::XMFLOAT2 texSize = {tapEffect->GetTextureWidthf()/4.0f,tapEffect->GetTextureHeightf()/9.0f};
+	for (auto& data : effectDatas)
+	{
+		int animationFrame = data.animationFrame/2;
+		DirectX::XMFLOAT2 texPos = { texSize.x * (animationFrame % 4),texSize.y * (animationFrame / 4) };
+		tapEffect->Render(dc,
+			data.pos.x - size.x*0.5f,
+			data.pos.y - size.y*0.5f,
+			size.x,size.y,
+			texPos.x,texPos.y,
+			texSize.x,texSize.y,
+			.0f,
+			1.0f,1.0f,1.0f,1.0f
+		);
+	}
 }

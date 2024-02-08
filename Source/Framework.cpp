@@ -80,6 +80,8 @@ void Framework::Render(float elapsedTime/*Elapsed seconds from last frame*/)
 	graphics.GetImGuiRenderer()->Render(dc);
 #endif // _DEBUG
 
+	input.GetMouse().Render(dc);
+
 	// バックバッファに描画した画を画面に表示する。
 	graphics.GetSwapChain()->Present(syncInterval, 0);
 }

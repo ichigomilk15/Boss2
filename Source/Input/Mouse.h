@@ -2,12 +2,22 @@
 
 #include <Windows.h>
 #include <DirectXMath.h>
+#include <memory>
+#include <vector>
+
+#include "Graphics\Sprite.h"
 
 using MouseButton = unsigned int;
 
 // マウス
 class Mouse
 {
+private://classes
+	struct EffectData
+	{
+		DirectX::XMFLOAT2 pos = {};
+		int animationFrame = 0;
+	};
 public:
 	static const MouseButton BTN_LEFT = (1 << 0);
 	static const MouseButton BTN_MIDDLE = (1 << 1);
@@ -19,6 +29,8 @@ public:
 
 	// 更新
 	void Update();
+
+	void Render(ID3D11DeviceContext* dc);
 
 	// ボタン入力状態の取得
 	MouseButton GetButton() const { return buttonState[0]; }
@@ -74,4 +86,8 @@ private:
 	int				screenWidth = 0;
 	int				screenHeight = 0;
 	HWND			hWnd = nullptr;
+
+	std::unique_ptr<Sprite> tapEffect;
+
+	std::vector<EffectData> effectDatas;
 };

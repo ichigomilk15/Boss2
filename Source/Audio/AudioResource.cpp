@@ -12,8 +12,6 @@ const std::string KEY = "IEIHjewh";
 AudioResource::AudioResource(const char* filename)
 {
 #if 0
-
-
 	//複合化
 	{
 		std::filesystem::path path = filename;
@@ -42,14 +40,14 @@ AudioResource::AudioResource(const char* filename)
 
 			path = path.replace_extension(".wav");
 			std::string fileStr = path.generic_string();
-			filename = fileStr.c_str();
 
 			error = fopen_s(&encodeFp,filename,"wb");
 			_ASSERT_EXPR_A(error == 0, "File is not found");
 
+			//ここ重たすぎるしデータが壊れる
 			for (size_t i=0;i<size;++i)
 			{
-				fputs(&data[i], encodeFp);
+				fputc(data[i], encodeFp);
 			}
 			fclose(encodeFp);
 
