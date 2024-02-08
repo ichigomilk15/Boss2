@@ -37,7 +37,7 @@ CardManager::CardManager() :
 	comboBorderExpDetail[0].sprBorder = std::make_unique<Sprite>("./Data/Sprite/combo_border1.png");
 	comboBorderExpDetail[0].Size = { 245.0f, 124.0f };
 	comboBorderExpDetail[1].sprBorder = std::make_unique<Sprite>("./Data/Sprite/combo_border2.png");
-	comboBorderExpDetail[1].Size = { 245.0f, 124.0f };
+	comboBorderExpDetail[1].Size = { 201.0f, 108.0f };
 
 	//カードコンボ設定
 	{
@@ -347,29 +347,53 @@ void CardManager::Update(float elapsedTime)
 	}
 
 	//コンボセットカード枠更新
-	comboBorderDetail[0].isOn = true;
-	comboBorderDetail[1].isOn = true;
-	if (SetCards[0].get() == nullptr || SetCards[1].get() == nullptr) comboBorderDetail[0].isOn = false;
-	if (SetCards[1].get() == nullptr || SetCards[2].get() == nullptr) comboBorderDetail[1].isOn = false;
-	//コンボセットカード説明枠更新
-	comboBorderExpDetail[0].isOn = false;
-	comboBorderExpDetail[1].isOn = false;
-	const int index = HitCheckSetCardsIndex(mouse.GetPosition());
-	if (index >= 1 && comboBorderDetail[index - 1].isOn)
 	{
-		comboBorderExpDetail[index - 1].isOn = true;
-		auto prevCard = SetCards[index - 1];
-		switch (prevCard->GetType())
+		comboBorderDetail[0].isOn = true;
+		comboBorderDetail[1].isOn = true;
+		if (SetCards[0].get() == nullptr || SetCards[1].get() == nullptr) comboBorderDetail[0].isOn = false;
+		if (SetCards[1].get() == nullptr || SetCards[2].get() == nullptr) comboBorderDetail[1].isOn = false;
+		//コンボセットカード説明枠更新
+		comboBorderExpDetail[0].isOn = false;
+		comboBorderExpDetail[1].isOn = false;
+		const int index = HitCheckSetCardsIndex(mouse.GetPosition());
+		DirectX::XMFLOAT2 pos {0.0f, 0.0f,};
+		
+		if (index == 1 && comboBorderDetail[index - 1].isOn) //SetCards[1]
 		{
-		case Card::Type::ATTACK:
-			comboBorderExpDetail[index - 1].Pos = { 1421.0f, 470.0f };
-			break;
-		case Card::Type::DEFENCE:
-			comboBorderExpDetail[index - 1].Pos = { 1600.0f, 470.0f };
-			break;
-		case Card::Type::MOVE:
-			comboBorderExpDetail[index - 1].Pos = { 1519.0f, 573.0f };
-			break;
+			auto prevCard = SetCards[index - 1];
+			switch (prevCard->GetType())
+			{
+			case Card::Type::ATTACK:
+				pos = { 1421.0f, 475.0f };
+				break;
+			case Card::Type::DEFENCE:
+				pos = { 1600.0f, 475.0f };
+				break;
+			case Card::Type::MOVE:
+				pos = { 1519.0f, 586.0f };
+				break;
+			}
+		}
+		else if (index == 2 && comboBorderDetail[index - 1].isOn) //SetCards[2]
+		{
+			auto prevCard = SetCards[index - 1];
+			switch (prevCard->GetType())
+			{
+			case Card::Type::ATTACK:
+				pos = { 1439.0f, 499.0f };
+				break;
+			case Card::Type::DEFENCE:
+				pos = { 1616.0f, 499.0f };
+				break;
+			case Card::Type::MOVE:
+				pos = { 1537.0f, 606.0f };
+				break;
+			}
+		}
+		if (index >= 1 && comboBorderDetail[index - 1].isOn) //SetCards[1] && SetCards[2]
+		{
+			comboBorderExpDetail[index - 1].isOn = true;
+			comboBorderExpDetail[index - 1].Pos = pos;
 		}
 	}
 
