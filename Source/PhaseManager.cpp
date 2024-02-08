@@ -34,7 +34,7 @@ PhaseManager::PhaseManager()
 
 	waveChangeData.sprite = std::make_unique<Sprite>("./Data/Sprite/wave_change.png");
 	waveChangeData.offsetY = screenSize.y * 0.2f;
-	waveChangeData.DepthNum = screenSize.y / waveChangeData.offsetY;
+	waveChangeData.DepthNum = static_cast<int>(screenSize.y) / static_cast<int>(waveChangeData.offsetY);
 
 	InitializeAudio();
 }

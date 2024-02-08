@@ -454,7 +454,7 @@ void Character::ShowDamageNumber(const int damageNumber, bool isDrawSymbol, cons
 	data.pos = { screenPos.x, screenPos.y };
 
 	//•ûŒü
-	const int offset = 40.0f;
+	const int offset = 40;
 	switch (direction)
 	{
 	case CommonClass::FrontLeft:
