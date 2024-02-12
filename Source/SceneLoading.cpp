@@ -2,6 +2,7 @@
 #include "Input\Input.h"
 #include "SceneLoading.h"
 #include "SceneManager.h"
+#include "Misc.h"
 #include <SceneGame.h>
 
 void SceneLoading::Initialize()
@@ -89,7 +90,8 @@ void SceneLoading::LoadingThread(SceneLoading* scene)
 {
 	std::lock_guard lock(scene->GetLoadingMutex());
 	//COM関連の初期化でスレッド毎に呼ぶ必要がある
-	CoInitialize(nullptr);
+	HRESULT hr = CoInitialize(nullptr);
+	_ASSERT_EXPR(SUCCEEDED(hr),HRTrace(hr));
 
 	//次のシーンの初期化を行う
 	scene->nextScene->Initialize();

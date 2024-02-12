@@ -336,9 +336,9 @@ void PhaseManager::RenderWaveChange(ID3D11DeviceContext* dc)const
 
 
 	////waveの進行度の表示
-	//HitBox2D box = HitBox2D::CreateBoxFromCenter({ ScreenSize.x * 0.5f,ScreenSize.y * 0.5f }, { ScreenSize.x,ScreenSize.y * 0.3f });
-	//waveSprites[Stage::Instance()->GetStageLevel() - 1]->Render(dc,
-	//	box.GetLeftTop(), box.GetBoxSize(), .0f, { 1.0f,1.0f,1.0f,1.0f });
+	HitBox2D box = HitBox2D::CreateBoxFromCenter({ ScreenSize.x * 0.5f,ScreenSize.y * 0.5f }, { ScreenSize.x,ScreenSize.y * 0.3f });
+	waveSprites[Stage::Instance()->GetStageLevel() - 1]->Render(dc,
+		box.GetLeftTop(), box.GetBoxSize(), .0f, { 1.0f,1.0f,1.0f,1.0f });
 }
 
 void PhaseManager::Reset()
