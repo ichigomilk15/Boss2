@@ -10,9 +10,10 @@
 #include "EnemyManager.h"
 #undef NOMINMAX
 
-
+//hack : ここがカードのサイズおかしくなる場所
+//! ここ
 CardManager::CardManager() :
-	CARD_SIZE(DirectX::XMFLOAT2{ 153.0f*(1.0f/Graphics::Instance().GetScreenScale()),210*(1.0f/Graphics::Instance().GetScreenScale())}),
+	CARD_SIZE(DirectX::XMFLOAT2{ 153.0f*(Graphics::Instance().GetScreenWidth()/1980.0f),210*(Graphics::Instance().GetScreenHeight()/1080.0f)}),
 	HAND_CARDS_START_POS(DirectX::XMFLOAT2{ Graphics::Instance().GetScreenWidth() * 0.3f,Graphics::Instance().GetScreenHeight() - CARD_SIZE.y }),
 	SET_CARDS_START_POS({ Graphics::Instance().GetScreenWidth() * 0.1f,Graphics::Instance().GetScreenHeight() * 0.2f }), isMoveable(false),
 	HandsCardSprite("./Data/Sprite/HandsBackGround.png"),
