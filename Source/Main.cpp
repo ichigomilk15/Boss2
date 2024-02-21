@@ -43,6 +43,7 @@ INT WINAPI wWinMain( _In_ HINSTANCE instance, _In_opt_ HINSTANCE prev_instance, 
 	RegisterClassEx(&wcex);
 
 	DWORD windowStyle = WS_BORDER;
+	//DWORD windowStyle = NULL;
 	//RECT rc = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
 	RECT rc = {0,0,GetSystemMetrics(SM_CXSCREEN),GetSystemMetrics(SM_CYSCREEN)};
 	AdjustWindowRect(&rc, windowStyle, FALSE);

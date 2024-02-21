@@ -445,7 +445,7 @@ void Stage::ReFleshCard()
 			}
 			else
 			{
-				square->SetCard(std::make_shared<Card>(CardManager::Instance().GetCardSpawnPos(), CardManager::CARD_SIZE, Card::Type::SPECIAL));
+				square->SetCard(std::make_shared<Card>(CardManager::Instance().GetCardSpawnPos(), CardManager::Instance().GetCardSize(), Card::Type::SPECIAL));
 			}
 
 		}

@@ -73,10 +73,13 @@ public:
 
 	const bool IsFullScreen() { return isFullScreen; }
 
+	const float& GetScreenScale()const noexcept{return screenScale;}
+
 private:
 	static Graphics*								instance;
 
 	const HWND hwnd;
+	float screenScale = 1.0f;
 
 	Microsoft::WRL::ComPtr<ID3D11Device>			device;
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext>		immediateContext;

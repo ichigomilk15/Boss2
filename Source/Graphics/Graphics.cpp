@@ -21,6 +21,7 @@ Graphics::Graphics(HWND hWnd) :hwnd(hWnd)
 	this->screenWidth = static_cast<float>(screenWidth);
 	this->screenHeight = static_cast<float>(screenHeight);
 
+
 	HRESULT hr = S_OK;
 
 	// デバイス＆スワップチェーンの生成
@@ -147,6 +148,8 @@ Graphics::Graphics(HWND hWnd) :hwnd(hWnd)
 #endif // _DEBUG
 	}
 
+	//画面の拡大率の取得
+	screenScale = GetDeviceCaps(GetDC(hWnd),LOGPIXELSY)/static_cast<float>(USER_DEFAULT_SCREEN_DPI);
 
 	hr = swapchain->SetFullscreenState(FALSE, nullptr);
 	_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));

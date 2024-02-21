@@ -12,6 +12,7 @@
 
 
 CardManager::CardManager() :
+	CARD_SIZE(DirectX::XMFLOAT2{ 153.0f*(1.0f/Graphics::Instance().GetScreenScale()),210*(1.0f/Graphics::Instance().GetScreenScale())}),
 	HAND_CARDS_START_POS(DirectX::XMFLOAT2{ Graphics::Instance().GetScreenWidth() * 0.3f,Graphics::Instance().GetScreenHeight() - CARD_SIZE.y }),
 	SET_CARDS_START_POS({ Graphics::Instance().GetScreenWidth() * 0.1f,Graphics::Instance().GetScreenHeight() * 0.2f }), isMoveable(false),
 	HandsCardSprite("./Data/Sprite/HandsBackGround.png"),
@@ -583,7 +584,7 @@ void CardManager::Render(ID3D11DeviceContext* dc)
 
 	renderpos = { ScreenSize.x * 0.076f,ScreenSize.y * 0.075f };
 	//renderpos = { ScreenSize.x*testdatas[0].x,ScreenSize.y*testdatas[0].y };//todo ichigomilk: screensizeに合わせるように
-	renderSize = { ScreenSize.x * 0.141f,ScreenSize.y * 0.828f };
+	renderSize = { ScreenSize.x * 0.141f,ScreenSize.y * 0.8f };
 	//renderSize = { ScreenSize.x*testdatas[1].x,ScreenSize.y*testdatas[1].y};//todo ihigomilk: screensizeに合わせるように
 
 	//セットカードの描画裏側
