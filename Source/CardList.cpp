@@ -575,6 +575,8 @@ void CardManager::DrawDebugGUI()
 		if (ImGui::InputInt("HaveSpecial", &size, 0)) {};
 		size = static_cast<int>(reservedCards.size());
 		if (ImGui::InputInt("ReservedCard", &size, 0)) {};
+		DirectX::XMFLOAT2 f2 = {CARD_SIZE};
+		if(ImGui::InputFloat2("cardSize",&f2.x)){};
 		if (ImGui::CollapsingHeader("HaveCard", ImGuiTreeNodeFlags_::ImGuiTreeNodeFlags_DefaultOpen))
 		{
 			if (!haveCard.expired())

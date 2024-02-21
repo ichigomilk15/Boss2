@@ -168,6 +168,18 @@ Graphics::~Graphics()
 	//ShowCursor(TRUE);
 }
 
+void Graphics::DrawDebugGUI()
+{
+	if (ImGui::Begin("Graphics"))
+	{
+		DirectX::XMFLOAT2 f2 ={screenWidth,screenHeight};
+		ImGui::InputFloat2("ScreenSize",&f2.x);
+		float f1 = screenScale;
+		ImGui::InputFloat("ScreenScale",&f1);
+	}
+	ImGui::End();
+}
+
 void Graphics::Quit() const noexcept
 {
 	PostMessage(hwnd, WM_CLOSE, 0, 0);

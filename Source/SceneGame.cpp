@@ -236,6 +236,7 @@ void SceneGame::Render()
 
 		CardManager::Instance().DrawDebugGUI();
 		PhaseManager::Instance().DrawDebugGUI();
+		graphics.DrawDebugGUI();
 	}
 
 

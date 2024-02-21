@@ -26,6 +26,8 @@ public:
 	// インスタンス取得
 	static Graphics& Instance() { return *instance; }
 
+	void DrawDebugGUI();
+
 	// デバイス取得
 	ID3D11Device* GetDevice() const { return device.Get(); }
 

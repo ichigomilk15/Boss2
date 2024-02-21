@@ -145,4 +145,6 @@ void SceneTitle::Render()
 
 		back->Render(dc,{.0f,.0f},{100.0f,100.0f},.0f,{1.0f,1.0f,1.0f,1.0f});
 	}
+
+	graphics.DrawDebugGUI();
 }
