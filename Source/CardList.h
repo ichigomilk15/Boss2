@@ -135,6 +135,11 @@ private://functions
 	//オーディオの初期化
 	void InitializeAudio();
 
+	//組合せセットカード枠の描画チェック
+	void CheckCardComboBorder();
+	//組合せカード説明枠の描画チェック
+	void CheckCardComboExpBorder();
+
 private:
 	DirectX::XMFLOAT2 CARD_SIZE;// = DirectX::XMFLOAT2{ 90.0f * 1.7f,140.0f * 1.5f };//todo : スクリーンサイズを参照すること
 public://static memberes

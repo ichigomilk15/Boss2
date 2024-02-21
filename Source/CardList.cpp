@@ -349,67 +349,8 @@ void CardManager::Update(float elapsedTime)
 
 	//コンボセットカード枠更新
 	{
-		comboBorderDetail[0].isOn = true;
-		comboBorderDetail[1].isOn = true;
-		if (SetCards[0].get() == nullptr || SetCards[1].get() == nullptr) comboBorderDetail[0].isOn = false;
-		if (SetCards[1].get() == nullptr || SetCards[2].get() == nullptr) comboBorderDetail[1].isOn = false;
-		//コンボセットカード説明枠更新
-		comboBorderExpDetail[0].isOn = false;
-		comboBorderExpDetail[1].isOn = false;
-		const int index = HitCheckSetCardsIndex(mouse.GetPosition());
-		DirectX::XMFLOAT2 pos{ -2000.0f, -2000.0f, };
-
-		if (index >= 1 && comboBorderDetail[index - 1].isOn) //SetCards[1] && SetCards[2]
-		{
-			auto prevCard = SetCards[index - 1];
-			auto curCard = SetCards[index];
-			const float offsetY = -2.0f;
-			if (curCard && curCard->GetType() == Card::Type::SPECIAL)
-			{
-				switch (prevCard->GetType())
-				{
-				case Card::Type::ATTACK:
-					pos = { 1441.0f, 491.0f + offsetY };
-					break;
-				case Card::Type::DEFENCE:
-					pos = { 1620.0f, 491.0f + offsetY };
-					break;
-				case Card::Type::MOVE:
-					pos = { 1441.0f, 597.0f + offsetY };
-					break;
-				case Card::Type::DEBUFF:
-					pos = { 1620.0f, 597.0f + offsetY };
-					break;
-				}
-			}
-			else if (curCard && curCard->GetType() == Card::Type::DEBUFF)
-			{
-				if (prevCard && prevCard->GetType() == Card::Type::DEBUFF)
-				{
-					pos = { 1441.0f, 491.0f + offsetY };
-				}
-			}
-			else if(curCard && prevCard)
-			{
-				switch (prevCard->GetType())
-				{
-				case Card::Type::ATTACK:
-					pos = { 1441.0f, 491.0f + offsetY };
-					break;
-				case Card::Type::DEFENCE:
-					pos = { 1620.0f, 491.0f + offsetY };
-					break;
-				case Card::Type::MOVE:
-					pos = { 1535.0f, 597.0f + offsetY };
-					break;
-				default:
-					pos = { -2000.0f, -2000.0f };
-					break;
-				}
-			}
-			comboBorderExpDetail[index - 1].isOn = true;
-			comboBorderExpDetail[index - 1].Pos = pos;
-		}
+		CheckCardComboBorder();
+		CheckCardComboExpBorder();
 	}
 
 	//何も持って無くてカードを右クリックしたら
@@ -947,4 +888,120 @@ void CardManager::InitializeAudio()
 		std::unique_ptr<AudioSource> cardDraw;
 		std::unique_ptr<AudioSource> cardSet;
 		std::unique_ptr<AudioSource> buff;*/
+}
+
+void CardManager::CheckCardComboBorder()
+{
+	comboBorderDetail[0].isOn = false;
+	comboBorderDetail[1].isOn = false;
+
+	Card* card[3];
+	card[0] = SetCards[0].get();
+	card[1] = SetCards[1].get();
+	card[2] = SetCards[2].get();
+
+	//通常カードのチェック
+	for (int i = 1; i <= 2; ++i)
+	{
+		if (card[i])
+		{
+			if (card[i]->IsNormalCard() && card[i - 1] && card[i - 1]->IsNormalCard())
+				comboBorderDetail[i - 1].isOn = true;
+		}
+	}
+
+	//Specialカードのチェック
+	for (int i = 0; i <= 1; ++i)
+	{
+		if (card[i] && card[i]->GetType() == Card::Type::SPECIAL && card[i+1] != nullptr)
+		{
+			comboBorderDetail[i].isOn = true;
+		}
+	}
+
+	//Debuffカードのチェック
+	for (int i = 1; i <= 2; ++i)
+	{
+		if (card[i] && card[i]->GetType() == Card::Type::DEBUFF &&
+			card[i - 1] && card[i - 1]->GetType() == Card::Type::DEBUFF)
+		{
+			comboBorderDetail[i-1].isOn = true;
+		}
+	}
+}
+
+void CardManager::CheckCardComboExpBorder()
+{
+	//コンボセットカード説明枠更新
+	Mouse& mouse = Input::Instance().GetMouse();
+	const DirectX::XMFLOAT2 ScreenSize = { Graphics::Instance().GetScreenWidth(),Graphics::Instance().GetScreenHeight() };
+
+	comboBorderExpDetail[0].isOn = false;
+	comboBorderExpDetail[1].isOn = false;
+
+	const int index = HitCheckSetCardsIndex(mouse.GetPosition());
+	DirectX::XMFLOAT2 pos{ -2000.0f, -2000.0f, };
+	const float offsetY = -2.0f;
+
+	bool isCurBorderOn = false;
+	if (index <= 1) //SetCards[0][1] && SPECIALカードのチェック
+	{
+		auto curCard = SetCards[index];
+		auto nextCard = SetCards[index + 1];
+
+		if (curCard && curCard->GetType() == Card::Type::SPECIAL && nextCard)
+		{
+			switch (nextCard->GetType())
+			{
+			case Card::Type::ATTACK:
+				pos = { 1441.0f, 491.0f + offsetY };
+				break;
+			case Card::Type::DEFENCE:
+				pos = { 1620.0f, 491.0f + offsetY };
+				break;
+			case Card::Type::MOVE:
+				pos = { 1441.0f, 597.0f + offsetY };
+				break;
+			case Card::Type::DEBUFF:
+				pos = { 1620.0f, 597.0f + offsetY };
+				break;
+			}
+			comboBorderExpDetail[index].isOn = true;
+			comboBorderExpDetail[index].Pos = pos;
+			isCurBorderOn = true;
+		}
+	}
+	if (index >= 1 && !isCurBorderOn) //SetCards[1] && SetCards[2]
+	{
+		auto prevCard = SetCards[index - 1].get();
+		auto curCard = SetCards[index].get();
+
+		if (curCard && curCard->GetType() == Card::Type::DEBUFF)
+		{
+			if (prevCard && prevCard->GetType() == Card::Type::DEBUFF)
+			{
+				pos = { 1441.0f, 491.0f + offsetY };
+			}
+		}
+		else if (curCard && prevCard)
+		{
+			switch (prevCard->GetType())
+			{
+			case Card::Type::ATTACK:
+				pos = { 1441.0f, 491.0f + offsetY };
+				break;
+			case Card::Type::DEFENCE:
+				pos = { 1620.0f, 491.0f + offsetY };
+				break;
+			case Card::Type::MOVE:
+				pos = { 1535.0f, 597.0f + offsetY };
+				break;
+			default:
+				pos = { -2000.0f, -2000.0f };
+				break;
+			}
+		}
+		comboBorderExpDetail[index - 1].isOn = true;
+		comboBorderExpDetail[index - 1].Pos = pos;
+	}
 }
