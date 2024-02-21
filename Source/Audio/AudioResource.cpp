@@ -70,6 +70,9 @@ AudioResource::AudioResource(const char* filename)
 		errno_t error = fopen_s(&fp, filename, "rb");
 		_ASSERT_EXPR_A(error == 0, "WAV File not found");
 
+		if (fp != nullptr)
+		{
+
 		// ファイルのサイズを求める
 		fseek(fp, 0, SEEK_END);
 		size_t size = static_cast<size_t>(ftell(fp));
@@ -143,6 +146,7 @@ AudioResource::AudioResource(const char* filename)
 		}
 
 		fclose(fp);
+		}
 	}
 
 	// WAV フォーマットをセットアップ
