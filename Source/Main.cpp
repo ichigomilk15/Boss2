@@ -47,7 +47,7 @@ INT WINAPI wWinMain( _In_ HINSTANCE instance, _In_opt_ HINSTANCE prev_instance, 
 	RECT rc = {0,0,GetSystemMetrics(SM_CXSCREEN),GetSystemMetrics(SM_CYSCREEN)};
 	AdjustWindowRect(&rc, windowStyle, FALSE);
 	HWND hWnd = CreateWindow(_T("Game"), _T("PIRATES OF LILY"), windowStyle, rc.left, rc.top, rc.right - rc.left, rc.bottom - rc.top, NULL, NULL, instance, NULL);
-	SetWindowLong(hWnd,GWL_STYLE,WS_POPUP);
+	SetWindowLongPtr(hWnd,GWL_STYLE,WS_POPUP);
 	SetWindowPos(hWnd,NULL,0,0,GetSystemMetrics(SM_CXSCREEN),GetSystemMetrics(SM_CYSCREEN),SWP_FRAMECHANGED);
 	ShowWindow(hWnd, cmd_show);
 
