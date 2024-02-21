@@ -101,6 +101,11 @@ void Card::Swap(Card* card)
     this->sprite.swap(card->sprite);
 }
 
+const bool Card::IsNormalCard() const
+{
+    return (type == Type::ATTACK || type == Type::DEFENCE || type == Type::MOVE);
+}
+
 const bool Card::IsMoving() const noexcept
 {
     return (pos.x != targetPos.x || pos.y != targetPos.y);

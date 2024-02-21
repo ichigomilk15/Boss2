@@ -133,6 +133,11 @@ private://functions
 	//オーディオの初期化
 	void InitializeAudio();
 
+	//組合せセットカード枠の描画チェック
+	void CheckCardComboBorder();
+	//組合せカード説明枠の描画チェック
+	void CheckCardComboExpBorder();
+
 public://static memberes
 	static constexpr unsigned int CARD_MAX = 5u;
 	static constexpr unsigned int SPECIAL_CARD_MAX = 1u;

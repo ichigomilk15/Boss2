@@ -35,6 +35,8 @@ public://functions
 
     void Swap(Card* card);
 
+    const bool IsNormalCard() const;
+
     /// <summary>
     /// カード使用時に実行する関数
     /// </summary>
