@@ -357,15 +357,15 @@ void CardManager::Update(float elapsedTime)
 		comboBorderExpDetail[1].isOn = false;
 		const int index = HitCheckSetCardsIndex(mouse.GetPosition());
 		DirectX::XMFLOAT2 pos{ -2000.0f, -2000.0f, };
+		const float offsetY = -2.0f;
 
-		if (index >= 1 && comboBorderDetail[index - 1].isOn) //SetCards[1] && SetCards[2]
+		if (index == 0) //SetCards[0] && SPECIALカードのチェック
 		{
-			auto prevCard = SetCards[index - 1];
 			auto curCard = SetCards[index];
-			const float offsetY = -2.0f;
-			if (curCard && curCard->GetType() == Card::Type::SPECIAL)
+			auto nextCard = SetCards[index + 1];
+			if (curCard && curCard->GetType() == Card::Type::SPECIAL && nextCard)
 			{
-				switch (prevCard->GetType())
+				switch (nextCard->GetType())
 				{
 				case Card::Type::ATTACK:
 					pos = { 1441.0f, 491.0f + offsetY };
@@ -381,6 +381,36 @@ void CardManager::Update(float elapsedTime)
 					break;
 				}
 			}
+			comboBorderExpDetail[index].isOn = true;
+			comboBorderExpDetail[index].Pos = pos;
+		}
+		else if (index >= 1 && comboBorderDetail[index - 1].isOn) //SetCards[1] && SetCards[2]
+		{
+			auto prevCard = SetCards[index - 1];
+			auto curCard = SetCards[index];
+
+			if (curCard && curCard->GetType() == Card::Type::SPECIAL)
+			{
+				auto nextCard = SetCards[index + 1];
+				if (nextCard)
+				{
+					switch (nextCard->GetType())
+					{
+					case Card::Type::ATTACK:
+						pos = { 1441.0f, 491.0f + offsetY };
+						break;
+					case Card::Type::DEFENCE:
+						pos = { 1620.0f, 491.0f + offsetY };
+						break;
+					case Card::Type::MOVE:
+						pos = { 1441.0f, 597.0f + offsetY };
+						break;
+					case Card::Type::DEBUFF:
+						pos = { 1620.0f, 597.0f + offsetY };
+						break;
+					}
+				}
+			}
 			else if (curCard && curCard->GetType() == Card::Type::DEBUFF)
 			{
 				if (prevCard && prevCard->GetType() == Card::Type::DEBUFF)
@@ -388,7 +418,7 @@ void CardManager::Update(float elapsedTime)
 					pos = { 1441.0f, 491.0f + offsetY };
 				}
 			}
-			else if(curCard && prevCard)
+			else if (curCard && prevCard)
 			{
 				switch (prevCard->GetType())
 				{
