@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <set>
+#include <mutex>
 #include "Common.h"
 #include "Enemy.h"
 #include "Character.h"
@@ -65,6 +66,7 @@ public:
     const bool GetIsAllActEnd() const;
     const bool GetIsAllDead() const;
     const bool GetIsAllDestroyed() const;
+    //std::mutex& GetMutex()noexcept{return Mutex;}
 
 
     void SetStartEnemyNum()noexcept { startEnemyNum = static_cast<int>(enemies.size()); }
@@ -72,6 +74,7 @@ private:
     void UpdateEnemiesTurn(float elapsedTime); //敵のターン更新処理
 
 private:
+    //std::mutex Mutex;
     std::vector<Enemy*> enemies;
     std::set<Enemy*>    removes;
     static int enemyTurnIndex; //敵の行動順番

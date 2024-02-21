@@ -1,5 +1,6 @@
 
 #define NOMINMAX
+#include <thread>
 #include "PhaseManager.h"
 #include "Audio\AudioLoader.h"
 #include "Input/Input.h"
@@ -19,6 +20,71 @@
 #include "Graphics/ImGuiRenderer.h"
 #endif // _DEBUG
 #undef NOMINMAX
+
+void StageInitEnemy(int level)
+{
+	switch (level)
+	{
+	case 1:
+	{
+		//enemyの配置
+		EnemyMinion1* enemy = new EnemyMinion1(PlayerManager::Instance().GetFirstPlayer());
+		enemy->SetPositionWorld({ 5, 5 });
+		enemy->SetTargetMovePosition({ -1, -1 });
+		enemy->SetState(State::Idle_Init);
+		enemy->SetAttackRange(1);
+		enemy->SetHealth(30);
+		enemy->SetMaxHealth(30);
+		EnemyManager::Instance().Register(enemy);
+	}
+	break;
+	case 2:
+	{
+		//enemyの配置
+		EnemyMinion1* enemy = new EnemyMinion1(PlayerManager::Instance().GetFirstPlayer());
+		enemy->SetPositionWorld({ 1, 5 });
+		enemy->SetTargetMovePosition({ -1, -1 });
+		enemy->SetState(State::Idle_Init);
+		enemy->SetAttackRange(1);
+		enemy->SetHealth(30);
+		enemy->SetMaxHealth(30);
+		EnemyManager::Instance().Register(enemy);
+
+		EnemyMinion1* enemy2 = new EnemyMinion1(PlayerManager::Instance().GetFirstPlayer());
+		enemy2->SetPositionWorld({ 5, 1 });
+		enemy2->SetTargetMovePosition({ -1, -1 });
+		enemy2->SetState(State::Idle_Init);
+		enemy2->SetAttackRange(1);
+		enemy2->SetHealth(30);
+		enemy2->SetMaxHealth(30);
+		EnemyManager::Instance().Register(enemy2);
+	}
+	break;
+	case 3:
+	{
+		auto player = PlayerManager::Instance().GetFirstPlayer();
+		EnemyBoss1* boss1 = new EnemyBoss1(player);
+		DirectX::XMINT2 pos;
+		pos.x = (player->GetPosition().x > 4) ? 0 : 5;
+		pos.y = (player->GetPosition().y > 4) ? 0 : 5;
+		//boss1->SetPositionWorld(pos);
+		boss1->SetPositionWorld({ 3,3 });
+		boss1->SetTargetMovePosition({ -1, -1 });
+		boss1->SetSize({ 2, 2 });
+		DirectX::XMFLOAT3 pivot = { Common::SquareWidth / 2, 1.0f, -Common::SquareHeight / 2 };
+		boss1->SetPivotAdjustPosWorld(pivot);
+		boss1->SetState(State::Attack_Init);
+		boss1->SetHealth(150);
+
+		boss1->SetMaxHealth(150);
+		boss1->SetAttackRange(4);
+		EnemyManager::Instance().Register(boss1);
+	}
+	break;
+
+	}
+}
+
 
 PhaseManager::PhaseManager()
 {
@@ -332,9 +398,6 @@ void PhaseManager::RenderWaveChange(ID3D11DeviceContext* dc)const
 	}
 
 
-
-
-
 	////waveの進行度の表示
 	HitBox2D box = HitBox2D::CreateBoxFromCenter({ ScreenSize.x * 0.5f,ScreenSize.y * 0.5f }, { ScreenSize.x,ScreenSize.y * 0.3f });
 	waveSprites[Stage::Instance()->GetStageLevel() - 1]->Render(dc,
@@ -426,6 +489,7 @@ const bool PhaseManager::IsQuickNextPhase(const bool flag)
 
 void PhaseManager::StageInit(const int level)
 {
+	StageInitEnemy(level);
 	switch (level)
 	{
 		//case 1:
@@ -449,15 +513,6 @@ void PhaseManager::StageInit(const int level)
 		PlayerManager::Instance().GetFirstPlayer()->SetTargetMovePosition({ 3,3 });
 		PlayerManager::Instance().GetFirstPlayer()->SetPositionWorld({ 3,3 });
 		Stage::Instance()->ResetAllSquare();
-		//enemyの配置
-		EnemyMinion1* enemy = new EnemyMinion1(PlayerManager::Instance().GetFirstPlayer());
-		EnemyManager::Instance().Register(enemy);
-		enemy->SetPositionWorld({ 5, 5 });
-		enemy->SetTargetMovePosition({ -1, -1 });
-		enemy->SetState(State::Idle_Init);
-		enemy->SetAttackRange(1);
-		enemy->SetHealth(30);
-		enemy->SetMaxHealth(30);
 	}
 	break;
 	case 2:
@@ -465,24 +520,6 @@ void PhaseManager::StageInit(const int level)
 		PlayerManager::Instance().GetFirstPlayer()->SetTargetMovePosition(Common::PlayerPosInit);
 		PlayerManager::Instance().GetFirstPlayer()->SetPositionWorld(Common::PlayerPosInit);
 		Stage::Instance()->ResetAllSquare();
-		//enemyの配置
-		EnemyMinion1* enemy = new EnemyMinion1(PlayerManager::Instance().GetFirstPlayer());
-		EnemyManager::Instance().Register(enemy);
-		enemy->SetPositionWorld({ 1, 5 });
-		enemy->SetTargetMovePosition({ -1, -1 });
-		enemy->SetState(State::Idle_Init);
-		enemy->SetAttackRange(1);
-		enemy->SetHealth(30);
-		enemy->SetMaxHealth(30);
-
-		EnemyMinion1* enemy2 = new EnemyMinion1(PlayerManager::Instance().GetFirstPlayer());
-		EnemyManager::Instance().Register(enemy2);
-		enemy2->SetPositionWorld({ 5, 1 });
-		enemy2->SetTargetMovePosition({ -1, -1 });
-		enemy2->SetState(State::Idle_Init);
-		enemy2->SetAttackRange(1);
-		enemy2->SetHealth(30);
-		enemy2->SetMaxHealth(30);
 	}
 	break;
 	case 3:
@@ -490,26 +527,6 @@ void PhaseManager::StageInit(const int level)
 		PlayerManager::Instance().GetFirstPlayer()->SetTargetMovePosition({ 1,3 });
 		PlayerManager::Instance().GetFirstPlayer()->SetPositionWorld({ 1,3 });
 		Stage::Instance()->ResetAllSquare();
-		auto player = PlayerManager::Instance().GetFirstPlayer();
-		EnemyBoss1* boss1 = new EnemyBoss1(player);
-		EnemyManager::Instance().Register(boss1);
-		DirectX::XMINT2 pos;
-		pos.x = (player->GetPosition().x > 4) ? 0 : 5;
-		pos.y = (player->GetPosition().y > 4) ? 0 : 5;
-		//boss1->SetPositionWorld(pos);
-		boss1->SetPositionWorld({ 3,3 });
-		boss1->SetTargetMovePosition({ -1, -1 });
-		boss1->SetSize({ 2, 2 });
-		DirectX::XMFLOAT3 pivot = { Common::SquareWidth / 2, 1.0f, -Common::SquareHeight / 2 };
-		boss1->SetPivotAdjustPosWorld(pivot);
-		boss1->SetState(State::Attack_Init);
-		boss1->SetHealth(150);
-#ifdef _DEBUG//todo : debug ボスの体力の初期体力を設定
-		boss1->SetHealth(150);
-#endif // _DEBUG
-
-		boss1->SetMaxHealth(150);
-		boss1->SetAttackRange(4);
 	}
 	break;
 
@@ -530,3 +547,5 @@ void PhaseManager::StartWaveChange(float startTime)
 	waveChangeData.isLoadOk = false;
 	waveChangeData.oldIsLoadOk = false;
 }
+
+
