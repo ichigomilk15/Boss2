@@ -471,6 +471,12 @@ void Player::UpdateAttack(float elapsedTime)
 		{
 			posVec.emplace_back(sq->GetPos());
 		}
+#if _DEBUG
+		if (testSq.empty())
+		{
+			MessageBoxA(Graphics::Instance().GetHWnd(), "Error", "attacktargetVector‚É‰½‚à“ü‚Á‚Ä‚¢‚Ü‚¹‚ñ", MB_ICONERROR);
+		}
+#endif
 		InitializeAttack(attackDamage, posVec, 0.5f);
 	}
 }

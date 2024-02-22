@@ -50,6 +50,8 @@ void SceneLoading::Update(float elapsedTime)
 		this->thread->detach();
 		SceneManager::Instance().ChangeScene(this->nextScene,SceneManager::Instance().IsFade());
 	}
+
+	timer += elapsedTime;
 }
 
 void SceneLoading::Render()
@@ -76,10 +78,15 @@ void SceneLoading::Render()
 		float positionY = screenHeight - textureHeight;
 
 		back->Render(dc,
-			.0f, .0f, graphics.GetScreenWidth(), graphics.GetScreenHeight(), .0f, .0f, back->GetTextureWidthf(), back->GetTextureHeightf(), .0f, 1.0f, 1.0f, 1.0f, 1.0f);
+			.0f, .0f, graphics.GetScreenWidth(), graphics.GetScreenHeight(), back->GetTextureWidthf()/** timer*/, .0f, back->GetTextureWidthf(), back->GetTextureHeightf(), .0f, 1.0f, 1.0f, 1.0f, 1.0f);
+
+		float sizeX = screenWidth*0.2f * graphics.GetScreenAspect();
+		float sizeY = screenHeight * 0.2f;
+		positionX = screenWidth - sizeX;
+		positionY = screenHeight - sizeY;
 
 		sprite->Render(dc,
-			positionX, positionY, textureWidth, textureHeight,
+			positionX, positionY, sizeX, sizeY,
 			0, 0, textureWidth, textureHeight,
 			angle,
 			1, 1, 1, 1);

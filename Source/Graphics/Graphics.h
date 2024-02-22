@@ -48,9 +48,14 @@ public:
 
 	// スクリーン幅取得
 	float GetScreenWidth() const { return screenWidth; }
+	float GetScreenWidthReScale()const noexcept{return screenWidth/1920.0f;}
 
 	// スクリーン高さ取得
 	float GetScreenHeight() const { return screenHeight; }
+	float GetScreenHeightReScale()const noexcept{return screenHeight/1080.0f;}
+
+	//height/width
+	float GetScreenAspect()const noexcept{return screenHeight/screenWidth;}
 
 	//画面サイズの取得
 	const DirectX::XMFLOAT2 GetScreenSize()const noexcept { return DirectX::XMFLOAT2{ screenWidth,screenHeight }; }
