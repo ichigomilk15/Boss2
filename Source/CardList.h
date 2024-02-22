@@ -145,7 +145,7 @@ private:
 public://static memberes
 	static constexpr unsigned int CARD_MAX = 5u;
 	static constexpr unsigned int SPECIAL_CARD_MAX = 1u;
-	static constexpr float CARD_DISTANCE = 20.0f * 1.5f;
+	static constexpr float CARD_DISTANCE = 30.0f;
 	static constexpr unsigned int SET_CARD_MAX = 3u;
 
 private://members

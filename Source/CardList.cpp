@@ -21,6 +21,8 @@ CardManager::CardManager() :
 {
 
 	const DirectX::XMFLOAT2 ScreenSize = Graphics::Instance().GetScreenSize();
+	const Graphics& graphics = Graphics::Instance();
+	DirectX::XMFLOAT2 rescale = {graphics.GetScreenWidthReScale(),graphics.GetScreenHeightReScale()};
 
 	//山札設定
 	cardStack.SetHitBox(HitBox2D::CreateBoxFromTopLeft({ ScreenSize.x * 0.9f,ScreenSize.y - CARD_SIZE.y }, CARD_SIZE));
@@ -30,16 +32,16 @@ CardManager::CardManager() :
 	SetCardSprites[0] = std::make_unique<Sprite>("./Data/Sprite/SetCardBack.png");
 	SetCardSprites[1] = std::make_unique<Sprite>("./Data/Sprite/SetCardFront.png");
 	comboBorderDetail[0].sprBorder = std::make_unique<Sprite>("./Data/Sprite/combo_border1.png");
-	comboBorderDetail[0].Pos = { 133.0f, 63.0f };
-	comboBorderDetail[0].Size = { 280.0f, 643.0f };
+	comboBorderDetail[0].Pos = { 133.0f * rescale.x, 63.0f * rescale.y};
+	comboBorderDetail[0].Size = { 280.0f * rescale.x, 643.0f * rescale.y };
 	comboBorderDetail[1].sprBorder = std::make_unique<Sprite>("./Data/Sprite/combo_border2.png");
-	comboBorderDetail[1].Pos = { 133.0f, 403.0f };
-	comboBorderDetail[1].Size = { 280.0f, 548.0f };
+	comboBorderDetail[1].Pos = { 133.0f * rescale.x, 403.0f * rescale.y };
+	comboBorderDetail[1].Size = { 280.0f * rescale.x, 548.0f * rescale.y };
 
 	comboBorderExpDetail[0].sprBorder = std::make_unique<Sprite>("./Data/Sprite/combo_border_h1.png");
-	comboBorderExpDetail[0].Size = { 198.0f, 110.0f };
+	comboBorderExpDetail[0].Size = { 198.0f * rescale.x, 110.0f * rescale.y };
 	comboBorderExpDetail[1].sprBorder = std::make_unique<Sprite>("./Data/Sprite/combo_border_h2.png");
-	comboBorderExpDetail[1].Size = { 198.0f, 110.0f };
+	comboBorderExpDetail[1].Size = { 198.0f * rescale.x, 110.0f * rescale.y };
 
 	//カードコンボ設定
 	{
@@ -325,7 +327,7 @@ void CardManager::Update(float elapsedTime)
 		}
 
 		card->SetPosition(pos);
-		pos.x += card->GetSize().x + CARD_DISTANCE;
+		pos.x += card->GetSize().x + CARD_DISTANCE * Graphics::Instance().GetScreenWidthReScale();
 		card->Update(elapsedTime);
 #ifdef _DEBUG
 		if (card->GetPosition().x < 0.0f)//todo : debug用
@@ -335,7 +337,7 @@ void CardManager::Update(float elapsedTime)
 
 	//セットカードの更新
 	pos = DirectX::XMFLOAT2{ ScreenSize.x * 0.1f,ScreenSize.y * 0.2f };
-	for (size_t i = 0; i < SET_CARD_MAX; ++i, pos.y += CARD_SIZE.y + CARD_DISTANCE)
+	for (size_t i = 0; i < SET_CARD_MAX; ++i, pos.y += CARD_SIZE.y + CARD_DISTANCE* Graphics::Instance().GetScreenHeightReScale())
 	{
 		auto& card = SetCards[i];
 		if (card.get() == nullptr)continue;
@@ -392,7 +394,7 @@ void CardManager::Update(float elapsedTime)
 
 			//手札との判定
 			DirectX::XMFLOAT2 boxSize = DirectX::XMFLOAT2{
-				(CARD_SIZE.x + CARD_DISTANCE) * std::max(cards.size(),static_cast<size_t>(CARD_MAX)),CARD_SIZE.y };
+				(CARD_SIZE.x + CARD_DISTANCE * Graphics::Instance().GetScreenWidthReScale()) * std::max(cards.size(),static_cast<size_t>(CARD_MAX)),CARD_SIZE.y };
 			if (Collision2D::BoxVsPos(HAND_CARDS_START_POS, boxSize, mouse.GetPosition()))
 			{
 				const auto& it = std::find(cards.begin(), cards.end(), card);
@@ -417,7 +419,7 @@ void CardManager::Update(float elapsedTime)
 				{
 					if (SetCards[i] == card)continue;
 					DirectX::XMFLOAT2 pos = SET_CARDS_START_POS;
-					pos.y += (CARD_SIZE.y + CARD_DISTANCE) * i;
+					pos.y += (CARD_SIZE.y + CARD_DISTANCE * Graphics::Instance().GetScreenHeightReScale()) * i;
 					if (Collision2D::BoxVsPos(pos, boxSize, mouse.GetPosition()))
 					{
 						if (SetCards[i] == nullptr)
@@ -498,7 +500,7 @@ void CardManager::Render(ID3D11DeviceContext* dc)
 			for (size_t i = 1; i < std::size(SetCards); i++)
 			{
 				DirectX::XMFLOAT2 pos = SET_CARDS_START_POS;
-				pos.y += (CARD_SIZE.y + CARD_DISTANCE) * i;
+				pos.y += (CARD_SIZE.y + CARD_DISTANCE * Graphics::Instance().GetScreenHeightReScale()) * i;
 				if (Collision2D::BoxVsPos(pos, CardManager::CARD_SIZE, mouse.GetPosition()))
 				{
 					if (auto card = SetCards[i - 1])types.first = card->GetType();
@@ -970,6 +972,8 @@ void CardManager::CheckCardComboExpBorder()
 				break;
 			}
 			comboBorderExpDetail[index].isOn = true;
+			pos.x *= Graphics::Instance().GetScreenWidthReScale();
+			pos.y *= Graphics::Instance().GetScreenHeightReScale();
 			comboBorderExpDetail[index].Pos = pos;
 			isCurBorderOn = true;
 		}
@@ -1004,6 +1008,8 @@ void CardManager::CheckCardComboExpBorder()
 				break;
 			}
 		}
+		pos.x *= Graphics::Instance().GetScreenWidthReScale();
+		pos.y *= Graphics::Instance().GetScreenHeightReScale();
 		comboBorderExpDetail[index - 1].isOn = true;
 		comboBorderExpDetail[index - 1].Pos = pos;
 	}

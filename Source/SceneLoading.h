@@ -38,4 +38,5 @@ private:
 	Scene* nextScene = nullptr;
 	std::thread* thread = nullptr;
 	std::mutex loadingMutex;
+	float timer = .0f;
 };

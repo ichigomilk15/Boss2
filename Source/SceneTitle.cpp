@@ -142,9 +142,8 @@ void SceneTitle::Render()
 				1.0f, 1.0f, 1.0f,(startTimer- timer)/startTimer
 			);
 		}
-
-		back->Render(dc,{.0f,.0f},{100.0f,100.0f},.0f,{1.0f,1.0f,1.0f,1.0f});
 	}
-
+#ifdef _DEBUG
 	graphics.DrawDebugGUI();
+#endif // _DEBUG
 }

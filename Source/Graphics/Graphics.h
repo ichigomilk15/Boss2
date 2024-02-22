@@ -54,6 +54,9 @@ public:
 	float GetScreenHeight() const { return screenHeight; }
 	float GetScreenHeightReScale()const noexcept{return screenHeight/1080.0f;}
 
+	//height/width
+	float GetScreenAspect()const noexcept{return screenHeight/screenWidth;}
+
 	//‰æ–ÊƒTƒCƒY‚ÌŽæ“¾
 	const DirectX::XMFLOAT2 GetScreenSize()const noexcept { return DirectX::XMFLOAT2{ screenWidth,screenHeight }; }
 
