@@ -143,8 +143,10 @@ void SceneTitle::Render()
 			);
 		}
 
-		back->Render(dc,{.0f,.0f},{100.0f,100.0f},.0f,{1.0f,1.0f,1.0f,1.0f});
+		//back->Render(dc,{.0f,.0f},{100.0f,100.0f},.0f,{1.0f,1.0f,1.0f,1.0f});
 	}
 
+#if _DEBUG
 	graphics.DrawDebugGUI();
+#endif
 }
