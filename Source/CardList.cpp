@@ -10,8 +10,9 @@
 #include "EnemyManager.h"
 #undef NOMINMAX
 
-//hack : ここがカードのサイズおかしくなる場所
-//! ここ
+#include "PhaseManager.h"
+
+
 CardManager::CardManager() :
 	CARD_SIZE(DirectX::XMFLOAT2{ 153.0f*(Graphics::Instance().GetScreenWidth()/1980.0f),210*(Graphics::Instance().GetScreenHeight()/1080.0f)}),
 	HAND_CARDS_START_POS(DirectX::XMFLOAT2{ Graphics::Instance().GetScreenWidth() * 0.3f,Graphics::Instance().GetScreenHeight() - CARD_SIZE.y }),
@@ -321,7 +322,7 @@ void CardManager::Update(float elapsedTime)
 	for (auto& card : cards)
 	{
 		if (card->GetType() == Card::Type::SPECIAL)++haveSpecial;
-		if (isMoveable && mouse.GetButtonDown() & Mouse::BTN_LEFT && card->HitCheck(mouse.GetPosition()))
+		if (PhaseManager::Instance().GetFhase()==PhaseManager::Phase::Phase_Player&& isMoveable && mouse.GetButtonDown() & Mouse::BTN_LEFT && card->HitCheck(mouse.GetPosition()))
 		{
 			ChangeHaveCard(&card);
 		}
@@ -343,7 +344,7 @@ void CardManager::Update(float elapsedTime)
 		if (card.get() == nullptr)continue;
 		if (card->GetType() == Card::Type::SPECIAL)++haveSpecial;
 
-		if (isMoveable && mouse.GetButtonDown() & Mouse::BTN_LEFT && card->HitCheck(mouse.GetPosition()))
+		if (PhaseManager::Instance().GetFhase()==PhaseManager::Phase::Phase_Player&& isMoveable && mouse.GetButtonDown() & Mouse::BTN_LEFT && card->HitCheck(mouse.GetPosition()))
 			ChangeHaveCard(&card);
 
 		card->SetPosition(pos);
@@ -360,7 +361,7 @@ void CardManager::Update(float elapsedTime)
 	if (haveCard.expired())
 	{
 		auto card = HitCheck(mouse.GetPosition());
-		if (card && mouse.GetButtonDown() & Mouse::BTN_RIGHT)//マウスがカードの上にあるかつ左クリックしたら
+		if (PhaseManager::Instance().GetFhase()==PhaseManager::Phase::Phase_Player&& card && mouse.GetButtonDown() & Mouse::BTN_RIGHT)//マウスがカードの上にあるかつ左クリックしたら
 		{
 			if (std::find(cards.begin(), cards.end(), card) != cards.end())//手札の中にカードがあれば
 			{
