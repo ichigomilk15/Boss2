@@ -313,6 +313,9 @@ void CardManager::Update(float elapsedTime)
 	Mouse& mouse = Input::Instance().GetMouse();
 	const DirectX::XMFLOAT2 ScreenSize = { Graphics::Instance().GetScreenWidth(),Graphics::Instance().GetScreenHeight() };
 
+	const PhaseManager::Phase phase = PhaseManager::Instance().GetFhase();
+	const bool isPlayerPhase = phase == PhaseManager::Phase::Phase_Player_Init || phase == PhaseManager::Phase::Phase_Player;
+
 	//全てのスペシャルカードのカウント
 	haveSpecial = 0u;
 
@@ -322,7 +325,7 @@ void CardManager::Update(float elapsedTime)
 	for (auto& card : cards)
 	{
 		if (card->GetType() == Card::Type::SPECIAL)++haveSpecial;
-		if (PhaseManager::Instance().GetFhase()==PhaseManager::Phase::Phase_Player&& isMoveable && mouse.GetButtonDown() & Mouse::BTN_LEFT && card->HitCheck(mouse.GetPosition()))
+		if (isPlayerPhase&& isMoveable && mouse.GetButtonDown() & Mouse::BTN_LEFT && card->HitCheck(mouse.GetPosition()))
 		{
 			ChangeHaveCard(&card);
 		}
@@ -344,7 +347,7 @@ void CardManager::Update(float elapsedTime)
 		if (card.get() == nullptr)continue;
 		if (card->GetType() == Card::Type::SPECIAL)++haveSpecial;
 
-		if (PhaseManager::Instance().GetFhase()==PhaseManager::Phase::Phase_Player&& isMoveable && mouse.GetButtonDown() & Mouse::BTN_LEFT && card->HitCheck(mouse.GetPosition()))
+		if (isPlayerPhase&& isMoveable && mouse.GetButtonDown() & Mouse::BTN_LEFT && card->HitCheck(mouse.GetPosition()))
 			ChangeHaveCard(&card);
 
 		card->SetPosition(pos);
@@ -361,7 +364,7 @@ void CardManager::Update(float elapsedTime)
 	if (haveCard.expired())
 	{
 		auto card = HitCheck(mouse.GetPosition());
-		if (PhaseManager::Instance().GetFhase()==PhaseManager::Phase::Phase_Player&& card && mouse.GetButtonDown() & Mouse::BTN_RIGHT)//マウスがカードの上にあるかつ左クリックしたら
+		if (isPlayerPhase&& card && mouse.GetButtonDown() & Mouse::BTN_RIGHT)//マウスがカードの上にあるかつ左クリックしたら
 		{
 			if (std::find(cards.begin(), cards.end(), card) != cards.end())//手札の中にカードがあれば
 			{
@@ -950,7 +953,7 @@ void CardManager::CheckCardComboExpBorder()
 	const float offsetY = -2.0f;
 
 	bool isCurBorderOn = false;
-	if (index <= 1) //SetCards[0][1] && SPECIALカードのチェック
+	if (index >= 0 && index <= 1) //SetCards[0][1] && SPECIALカードのチェック
 	{
 		auto curCard = SetCards[index];
 		auto nextCard = SetCards[index + 1];
@@ -991,7 +994,7 @@ void CardManager::CheckCardComboExpBorder()
 				pos = { 1441.0f, 491.0f + offsetY };
 			}
 		}
-		else if (curCard && prevCard)
+		else if (curCard && curCard->GetType() != Card::Type::SPECIAL && prevCard)
 		{
 			switch (prevCard->GetType())
 			{
