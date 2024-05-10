@@ -115,7 +115,7 @@ Sprite::Sprite(const char* filename)
 		desc.AlphaToCoverageEnable = true;
 		desc.IndependentBlendEnable = false;
 		desc.RenderTarget[0].BlendEnable = true;
-		desc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+		desc.RenderTarget[0].SrcBlend = D3D11_BLEND::D3D11_BLEND_SRC_COLOR;
 		desc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
 		desc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
 		desc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND::D3D11_BLEND_SRC_ALPHA;
@@ -164,7 +164,7 @@ Sprite::Sprite(const char* filename)
 		::memset(&desc, 0, sizeof(desc));
 		desc.MipLODBias = 0.0f;
 		desc.MaxAnisotropy = 1;
-		desc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+		desc.ComparisonFunc = D3D11_COMPARISON_FUNC::D3D11_COMPARISON_LESS_EQUAL;
 		desc.MinLOD = -FLT_MAX;
 		desc.MaxLOD = FLT_MAX;
 		desc.BorderColor[0] = 1.0f;
