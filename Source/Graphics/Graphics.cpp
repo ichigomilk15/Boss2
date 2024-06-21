@@ -155,7 +155,7 @@ Graphics::Graphics(HWND hWnd) :hwnd(hWnd)
 	_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
 	//ShowCursor(FALSE);
 
-	//swapchain->GetFullscreenState(&isFullScreen, nullptr);
+	swapchain->GetFullscreenState(&isFullScreen, nullptr);
 }
 
 // デストラクタ
