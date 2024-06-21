@@ -371,6 +371,7 @@ void CardManager::Update(float elapsedTime)
 				//ƒZƒbƒg‚Ì‹ó‚¢‚Ä‚¢‚é1”Ôã‚É“ü‚ê‚Ä‚¢‚­
 				for (auto& set : SetCards)
 				{
+					if(&SetCards[2]==&set&&card->GetType()==Card::Type::SPECIAL)break;
 					if (set == nullptr)
 					{
 						QuickEraseItem(card);
