@@ -135,7 +135,8 @@ void Player::UpdateState(float elapsedTime)
 		state = State::Idle;
 		[[fallthrough]];
 	case State::Idle:
-		UpdateViewEnemyDetail();
+		if(PhaseManager::Instance().GetFhase()!=PhaseManager::Phase::Phase_NextStage)
+			UpdateViewEnemyDetail();
 		break;
 
 	case State::Act_Init:
@@ -407,7 +408,7 @@ State Player::MovingEnd()
 void Player::UpdateAttack(float elapsedTime)
 {
 	Stage::Instance()->ResetAllSquare();
-	CardComboAttack* attackDetail = dynamic_cast<CardComboAttack*>(std::move(cardComboDataBase));
+	CardComboAttack* attackDetail = dynamic_cast<CardComboAttack*>(cardComboDataBase);
 	//CardComboAttack* attackDetail = nullptr;
 	if (!attackDetail)
 		return;
@@ -420,7 +421,7 @@ void Player::UpdateAttack(float elapsedTime)
 	}
 
 	Mouse& mouse = Input::Instance().GetMouse();
-	auto dc = Graphics::Instance().GetDeviceContext();
+	auto* dc = Graphics::Instance().GetDeviceContext();
 	Camera& camera = Camera::Instance();
 
 	DirectX::XMFLOAT3 startMousePos = CommonClass::GetWorldStartPosition(dc, mouse.GetPositionX(), mouse.GetPositionY(), camera.GetView(), camera.GetProjection());
