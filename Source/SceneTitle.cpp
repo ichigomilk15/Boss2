@@ -124,7 +124,7 @@ void SceneTitle::Render()
 
 		//HitBox2D box = HitBox2D::CreateBoxFromCenter({ screenWidth * 0.7f,screenHeight * 0.3f }, { screenWidth * 0.6f,screenHeight * 0.6f });
 		title->Render(dc,
-			screenWidth*0.3f,screenHeight*.0f,screenWidth*0.6f,screenHeight*0.6f,
+			screenWidth * 0.19f, screenHeight * 0.04f, screenWidth*0.6f * titlePosDetail.scale,screenHeight*0.6f * titlePosDetail.scale,
 			.0f,.0f,title->GetTextureWidthf(),title->GetTextureHeightf(),
 			.0f,
 			1.0f,1.0f,1.0f,1.0f);
@@ -145,5 +145,12 @@ void SceneTitle::Render()
 	}
 #ifdef _DEBUG
 	graphics.DrawDebugGUI();
+	
+	if (ImGui::Begin("Title Screen"))
+	{
+		ImGui::SliderFloat2("Title Pos", &titlePosDetail.pos.x, 0.0f, 1.0f);
+		ImGui::SliderFloat("Title Scale", &titlePosDetail.scale, 0.0f, 2.0f);
+	}
+	ImGui::End();
 #endif // _DEBUG
 }

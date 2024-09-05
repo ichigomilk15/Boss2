@@ -39,6 +39,7 @@ Player::Player() :Character()
 	maxHealth = 75;
 	health = 75;
 	maxHealth = 75;
+
 	//attackAdjacentRange = 3;
 	SetDirection(CommonClass::DirectionFace::BackRight);
 	InitializeAudio();

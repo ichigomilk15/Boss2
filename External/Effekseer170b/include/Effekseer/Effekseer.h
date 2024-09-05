@@ -857,21 +857,21 @@ struct Gradient
 
 	struct ColorKey
 	{
-		float Position;
-		std::array<float, 3> Color;
-		float Intensity;
+		float Position = 0.0f;
+		std::array<float, 3> Color{};
+		float Intensity = 0.0f;
 	};
 
 	struct AlphaKey
 	{
-		float Position;
-		float Alpha;
+		float Position = 0.0f;
+		float Alpha = 0.0f;
 	};
 
 	int ColorCount = 0;
 	int AlphaCount = 0;
-	std::array<ColorKey, KeyMax> Colors;
-	std::array<AlphaKey, KeyMax> Alphas;
+	std::array<ColorKey, KeyMax> Colors{};
+	std::array<AlphaKey, KeyMax> Alphas{};
 
 	std::array<float, 4> GetColor(float x) const;
 

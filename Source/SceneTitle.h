@@ -28,6 +28,13 @@ private:
 	Sprite* pressClick = nullptr;
 	Sprite* mask = nullptr;
 
+	struct TitlePosDetail
+	{
+		DirectX::XMFLOAT2 pos{ 360.0f, 0.0f };
+		float scale = 0.89f;
+	};
+	TitlePosDetail titlePosDetail{};
+
 	float startTimer;
 	float timer;
 	float SceneTimer = .0f;

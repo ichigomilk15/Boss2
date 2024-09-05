@@ -242,6 +242,26 @@ void PhaseManager::Update(float elapsedTime)
 
 		UpdatePlayerAct(elapsedTime);
 
+
+		bool isGameOver = false;
+
+		bool isPlayerDead = false;
+		for (auto& player : *PlayerManager::Instance().GetPlayerVector())
+		{
+			if (player->GetIsDead())
+			{
+				if (player->GetIsDestroyed()) {
+					isGameOver = true;
+					break;
+				}
+				isPlayerDead = true;
+			}
+		}
+
+		if (!SceneManager::Instance().IsWaitSceneChange() && isGameOver)
+			SceneManager::Instance().ChangeScene(new SceneGameOver);
+
+
 		if (EnemyManager::Instance().GetIsAllDead())
 		{
 			auto player = PlayerManager::Instance().GetFirstPlayer();

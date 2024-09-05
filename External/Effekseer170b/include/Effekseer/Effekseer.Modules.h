@@ -111,7 +111,7 @@ public:
 		Color AllColor;
 
 		// Lower left, Lower right, Upper left, Upper right
-		Color Colors[4];
+		Color Colors[4]{};
 
 		SIMD::Vec2f Positions[4];
 
@@ -219,7 +219,7 @@ public:
 		Color AllColor;
 
 		// Lower left, Lower right, Upper left, Upper right
-		Color Colors[4];
+		Color Colors[4]{};
 
 		float Positions[4];
 
@@ -1198,18 +1198,18 @@ public:
 	static const int32_t Version = 1;
 
 private:
-	int mControllPointCount;
-	std::vector<dVector4> mControllPoint;
+	int mControllPointCount = 0;
+	std::vector<dVector4> mControllPoint{};
 
-	int mKnotCount;
+	int mKnotCount = 0;
 	std::vector<double> mKnotValue;
 
-	int mOrder;
-	int mStep;
-	int mType;
-	int mDimension;
+	int mOrder = 0;
+	int mStep = 0;
+	int mType = 0;
+	int mDimension = 0;
 
-	float mLength;
+	float mLength = 0.0f;
 
 private:
 	/**
