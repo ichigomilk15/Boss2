@@ -141,7 +141,7 @@ private://functions
 	void CheckCardComboExpBorder();
 
 private:
-	DirectX::XMFLOAT2 CARD_SIZE;// = DirectX::XMFLOAT2{ 90.0f * 1.7f,140.0f * 1.5f };//todo : スクリーンサイズを参照すること
+	DirectX::XMFLOAT2 CARD_SIZE;
 public://static memberes
 	static constexpr unsigned int CARD_MAX = 5u;
 	static constexpr unsigned int SPECIAL_CARD_MAX = 1u;
