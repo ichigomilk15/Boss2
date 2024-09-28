@@ -28,5 +28,6 @@ private:
 	Audio					audio;
 	Graphics				graphics;
 	Input					input;
+	float fps;
 };
 

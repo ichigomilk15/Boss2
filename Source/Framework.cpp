@@ -14,8 +14,11 @@
 #endif // _DEBUG
 
 // 垂直同期間隔設定
+#ifdef _DEBUG
+static const int syncInterval = 0;
+#else
 static const int syncInterval = 1;
-
+#endif // _DEBUG
 // コンストラクタ
 Framework::Framework(HWND hWnd)
 	: hWnd(hWnd)
@@ -76,8 +79,15 @@ void Framework::Render(float elapsedTime/*Elapsed seconds from last frame*/)
 	//ImGui::ShowDemoWindow();
 
 #ifdef _DEBUG
+	if(ImGui::Begin("Framework"))
+	{
+		ImGui::Text("FPS : %.1f", fps);
+		ImGui::Text("ElapsedTime: %f",elapsedTime);
+	}
+	ImGui::End();
 	// IMGUI描画
 	graphics.GetImGuiRenderer()->Render(dc);
+
 #endif // _DEBUG
 
 	input.GetMouse().Render(dc);
@@ -100,7 +110,7 @@ void Framework::CalculateFrameStats()
 	// Compute averages over one second period.
 	if ((timer.TimeStamp() - time_tlapsed) >= 1.0f)
 	{
-		float fps = static_cast<float>(frames); // fps = frameCnt / 1
+		fps = static_cast<float>(frames); // fps = frameCnt / 1
 #ifdef _DEBUG
 		float mspf = 1000.0f / fps;
 		std::ostringstream outs;
